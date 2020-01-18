@@ -27,7 +27,7 @@ func (c *Contact) iGenderToGender(gender string) string {
 		return "Vrouwelijk"
 	}
 
-	return ""
+	return "Onbekend"
 }
 
 func (c *Contact) iGenderToTitle(gender string) string {

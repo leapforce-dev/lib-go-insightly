@@ -162,6 +162,15 @@ func (i *Insightly) getContacts() error {
 			} else {
 				c.IsMainContact = false
 			}*/
+			// validate email
+			if c.EMAIL_ADDRESS != "" {
+				err := ValidateFormat(c.EMAIL_ADDRESS)
+				if err != nil {
+					fmt.Println("invalid emailadress:", c.EMAIL_ADDRESS)
+					c.EMAIL_ADDRESS = ""
+				}
+			}
+
 			c.IsMainContact = i.FindCustomFieldValueBool(c.CUSTOMFIELDS, customFieldNameMainContactPerson)
 			if c.IsMainContact {
 				isMainContactCount++

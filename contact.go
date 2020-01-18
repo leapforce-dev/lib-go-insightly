@@ -12,7 +12,9 @@ type Contact struct {
 	Initials        string
 	Gender          string
 	Title           string
+	Email           string
 	IsMainContact   bool
+	PushToEO        bool
 }
 
 /*

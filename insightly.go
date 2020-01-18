@@ -3,6 +3,7 @@ package insightly
 import (
 	"encoding/json"
 	"fmt"
+	"geo"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -17,6 +18,7 @@ const (
 	customFieldNameMainContactPerson = "Main_contactperson__c"
 	customFieldNameInitials          = "initialen__c"
 	customFieldNameGender            = "Gender__c"
+	customFieldPushToEO              = "Push_to_EO__c"
 )
 
 // type
@@ -27,6 +29,7 @@ type Insightly struct {
 	Contacts      []Contact
 	Token         string
 	ApiUrl        string
+	Geo           *geo.Geo
 }
 
 // methods
@@ -49,6 +52,9 @@ func (i *Insightly) Init() error {
 	i.RelationTypes.Append("Netwerkpartner", 4)
 	i.RelationTypes.Append("Partner", 5)
 	i.RelationTypes.Append("Opgezegd", 6)
+
+	i.Geo = new(geo.Geo)
+	i.Geo.InitBigQuery()
 
 	return nil
 }
@@ -90,6 +96,7 @@ func (i *Insightly) getOrganisations() error {
 	skip := 0
 	top := 500
 	rowCount := 1
+	pushToEOCount := 1
 
 	for rowCount > 0 {
 		url := fmt.Sprintf(urlStr, i.ApiUrl, strconv.Itoa(skip), strconv.Itoa(top))
@@ -109,7 +116,20 @@ func (i *Insightly) getOrganisations() error {
 			o.getRelationTypeName(i.RelationTypes)
 			//fmt.Println("outside:", o.RelationTypeName)
 			o.KvKNummer = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameKvKNummer)
+
+			o.PushToEO = i.FindCustomFieldValueBool(o.CUSTOMFIELDS, customFieldPushToEO)
+			if o.PushToEO {
+				pushToEOCount++
+			}
+
 			i.Organisations = append(i.Organisations, o)
+
+			// find CountryId
+			id, err := i.Geo.FindCountryId(o.ADDRESS_BILLING_COUNTRY, "", "", "")
+			if err != nil {
+				return err
+			}
+			o.CountryId = id
 		}
 
 		rowCount = len(os)
@@ -123,6 +143,7 @@ func (i *Insightly) getOrganisations() error {
 			fmt.Println("KvK:")
 			fmt.Println(o.KvKNummer)
 		}*/
+	fmt.Println("pushToEOCount (Organisation):", pushToEOCount)
 
 	return nil
 }
@@ -133,6 +154,7 @@ func (i *Insightly) getContacts() error {
 	top := 500
 	rowCount := 1
 	isMainContactCount := 1
+	pushToEOCount := 1
 
 	for rowCount > 0 {
 		url := fmt.Sprintf(urlStr, i.ApiUrl, strconv.Itoa(skip), strconv.Itoa(top))
@@ -167,7 +189,8 @@ func (i *Insightly) getContacts() error {
 				err := ValidateFormat(c.EMAIL_ADDRESS)
 				if err != nil {
 					fmt.Println("invalid emailadress:", c.EMAIL_ADDRESS)
-					c.EMAIL_ADDRESS = ""
+				} else {
+					c.Email = c.EMAIL_ADDRESS
 				}
 			}
 
@@ -175,6 +198,12 @@ func (i *Insightly) getContacts() error {
 			if c.IsMainContact {
 				isMainContactCount++
 			}
+
+			c.PushToEO = i.FindCustomFieldValueBool(c.CUSTOMFIELDS, customFieldPushToEO)
+			if c.PushToEO {
+				pushToEOCount++
+			}
+
 			i.Contacts = append(i.Contacts, c)
 			//fmt.Println(c.CONTACT_ID, c.LAST_NAME, "initials:", c.Initials, "gender:", c.Gender, "title:", c.Title)
 		}
@@ -193,6 +222,7 @@ func (i *Insightly) getContacts() error {
 	*/
 
 	fmt.Println("isMainContactCount:", isMainContactCount)
+	fmt.Println("pushToEOCount (Contact):", pushToEOCount)
 
 	return nil
 }

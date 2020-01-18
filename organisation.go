@@ -2,7 +2,6 @@ package insightly
 
 import (
 	"exactonline"
-	"types"
 )
 
 // Organisation store Organisation from Insightly
@@ -19,7 +18,8 @@ type Organisation struct {
 	//
 	RelationTypeName       string
 	KvKNummer              string
-	GUID                   types.GUID
+	CountryId              string
+	PushToEO               bool
 	ExactOnlineAccount     *exactonline.Account //the matched account from exact online
 	MainContact            *Contact
 	ExactOnlineMainContact *exactonline.Contact //the matched main contact from exact online
@@ -29,6 +29,12 @@ type Organisation struct {
 type iOrganisations struct {
 	Organisations []Organisation
 }*/
+
+// ToExactOnline return whether an organisation should be copied to ExactOnline or not
+//
+func (o *Organisation) ToExactOnline(onlyPushToEO bool) bool {
+	return o.RelationTypeName != "" && o.KvKNummer != "" && (o.PushToEO || !onlyPushToEO)
+}
 
 func (o *Organisation) getRelationTypeName(relationTypes RelationTypes) {
 	relationTypeName := ""

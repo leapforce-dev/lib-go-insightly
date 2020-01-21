@@ -15,14 +15,15 @@ import (
 )
 
 const (
-	customFieldNameRelationType      = "Relatietype__c"
-	customFieldNameKvKNummer         = "KVKnummer__c"
-	customFieldNameOrganizationOwner = "Organization_Owner__c"
-	customFieldNameMainContactPerson = "Main_contactperson__c"
-	customFieldNameInitials          = "initialen__c"
-	customFieldNameGender            = "Gender__c"
-	customFieldNamePushToEO          = "Push_to_EO__c"
-	customFieldNamePartnerSinds      = "Partner_sinds__c"
+	customFieldNameRelationType            = "Relatietype__c"
+	customFieldNameKvKNummer               = "KVKnummer__c"
+	customFieldNameOrganizationOwner       = "Organization_Owner__c"
+	customFieldNameMainContactPerson       = "Main_contactperson__c"
+	customFieldNameInitials                = "initialen__c"
+	customFieldNameGender                  = "Gender__c"
+	customFieldNamePushToEO                = "Push_to_EO__c"
+	customFieldNamePartnerSinds            = "Partner_sinds__c"
+	customFieldNameBeeindigingPartnerschap = "Beindiging_partnerschap__c"
 )
 
 // type
@@ -93,7 +94,7 @@ func (i *Insightly) GetOrganisations() error {
 			}
 
 			// get RelationTypeName from custom field
-			o.GetRelationTypeName(i.RelationTypes)
+			o.GetRelationType(&i.RelationTypes)
 
 			// parse DATE_UPDATED_UTC to time.Time
 			t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
@@ -108,6 +109,17 @@ func (i *Insightly) GetOrganisations() error {
 			if o.PushToEO {
 				pushToEOCount++
 			}
+
+			// get PushToEO from custom field
+			o.BeeindigingPartnerschap = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameBeeindigingPartnerschap)
+			if o.BeeindigingPartnerschap != "" {
+				t1, err := time.Parse("2006-01-02 15:04:05", o.BeeindigingPartnerschap)
+				errortools.Fatal(err)
+				o.BeeindigingPartnerschapTime = &t1
+
+				//fmt.Println("o.BeeindigingPartnerschapTime", t1)
+			}
+
 			i.Organisations = append(i.Organisations, o)
 
 			// find CountryId
@@ -296,7 +308,7 @@ func (i *Insightly) Put(url string, json []byte) error {
 }
 
 func (i *Insightly) ToExactOnline(o *Organisation) bool {
-	if o.RelationTypeName == "" {
+	if o.RelationType == nil {
 		return false
 	}
 	if o.KvKNummer == "" {

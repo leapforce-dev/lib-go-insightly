@@ -18,14 +18,18 @@ type Organisation struct {
 	DATE_UPDATED_UTC         string        `json:"DATE_UPDATED_UTC"`
 	CUSTOMFIELDS             []CustomField `json:"CUSTOMFIELDS"`
 	DateUpdated              time.Time
-	RelationTypeName         string
-	KvKNummer                string
-	CountryId                string
-	PartnerSinds             string
-	PushToEO                 bool
-	ExactOnlineAccount       *exactonline.Account //the matched account from exact online
-	MainContact              *Contact
-	ExactOnlineMainContact   *exactonline.Contact //the matched main contact from exact online
+	//RelationTypeName         string
+	RelationType *RelationType
+	KvKNummer    string
+	CountryId    string
+	//PartnerSinds                string
+	BeeindigingPartnerschap     string
+	BeeindigingPartnerschapTime *time.Time
+	PushToEO                    bool
+	ExactOnlineAccount          *exactonline.Account //the matched account from exact online
+	MainContact                 *Contact
+	ExactOnlineMainContact      *exactonline.Contact //the matched main contact from exact online
+
 }
 
 /*
@@ -39,8 +43,8 @@ type iOrganisations struct {
 	return o.RelationTypeName != "" && o.KvKNummer != "" && (o.PushToEO || !onlyPushToEO)
 }*/
 
-func (o *Organisation) GetRelationTypeName(relationTypes RelationTypes) {
-	relationTypeName := ""
+func (o *Organisation) GetRelationType(relationTypes *RelationTypes) {
+	var relationType *RelationType = nil
 	relationTypeRank := 1000
 
 	for _, cf := range o.CUSTOMFIELDS {
@@ -52,14 +56,14 @@ func (o *Organisation) GetRelationTypeName(relationTypes RelationTypes) {
 			//fmt.Println(cf.FieldValueString)
 			//fmt.Println(cf.getFieldValues())
 
-			for _, fv := range cf.getFieldValues() {
+			for _, fv := range cf.GetFieldValues() {
 				//fmt.Println("found:", fv, len(relationTypes.RelationTypes))
-				rt := relationTypes.findRelationType(fv)
+				rt := relationTypes.FindRelationType(fv)
 				if rt != nil {
 					//fmt.Println("rt", rt)
 					if rt.Rank < relationTypeRank {
-						relationTypeName = rt.Name
 						relationTypeRank = rt.Rank
+						relationType = rt
 					}
 				} else {
 					//fmt.Println("(", fv, ")")
@@ -70,5 +74,7 @@ func (o *Organisation) GetRelationTypeName(relationTypes RelationTypes) {
 	//fmt.Println("inside:")
 	//fmt.Println(relationTypeName)
 
-	o.RelationTypeName = relationTypeName
+	//o.RelationTypeName = relationTypeName
+	//fmt.Println(relationType.Name, relationType.ExactOnlineSubscriptionType)
+	o.RelationType = relationType
 }

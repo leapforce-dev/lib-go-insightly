@@ -39,7 +39,7 @@ func (i *Insightly) FindCustomFieldValue(cfs []CustomField, fieldName string) st
 	if cf == nil {
 		return ""
 	} else {
-		return cf.getFieldValues()[0]
+		return cf.GetFieldValues()[0]
 	}
 }
 
@@ -53,7 +53,7 @@ func (i *Insightly) FindCustomFieldValueBool(cfs []CustomField, fieldName string
 	}
 }
 
-func (cf *CustomField) getFieldValues() []string {
+func (cf *CustomField) GetFieldValues() []string {
 	return strings.Split(string(cf.FieldValueString), ";")
 }
 

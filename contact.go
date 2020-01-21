@@ -1,20 +1,25 @@
 package insightly
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
 type Contact struct {
-	CONTACT_ID      int           `json:"CONTACT_ID"`
-	FIRST_NAME      string        `json:"FIRST_NAME"`
-	LAST_NAME       string        `json:"LAST_NAME"`
-	ORGANISATION_ID int           `json:"ORGANISATION_ID"`
-	EMAIL_ADDRESS   string        `json:"EMAIL_ADDRESS"`
-	CUSTOMFIELDS    []CustomField `json:"CUSTOMFIELDS"`
-	Initials        string
-	Gender          string
-	Title           string
-	Email           string
-	IsMainContact   bool
-	PushToEO        bool
+	CONTACT_ID       int           `json:"CONTACT_ID"`
+	FIRST_NAME       string        `json:"FIRST_NAME"`
+	LAST_NAME        string        `json:"LAST_NAME"`
+	ORGANISATION_ID  int           `json:"ORGANISATION_ID"`
+	EMAIL_ADDRESS    string        `json:"EMAIL_ADDRESS"`
+	DATE_UPDATED_UTC string        `json:"DATE_UPDATED_UTC"`
+	CUSTOMFIELDS     []CustomField `json:"CUSTOMFIELDS"`
+	DateUpdated      time.Time
+	Initials         string
+	Gender           string
+	Title            string
+	Email            string
+	IsMainContact    bool
+	PushToEO         bool
 }
 
 /*

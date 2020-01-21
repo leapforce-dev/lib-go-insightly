@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"exactonline"
+	"time"
 )
 
 // Organisation store Organisation from Insightly
@@ -14,15 +15,17 @@ type Organisation struct {
 	ADDRESS_BILLING_STATE    string        `json:"ADDRESS_BILLING_STATE"`
 	ADDRESS_BILLING_COUNTRY  string        `json:"ADDRESS_BILLING_COUNTRY"`
 	ADDRESS_BILLING_POSTCODE string        `json:"ADDRESS_BILLING_POSTCODE"`
+	DATE_UPDATED_UTC         string        `json:"DATE_UPDATED_UTC"`
 	CUSTOMFIELDS             []CustomField `json:"CUSTOMFIELDS"`
-	//
-	RelationTypeName       string
-	KvKNummer              string
-	CountryId              string
-	PushToEO               bool
-	ExactOnlineAccount     *exactonline.Account //the matched account from exact online
-	MainContact            *Contact
-	ExactOnlineMainContact *exactonline.Contact //the matched main contact from exact online
+	DateUpdated              time.Time
+	RelationTypeName         string
+	KvKNummer                string
+	CountryId                string
+	PartnerSinds             string
+	PushToEO                 bool
+	ExactOnlineAccount       *exactonline.Account //the matched account from exact online
+	MainContact              *Contact
+	ExactOnlineMainContact   *exactonline.Contact //the matched main contact from exact online
 }
 
 /*
@@ -32,11 +35,11 @@ type iOrganisations struct {
 
 // ToExactOnline return whether an organisation should be copied to ExactOnline or not
 //
-func (o *Organisation) ToExactOnline(onlyPushToEO bool) bool {
+/*func (o *Organisation) ToExactOnline(onlyPushToEO bool, maxDateModified time.Time) bool {
 	return o.RelationTypeName != "" && o.KvKNummer != "" && (o.PushToEO || !onlyPushToEO)
-}
+}*/
 
-func (o *Organisation) getRelationTypeName(relationTypes RelationTypes) {
+func (o *Organisation) GetRelationTypeName(relationTypes RelationTypes) {
 	relationTypeName := ""
 	relationTypeRank := 1000
 

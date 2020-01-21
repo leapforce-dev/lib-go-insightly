@@ -1,13 +1,16 @@
 package insightly
 
 import (
+	"bytes"
 	"encoding/json"
+	"errortools"
 	"fmt"
 	"geo"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 	"types"
 )
 
@@ -18,7 +21,8 @@ const (
 	customFieldNameMainContactPerson = "Main_contactperson__c"
 	customFieldNameInitials          = "initialen__c"
 	customFieldNameGender            = "Gender__c"
-	customFieldPushToEO              = "Push_to_EO__c"
+	customFieldNamePushToEO          = "Push_to_EO__c"
+	customFieldNamePartnerSinds      = "Partner_sinds__c"
 )
 
 // type
@@ -30,9 +34,11 @@ type Insightly struct {
 	Token         string
 	ApiUrl        string
 	Geo           *geo.Geo
+	OnlyPushToEO  bool
+	FromTimestamp time.Time
 }
 
-// methods
+// Init initializes all settings in the Insightly struct
 //
 func (i *Insightly) Init() error {
 	if i.ApiUrl == "" {
@@ -45,6 +51,9 @@ func (i *Insightly) Init() error {
 	if !strings.HasSuffix(i.ApiUrl, "/") {
 		i.ApiUrl = i.ApiUrl + "/"
 	}
+
+	i.OnlyPushToEO = false
+	i.FromTimestamp, _ = time.Parse("2006-01-02", "1800-01-01")
 
 	i.RelationTypes.Append("In kind partners", 1)
 	i.RelationTypes.Append("Koploper", 2)
@@ -59,39 +68,7 @@ func (i *Insightly) Init() error {
 	return nil
 }
 
-//
-// get methods
-//
-func (i *Insightly) GetAll() error {
-	//
-	// get iContacts
-	//
-
-	errContacts := i.getContacts()
-	if errContacts != nil {
-		return errContacts
-	}
-
-	fmt.Println("#iContacts: ", len(i.Contacts))
-	//jsonString, _ := json.Marshal(Insightly.contacts)
-	//fmt.Println(string(jsonString))
-
-	//
-	// get iOrganisations
-	//
-	err := i.getOrganisations()
-	if err != nil {
-		return err
-	}
-	fmt.Println("#iOrganisations: ", len(i.Organisations))
-
-	//jsonString, _ := json.Marshal(Insightly.Organisations)
-	//fmt.Println(string(jsonString))
-
-	return nil
-}
-
-func (i *Insightly) getOrganisations() error {
+func (i *Insightly) GetOrganisations() error {
 	urlStr := "%sOrganisations?skip=%s&top=%s"
 	skip := 0
 	top := 500
@@ -104,24 +81,33 @@ func (i *Insightly) getOrganisations() error {
 
 		os := []Organisation{}
 
-		err := i.get(url, &os, i.Token)
+		err := i.Get(url, &os)
 		if err != nil {
 			return err
 		}
 
 		for _, o := range os {
-			for i := range o.CUSTOMFIELDS {
-				o.CUSTOMFIELDS[i].UnmarshalValue()
+			// unmarshal custom fields
+			for ii := range o.CUSTOMFIELDS {
+				o.CUSTOMFIELDS[ii].UnmarshalValue()
 			}
-			o.getRelationTypeName(i.RelationTypes)
-			//fmt.Println("outside:", o.RelationTypeName)
+
+			// get RelationTypeName from custom field
+			o.GetRelationTypeName(i.RelationTypes)
+
+			// parse DATE_UPDATED_UTC to time.Time
+			t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
+			errortools.Fatal(err)
+			o.DateUpdated = t
+
+			// get KvKNummer from custom field
 			o.KvKNummer = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameKvKNummer)
 
-			o.PushToEO = i.FindCustomFieldValueBool(o.CUSTOMFIELDS, customFieldPushToEO)
+			// get PushToEO from custom field
+			o.PushToEO = i.FindCustomFieldValueBool(o.CUSTOMFIELDS, customFieldNamePushToEO)
 			if o.PushToEO {
 				pushToEOCount++
 			}
-
 			i.Organisations = append(i.Organisations, o)
 
 			// find CountryId
@@ -134,21 +120,14 @@ func (i *Insightly) getOrganisations() error {
 
 		rowCount = len(os)
 		skip += top
-
-		//i.Organisations.Organisations = append(i.Organisations.Organisations, os...)
 	}
 
-	/*
-		for _, o := range i.Organisations {
-			fmt.Println("KvK:")
-			fmt.Println(o.KvKNummer)
-		}*/
 	fmt.Println("pushToEOCount (Organisation):", pushToEOCount)
 
 	return nil
 }
 
-func (i *Insightly) getContacts() error {
+func (i *Insightly) GetContacts() error {
 	urlStr := "%sContacts?skip=%s&top=%s"
 	skip := 0
 	top := 500
@@ -162,28 +141,33 @@ func (i *Insightly) getContacts() error {
 
 		cs := []Contact{}
 
-		err := i.get(url, &cs, i.Token)
+		err := i.Get(url, &cs)
 		if err != nil {
 			return err
 		}
 
 		for _, c := range cs {
+			// unmarshal custom fields
 			for ii := range c.CUSTOMFIELDS {
 				c.CUSTOMFIELDS[ii].UnmarshalValue()
-				c.Initials = i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameInitials)
-				c.Gender = c.iGenderToGender(i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameGender))
-				c.Title = c.iGenderToTitle(i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameGender))
 			}
 
-			//fmt.Println(c.CUSTOMFIELDS)
-			//jsonString, _ := json.Marshal(c.CUSTOMFIELDS)
-			//fmt.Println(string(jsonString))
-			/*b, err := strconv.ParseBool(findCustomFieldValue(c.CUSTOMFIELDS, customFieldNameMainContactPerson))
-			if err == nil {
-				c.IsMainContact = (b == true)
-			} else {
-				c.IsMainContact = false
-			}*/
+			// get Initials from custom field
+			c.Initials = i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameInitials)
+
+			// get Gender from custom field
+			c.Gender = c.iGenderToGender(i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameGender))
+
+			// get Title from custom field
+			c.Title = c.iGenderToTitle(i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameGender))
+
+			// parse DATE_UPDATED_UTC to time.Time
+			t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.DATE_UPDATED_UTC+" +0000 UTC")
+			errortools.Fatal(err)
+			c.DateUpdated = t
+
+			//fmt.Println("o.DATE_UPDATED_UTC", c.DATE_UPDATED_UTC, "o.DateUpdated", c.DateUpdated, "Now", time.Now(), "Diff", time.Now().Sub(c.DateUpdated))
+
 			// validate email
 			if c.EMAIL_ADDRESS != "" {
 				err := ValidateFormat(c.EMAIL_ADDRESS)
@@ -199,7 +183,7 @@ func (i *Insightly) getContacts() error {
 				isMainContactCount++
 			}
 
-			c.PushToEO = i.FindCustomFieldValueBool(c.CUSTOMFIELDS, customFieldPushToEO)
+			c.PushToEO = i.FindCustomFieldValueBool(c.CUSTOMFIELDS, customFieldNamePushToEO)
 			if c.PushToEO {
 				pushToEOCount++
 			}
@@ -210,16 +194,7 @@ func (i *Insightly) getContacts() error {
 
 		rowCount = len(cs)
 		skip += top
-
-		//i.Organisations.Organisations = append(i.Organisations.Organisations, os...)
 	}
-
-	/*
-		for _, o := range i.Organisations.Organisations {
-			fmt.Println("KvK:")
-			fmt.Println(findCustomFieldValue(o.CUSTOMFIELDS, customFieldNameKvKNummer))
-		}
-	*/
 
 	fmt.Println("isMainContactCount:", isMainContactCount)
 	fmt.Println("pushToEOCount (Contact):", pushToEOCount)
@@ -227,11 +202,47 @@ func (i *Insightly) getContacts() error {
 	return nil
 }
 
+// UpdateOrganisationRemovePushToEO remove PushToEo ( = true) custom value for specified organisation
+//
+func (i *Insightly) UpdateOrganisationRemovePushToEO(o *Organisation) error {
+	urlStr := "%sOrganisations"
+	url := fmt.Sprintf(urlStr, i.ApiUrl)
+
+	type CustomFieldDelete struct {
+		FIELD_NAME      string
+		CUSTOM_FIELD_ID string
+	}
+
+	type OrganisationID struct {
+		ORGANISATION_ID int
+		CUSTOMFIELDS    []CustomFieldDelete
+	}
+
+	o1 := OrganisationID{}
+	o1.ORGANISATION_ID = o.ORGANISATION_ID
+	o1.CUSTOMFIELDS = make([]CustomFieldDelete, 1)
+	o1.CUSTOMFIELDS[0] = CustomFieldDelete{customFieldNamePushToEO, customFieldNamePushToEO}
+
+	b, err := json.Marshal(o1)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+
+	err = i.Put(url, b)
+	if err != nil {
+		return err
+	}
+
+	//fmt.Println("unchecked:", o.ORGANISATION_ID)
+	//time.Sleep(1 * time.Second)
+
+	return nil
+}
+
 //
 // generic Get method
 //
-
-func (i *Insightly) get(url string, model interface{}, basicAuthorizationToken string) error {
+func (i *Insightly) Get(url string, model interface{}) error {
 	client := &http.Client{}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -239,7 +250,7 @@ func (i *Insightly) get(url string, model interface{}, basicAuthorizationToken s
 		return err
 	}
 	req.Header.Set("accept", "application/json")
-	req.Header.Set("authorization", "Basic "+basicAuthorizationToken)
+	req.Header.Set("authorization", "Basic "+i.Token)
 
 	// Send out the HTTP request
 	res, err := client.Do(req)
@@ -257,4 +268,58 @@ func (i *Insightly) get(url string, model interface{}, basicAuthorizationToken s
 	}
 
 	return nil
+}
+func (i *Insightly) Put(url string, json []byte) error {
+	client := &http.Client{}
+
+	req, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(json))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("authorization", "Basic "+i.Token)
+
+	// Send out the HTTP request
+	res, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	// Check HTTP StatusCode
+	if res.StatusCode < 200 || res.StatusCode > 299 {
+		return &types.ErrorString{fmt.Sprintf("Server returned statuscode %v: %s", res.StatusCode, err.Error())}
+	}
+
+	//fmt.Println(res)
+
+	return nil
+}
+
+func (i *Insightly) ToExactOnline(o *Organisation) bool {
+	if o.RelationTypeName == "" {
+		return false
+	}
+	if o.KvKNummer == "" {
+		return false
+	}
+	if i.OnlyPushToEO {
+		if o.PushToEO {
+			fmt.Println("ToExactOnline 1")
+			return true
+		} else {
+			return false
+		}
+	}
+	if o.DateUpdated.After(i.FromTimestamp) {
+		fmt.Println("ToExactOnline 2", o.DateUpdated, i.FromTimestamp)
+		return true
+	}
+	if o.MainContact != nil {
+		if o.MainContact.DateUpdated.After(i.FromTimestamp) {
+			fmt.Println("ToExactOnline 3", o.MainContact.DateUpdated, i.FromTimestamp)
+			return true
+		}
+	}
+
+	return false
 }

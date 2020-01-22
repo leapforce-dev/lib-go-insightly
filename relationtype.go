@@ -1,7 +1,7 @@
 package insightly
 
 import (
-	"exactonline"
+	exactonline "exactonline"
 	"strings"
 )
 
@@ -9,9 +9,10 @@ import (
 //
 
 type RelationType struct {
-	Name                        string
-	Rank                        int
-	ExactOnlineSubscriptionType *exactonline.SubscriptionType //the matched subscriptiontype from exact online
+	Name                            string
+	Rank                            int
+	ExactOnlineSubscriptionTypeCode string
+	ExactOnlineSubscriptionType     *exactonline.SubscriptionType //the matched subscriptiontype from exact online
 }
 
 type RelationTypes struct {
@@ -21,8 +22,8 @@ type RelationTypes struct {
 // methods
 //
 
-func (rts *RelationTypes) Append(name string, rank int) {
-	rts.RelationTypes = append(rts.RelationTypes, RelationType{name, rank, nil})
+func (rts *RelationTypes) Append(name string, rank int, exactOnlineSubscriptionTypeCode string) {
+	rts.RelationTypes = append(rts.RelationTypes, RelationType{name, rank, exactOnlineSubscriptionTypeCode, nil})
 }
 
 func (rts *RelationTypes) FindRelationType(relationTypeName string) *RelationType {

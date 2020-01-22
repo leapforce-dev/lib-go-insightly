@@ -3,15 +3,17 @@ package insightly
 import (
 	"bytes"
 	"encoding/json"
-	"errortools"
 	"fmt"
-	"geo"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-	"types"
+
+	types "types"
+
+	errortools "errortools"
+	geo "geo"
 )
 
 const (
@@ -56,12 +58,12 @@ func (i *Insightly) Init() error {
 	i.OnlyPushToEO = false
 	i.FromTimestamp, _ = time.Parse("2006-01-02", "1800-01-01")
 
-	i.RelationTypes.Append("In kind partners", 1)
-	i.RelationTypes.Append("Koploper", 2)
-	i.RelationTypes.Append("GBN", 3)
-	i.RelationTypes.Append("Netwerkpartner", 4)
-	i.RelationTypes.Append("Partner", 5)
-	i.RelationTypes.Append("Opgezegd", 6)
+	i.RelationTypes.Append("In kind partners", 1, "SamPartner")
+	i.RelationTypes.Append("Koploper", 2, "Koploper")
+	i.RelationTypes.Append("GBN", 3, "GBN")
+	i.RelationTypes.Append("Netwerkpartner", 4, "Netwerk")
+	i.RelationTypes.Append("Partner", 5, "Partner")
+	i.RelationTypes.Append("Opgezegd", 6, "")
 
 	i.Geo = new(geo.Geo)
 	i.Geo.InitBigQuery()

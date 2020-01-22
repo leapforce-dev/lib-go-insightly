@@ -1,7 +1,7 @@
 package insightly
 
 import (
-	"exactonline"
+	exactonline "exactonline"
 	"time"
 )
 

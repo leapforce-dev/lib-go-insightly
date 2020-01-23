@@ -318,19 +318,19 @@ func (i *Insightly) ToExactOnline(o *Organisation) bool {
 	}
 	if i.OnlyPushToEO {
 		if o.PushToEO {
-			fmt.Println("ToExactOnline 1")
+			//fmt.Println("ToExactOnline 1")
 			return true
 		} else {
 			return false
 		}
 	}
 	if o.DateUpdated.After(i.FromTimestamp) {
-		fmt.Println("ToExactOnline 2", o.DateUpdated, i.FromTimestamp)
+		//fmt.Println("ToExactOnline 2", o.DateUpdated, i.FromTimestamp)
 		return true
 	}
 	if o.MainContact != nil {
 		if o.MainContact.DateUpdated.After(i.FromTimestamp) {
-			fmt.Println("ToExactOnline 3", o.MainContact.DateUpdated, i.FromTimestamp)
+			//fmt.Println("ToExactOnline 3", o.MainContact.DateUpdated, i.FromTimestamp)
 			return true
 		}
 	}

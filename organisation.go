@@ -2,6 +2,7 @@ package insightly
 
 import (
 	exactonline "exactonline"
+	"strings"
 	"time"
 )
 
@@ -19,17 +20,20 @@ type Organisation struct {
 	CUSTOMFIELDS             []CustomField `json:"CUSTOMFIELDS"`
 	DateUpdated              time.Time
 	//RelationTypeName         string
-	RelationType *RelationType
-	KvKNummer    string
-	CountryId    string
+	//RelationType *RelationType
+	KvKNummer string
+	CountryId string
 	//PartnerSinds                string
 	BeeindigingPartnerschap     string
 	BeeindigingPartnerschapTime *time.Time
+	AantalMedewerkers           string
 	PushToEO                    bool
-	ExactOnlineAccount          *exactonline.Account //the matched account from exact online
+	Opgezegd                    bool
 	MainContact                 *Contact
-	ExactOnlineMainContact      *exactonline.Contact //the matched main contact from exact online
-
+	ExactOnlineAccount          *exactonline.Account          //the matched account from exact online
+	ExactOnlineMainContact      *exactonline.Contact          //the matched main contact from exact online
+	ExactOnlineSubscriptionType *exactonline.SubscriptionType //the matched SubscriptionType from exact online
+	ExactOnlineItem             *exactonline.Item             //the matched Item from exact online
 }
 
 /*
@@ -43,38 +47,73 @@ type iOrganisations struct {
 	return o.RelationTypeName != "" && o.KvKNummer != "" && (o.PushToEO || !onlyPushToEO)
 }*/
 
-func (o *Organisation) GetRelationType(relationTypes *RelationTypes) {
+func (o *Organisation) GetExactOnlineSubscriptionTypeAndItem(relationTypes *RelationTypes) {
 	var relationType *RelationType = nil
 	relationTypeRank := 1000
+	//value := ""
 
 	for _, cf := range o.CUSTOMFIELDS {
-		//fmt.Println("cf.FIELD_NAME:")
-		//fmt.Println(cf.FIELD_NAME)
 
 		if cf.FIELD_NAME == customFieldNameRelationType {
-			//fmt.Println("original:")
-			//fmt.Println(cf.FieldValueString)
-			//fmt.Println(cf.getFieldValues())
+			//value = cf.FieldValueString
 
 			for _, fv := range cf.GetFieldValues() {
-				//fmt.Println("found:", fv, len(relationTypes.RelationTypes))
 				rt := relationTypes.FindRelationType(fv)
 				if rt != nil {
-					//fmt.Println("rt", rt)
 					if rt.Rank < relationTypeRank {
 						relationTypeRank = rt.Rank
 						relationType = rt
 					}
-				} else {
-					//fmt.Println("(", fv, ")")
 				}
 			}
 		}
 	}
-	//fmt.Println("inside:")
-	//fmt.Println(relationTypeName)
 
-	//o.RelationTypeName = relationTypeName
-	//fmt.Println(relationType.Name, relationType.ExactOnlineSubscriptionType)
-	o.RelationType = relationType
+	if relationType != nil {
+		o.Opgezegd = strings.ToLower(relationType.Name) == "opgezegd"
+		o.ExactOnlineSubscriptionType = relationType.ExactOnlineSubscriptionType
+
+		if !o.Opgezegd {
+			for ii, a := range relationType.Articles {
+				if a.AantalMedewerkers == o.AantalMedewerkers {
+					o.ExactOnlineItem = relationType.Articles[ii].ExactOnlineItem
+				}
+			}
+		}
+	}
+
+	//fmt.Println("RelationType", value, "AantalMedewerkers", o.AantalMedewerkers, "\nExactOnlineSubscriptionType", o.ExactOnlineSubscriptionType, "ExactOnlineItem", o.ExactOnlineItem)
+}
+
+func (o *Organisation) Process(i *Insightly) bool {
+	if o.ExactOnlineSubscriptionType == nil && !o.Opgezegd {
+		return false
+	}
+	if o.KvKNummer == "" {
+		return false
+	}
+	if i.OnlyPushToEO {
+		if o.PushToEO {
+			//fmt.Println("ToExactOnline 1")
+			return true
+		} else {
+			return false
+		}
+	}
+	if o.DateUpdated.After(i.FromTimestamp) {
+		//fmt.Println("ToExactOnline 2", o.DateUpdated, i.FromTimestamp)
+		return true
+	}
+	/*if o.MainContact != nil {
+		if o.MainContact.DateUpdated.After(i.FromTimestamp) {
+			//fmt.Println("ToExactOnline 3", o.MainContact.DateUpdated, i.FromTimestamp)
+			return true
+		}
+	}*/
+
+	return false
+}
+
+func (o *Organisation) ProcessSubscriptions() bool {
+	return (o.ExactOnlineSubscriptionType != nil && o.ExactOnlineItem != nil) || o.Opgezegd
 }

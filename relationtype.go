@@ -8,10 +8,17 @@ import (
 // types
 //
 
+type Article struct {
+	AantalMedewerkers string
+	Name              string
+	ExactOnlineItem   *exactonline.Item
+}
+
 type RelationType struct {
 	Name                            string
 	Rank                            int
 	ExactOnlineSubscriptionTypeCode string
+	Articles                        []Article
 	ExactOnlineSubscriptionType     *exactonline.SubscriptionType //the matched subscriptiontype from exact online
 }
 
@@ -22,8 +29,8 @@ type RelationTypes struct {
 // methods
 //
 
-func (rts *RelationTypes) Append(name string, rank int, exactOnlineSubscriptionTypeCode string) {
-	rts.RelationTypes = append(rts.RelationTypes, RelationType{name, rank, exactOnlineSubscriptionTypeCode, nil})
+func (rts *RelationTypes) Append(name string, rank int, exactOnlineSubscriptionTypeCode string, articles []Article) {
+	rts.RelationTypes = append(rts.RelationTypes, RelationType{name, rank, exactOnlineSubscriptionTypeCode, articles, nil})
 }
 
 func (rts *RelationTypes) FindRelationType(relationTypeName string) *RelationType {

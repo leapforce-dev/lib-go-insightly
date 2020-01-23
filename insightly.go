@@ -26,6 +26,7 @@ const (
 	customFieldNamePushToEO                = "Push_to_EO__c"
 	customFieldNamePartnerSinds            = "Partner_sinds__c"
 	customFieldNameBeeindigingPartnerschap = "Beindiging_partnerschap__c"
+	customFieldNameAantalMedewerkers       = "Aantal_medewerkers__c"
 )
 
 // type
@@ -58,12 +59,52 @@ func (i *Insightly) Init() error {
 	i.OnlyPushToEO = false
 	i.FromTimestamp, _ = time.Parse("2006-01-02", "1800-01-01")
 
-	i.RelationTypes.Append("In kind partners", 1, "SamPartner")
-	i.RelationTypes.Append("Koploper", 2, "Koploper")
-	i.RelationTypes.Append("GBN", 3, "GBN")
-	i.RelationTypes.Append("Netwerkpartner", 4, "Netwerk")
-	i.RelationTypes.Append("Partner", 5, "Partner")
-	i.RelationTypes.Append("Opgezegd", 6, "")
+	// SamPartner
+	articles := []Article{
+		Article{"1-10", "S1", nil},
+		Article{"11-100", "S2", nil},
+		Article{"101-250", "S3", nil},
+		Article{"251-500", "S4", nil},
+		Article{"500+", "S5", nil},
+	}
+	i.RelationTypes.Append("In kind partners", 1, "SamPartner", articles)
+	// Koploper
+	articles = []Article{
+		Article{"1-10", "K1", nil},
+		Article{"11-100", "K2", nil},
+		Article{"101-250", "K3", nil},
+		Article{"251-500", "K4", nil},
+		Article{"500+", "K5", nil},
+	}
+	i.RelationTypes.Append("Koploper", 2, "Koploper", articles)
+	// GBN
+	articles = []Article{
+		Article{"500+", "GBN", nil},
+	}
+	i.RelationTypes.Append("GBN", 3, "GBN", articles)
+	// Netwerkpartner
+	articles = []Article{
+		Article{"1-10", "N1", nil},
+		Article{"11-100", "N2", nil},
+		Article{"101-250", "N3", nil},
+		Article{"251-500", "N4", nil},
+		Article{"500+", "N5", nil},
+	}
+	i.RelationTypes.Append("Netwerkpartner", 4, "Netwerk", articles)
+	articles = []Article{
+		Article{"500+", "GBN", nil},
+	}
+	// Partner
+	articles = []Article{
+		Article{"1-10", "P1", nil},
+		Article{"11-100", "P2", nil},
+		Article{"101-250", "P3", nil},
+		Article{"251-500", "P4", nil},
+		Article{"500+", "P5", nil},
+	}
+	i.RelationTypes.Append("Partner", 5, "Partner", articles)
+	// Opgezegd
+	i.RelationTypes.Append("Opgezegd", 6, "", nil)
 
 	i.Geo = new(geo.Geo)
 	i.Geo.InitBigQuery()
@@ -72,15 +113,17 @@ func (i *Insightly) Init() error {
 }
 
 func (i *Insightly) GetOrganisations() error {
-	urlStr := "%sOrganisations?skip=%s&top=%s"
+	urlStr := "%sOrganisations/Search?updated_after_utc=%s&skip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := 1
 	pushToEOCount := 1
 
+	from := i.FromTimestamp.Format("2006-01-02")
+
 	for rowCount > 0 {
-		url := fmt.Sprintf(urlStr, i.ApiUrl, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Printf(url)
+		url := fmt.Sprintf(urlStr, i.ApiUrl, from, strconv.Itoa(skip), strconv.Itoa(top))
+		fmt.Println(url)
 
 		os := []Organisation{}
 
@@ -95,9 +138,6 @@ func (i *Insightly) GetOrganisations() error {
 				o.CUSTOMFIELDS[ii].UnmarshalValue()
 			}
 
-			// get RelationTypeName from custom field
-			o.GetRelationType(&i.RelationTypes)
-
 			// parse DATE_UPDATED_UTC to time.Time
 			t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
 			errortools.Fatal(err)
@@ -105,6 +145,12 @@ func (i *Insightly) GetOrganisations() error {
 
 			// get KvKNummer from custom field
 			o.KvKNummer = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameKvKNummer)
+
+			// get Aantal Medewerkers from custom field
+			o.AantalMedewerkers = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameAantalMedewerkers)
+
+			// get RelationTypeName from custom field
+			o.GetExactOnlineSubscriptionTypeAndItem(&i.RelationTypes)
 
 			// get PushToEO from custom field
 			o.PushToEO = i.FindCustomFieldValueBool(o.CUSTOMFIELDS, customFieldNamePushToEO)
@@ -309,6 +355,7 @@ func (i *Insightly) Put(url string, json []byte) error {
 	return nil
 }
 
+/*
 func (i *Insightly) ToExactOnline(o *Organisation) bool {
 	if o.RelationType == nil {
 		return false
@@ -336,4 +383,4 @@ func (i *Insightly) ToExactOnline(o *Organisation) bool {
 	}
 
 	return false
-}
+}*/

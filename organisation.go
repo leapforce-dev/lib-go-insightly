@@ -1,7 +1,10 @@
 package insightly
 
 import (
+	"errortools"
 	exactonline "exactonline"
+	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -21,9 +24,10 @@ type Organisation struct {
 	DateUpdated              time.Time
 	//RelationTypeName         string
 	//RelationType *RelationType
-	KvKNummer string
-	CountryId string
-	//PartnerSinds                string
+	KvKNummer                   string
+	CountryId                   string
+	PartnerSinds                string
+	PartnerSindsTime            *time.Time
 	BeeindigingPartnerschap     string
 	BeeindigingPartnerschapTime *time.Time
 	AantalMedewerkers           string
@@ -86,6 +90,7 @@ func (o *Organisation) GetExactOnlineSubscriptionTypeAndItem(relationTypes *Rela
 }
 
 func (o *Organisation) Process(i *Insightly) bool {
+	//fmt.Println(o.ExactOnlineSubscriptionType == nil, o.Opgezegd, o.KvKNummer, i.OnlyPushToEO, o.DateUpdated)
 	if o.ExactOnlineSubscriptionType == nil && !o.Opgezegd {
 		return false
 	}
@@ -116,4 +121,90 @@ func (o *Organisation) Process(i *Insightly) bool {
 
 func (o *Organisation) ProcessSubscriptions() bool {
 	return (o.ExactOnlineSubscriptionType != nil && o.ExactOnlineItem != nil) || o.Opgezegd
+}
+
+func (i *Insightly) GetOrganisations() error {
+	urlStr := "%sOrganisations/Search?updated_after_utc=%s&skip=%s&top=%s"
+	skip := 0
+	top := 500
+	rowCount := 1
+	pushToEOCount := 1
+
+	from := i.FromTimestamp.Format("2006-01-02")
+
+	for rowCount > 0 {
+		url := fmt.Sprintf(urlStr, i.ApiUrl, from, strconv.Itoa(skip), strconv.Itoa(top))
+		fmt.Println(url)
+
+		os := []Organisation{}
+
+		err := i.Get(url, &os)
+		if err != nil {
+			return err
+		}
+
+		for _, o := range os {
+			// unmarshal custom fields
+			for ii := range o.CUSTOMFIELDS {
+				o.CUSTOMFIELDS[ii].UnmarshalValue()
+			}
+
+			// parse DATE_UPDATED_UTC to time.Time
+			t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
+			errortools.Fatal(err)
+			o.DateUpdated = t
+
+			// get KvKNummer from custom field
+			o.KvKNummer = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameKvKNummer)
+
+			// get Aantal Medewerkers from custom field
+			o.AantalMedewerkers = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameAantalMedewerkers)
+
+			// get RelationTypeName from custom field
+			o.GetExactOnlineSubscriptionTypeAndItem(&i.RelationTypes)
+
+			// get PushToEO from custom field
+			o.PushToEO = i.FindCustomFieldValueBool(o.CUSTOMFIELDS, customFieldNamePushToEO)
+			if o.PushToEO {
+				pushToEOCount++
+			}
+
+			// get PartnerSinds from custom field
+			o.PartnerSinds = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNamePartnerSinds)
+			if o.PartnerSinds != "" {
+				t1, err := time.Parse("2006-01-02 15:04:05", o.PartnerSinds)
+				errortools.Fatal(err)
+				o.PartnerSindsTime = &t1
+
+				//fmt.Println("o.PartnerSindsTime", t1)
+			}
+
+			// get BeeindigingPartnerschap from custom field
+			o.BeeindigingPartnerschap = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameBeeindigingPartnerschap)
+			if o.BeeindigingPartnerschap != "" {
+				t1, err := time.Parse("2006-01-02 15:04:05", o.BeeindigingPartnerschap)
+				errortools.Fatal(err)
+				o.BeeindigingPartnerschapTime = &t1
+
+				//fmt.Println("o.BeeindigingPartnerschapTime", o.BeeindigingPartnerschap, t1)
+			}
+
+			//fmt.Println(o)
+			i.Organisations = append(i.Organisations, o)
+
+			// find CountryId
+			id, err := i.Geo.FindCountryId(o.ADDRESS_BILLING_COUNTRY, "", "", "")
+			if err != nil {
+				return err
+			}
+			o.CountryId = id
+		}
+
+		rowCount = len(os)
+		skip += top
+	}
+
+	fmt.Println("pushToEOCount (Organisation):", pushToEOCount)
+
+	return nil
 }

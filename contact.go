@@ -1,6 +1,9 @@
 package insightly
 
 import (
+	"errortools"
+	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -27,7 +30,7 @@ type iContacts struct {
 	Contacts []Contact
 }*/
 
-func (c *Contact) iGenderToGender(gender string) string {
+func (c *Contact) GenderToGender(gender string) string {
 	if strings.ToLower(gender) == "man" {
 		return "Mannelijk"
 	} else if strings.ToLower(gender) == "vrouw" {
@@ -37,7 +40,7 @@ func (c *Contact) iGenderToGender(gender string) string {
 	return "Onbekend"
 }
 
-func (c *Contact) iGenderToTitle(gender string) string {
+func (c *Contact) GenderToTitle(gender string) string {
 	if strings.ToLower(gender) == "man" {
 		return "DHR"
 	} else if strings.ToLower(gender) == "vrouw" {
@@ -45,4 +48,85 @@ func (c *Contact) iGenderToTitle(gender string) string {
 	}
 
 	return ""
+}
+
+func (i *Insightly) GetContactsFiltered(fieldname string, fieldvalue string) ([]Contact, error) {
+	urlStr := "%sContacts/Search?field_name=%s&field_value=%s&skip=%s&top=%s"
+	//urlStr := "%sContacts?skip=%s&top=%s"
+	skip := 0
+	top := 500
+	rowCount := 1
+	isMainContactCount := 1
+	pushToEOCount := 1
+
+	contacts := []Contact{}
+
+	for rowCount > 0 {
+		url := fmt.Sprintf(urlStr, i.ApiUrl, fieldname, fieldvalue, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Printf(url)
+
+		cs := []Contact{}
+
+		err := i.Get(url, &cs)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, c := range cs {
+			// unmarshal custom fields
+			for ii := range c.CUSTOMFIELDS {
+				c.CUSTOMFIELDS[ii].UnmarshalValue()
+			}
+
+			// get Initials from custom field
+			c.Initials = i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameInitials)
+
+			// get Gender from custom field
+			c.Gender = c.GenderToGender(i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameGender))
+
+			// get Title from custom field
+			c.Title = c.GenderToTitle(i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameGender))
+
+			// parse DATE_UPDATED_UTC to time.Time
+			t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.DATE_UPDATED_UTC+" +0000 UTC")
+			errortools.Fatal(err)
+			c.DateUpdated = t
+
+			//fmt.Println("o.DATE_UPDATED_UTC", c.DATE_UPDATED_UTC, "o.DateUpdated", c.DateUpdated, "Now", time.Now(), "Diff", time.Now().Sub(c.DateUpdated))
+
+			// validate email
+			if c.EMAIL_ADDRESS != "" {
+				err := ValidateFormat(c.EMAIL_ADDRESS)
+				if err != nil {
+					fmt.Println("invalid emailadress:", c.EMAIL_ADDRESS)
+				} else {
+					c.Email = c.EMAIL_ADDRESS
+				}
+			}
+
+			c.IsMainContact = i.FindCustomFieldValueBool(c.CUSTOMFIELDS, customFieldNameMainContactPerson)
+			if c.IsMainContact {
+				isMainContactCount++
+			}
+
+			c.PushToEO = i.FindCustomFieldValueBool(c.CUSTOMFIELDS, customFieldNamePushToEO)
+			if c.PushToEO {
+				pushToEOCount++
+			}
+
+			contacts = append(contacts, c)
+		}
+
+		rowCount = len(cs)
+		skip += top
+	}
+
+	//fmt.Println("isMainContactCount:", isMainContactCount)
+	//fmt.Println("pushToEOCount (Contact):", pushToEOCount)
+
+	if len(contacts) == 0 {
+		contacts = nil
+	}
+
+	return contacts, nil
 }

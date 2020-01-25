@@ -51,9 +51,55 @@ func (c *Contact) GenderToTitle(gender string) string {
 	return ""
 }
 
+func (c *Contact) Updated(i *Insightly) bool {
+	return c.DateUpdated.After(i.FromTimestamp)
+}
+
+// GetContacts returns all contacts updated after FromTimestamp date
+//
+func (i *Insightly) GetContacts() error {
+	co, err := i.GetContactsInternal(true, "", "")
+
+	i.Contacts = co
+
+	//for _, c := range i.Contacts {
+	//	fmt.Println(c)
+	//}
+
+	return err
+}
+
+// GetContactsFiltered returns all contacts fulfulling the specified filter
+//
 func (i *Insightly) GetContactsFiltered(fieldname string, fieldvalue string) ([]Contact, error) {
-	urlStr := "%sContacts/Search?field_name=%s&field_value=%s&skip=%s&top=%s"
-	//urlStr := "%sContacts?skip=%s&top=%s"
+	return i.GetContactsInternal(false, fieldname, fieldvalue)
+}
+
+// GetContactsInternal is the generic function retrieving Contacts from Insightly
+//
+func (i *Insightly) GetContactsInternal(updatedAfterUTC bool, fieldName, fieldValue string) ([]Contact, error) {
+	search := false
+	updated := ""
+	fieldname := ""
+	fieldvalue := ""
+	searchstring := ""
+	if updatedAfterUTC {
+		search = true
+		from := i.FromTimestamp.Format("2006-01-02")
+		updated = fmt.Sprintf("updated_after_utc=%s&", from)
+	}
+	if fieldName != "" && fieldValue != "" {
+		search = true
+		updated = fmt.Sprintf("field_name=%s&field_value=%s&", fieldName, fieldValue)
+	}
+
+	if search {
+		searchstring = "/Search?" + updated + fieldname + fieldvalue
+	} else {
+		searchstring = "?"
+	}
+
+	urlStr := "%sContacts%sskip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := 1
@@ -63,8 +109,8 @@ func (i *Insightly) GetContactsFiltered(fieldname string, fieldvalue string) ([]
 	contacts := []Contact{}
 
 	for rowCount > 0 {
-		url := fmt.Sprintf(urlStr, i.ApiUrl, fieldname, fieldvalue, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Printf(url)
+		url := fmt.Sprintf(urlStr, i.ApiUrl, searchstring, strconv.Itoa(skip), strconv.Itoa(top))
+		fmt.Printf(url)
 
 		cs := []Contact{}
 

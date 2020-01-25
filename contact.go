@@ -1,11 +1,12 @@
 package insightly
 
 import (
-	"errortools"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
+
+	errortools "github.com/leapforce-nl/go_errortools"
 )
 
 type Contact struct {

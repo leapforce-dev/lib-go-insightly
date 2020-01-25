@@ -1,12 +1,14 @@
 package insightly
 
 import (
-	"errortools"
-	exactonline "exactonline"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
+
+	exactonline "github.com/leapforce-nl/go_exactonline"
+
+	errortools "github.com/leapforce-nl/go_errortools"
 )
 
 // Organisation store Organisation from Insightly

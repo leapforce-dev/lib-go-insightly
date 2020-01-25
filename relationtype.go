@@ -1,8 +1,9 @@
 package insightly
 
 import (
-	exactonline "exactonline"
 	"strings"
+
+	exactonline "github.com/leapforce-nl/go_exactonline"
 )
 
 // types

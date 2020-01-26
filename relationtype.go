@@ -3,7 +3,7 @@ package insightly
 import (
 	"strings"
 
-	exactonline "github.com/leapforce-nl/go_exactonline"
+	exactonline "github.com/Leapforce-nl/go_exactonline"
 )
 
 // types

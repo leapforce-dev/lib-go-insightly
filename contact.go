@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	errortools "github.com/leapforce-nl/go_errortools"
+	errortools "github.com/Leapforce-nl/go_errortools"
 )
 
 type Contact struct {

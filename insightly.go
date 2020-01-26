@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	types "github.com/leapforce-nl/go_types"
+	types "github.com/Leapforce-nl/go_types"
 
-	geo "github.com/leapforce-nl/go_geo"
+	geo "github.com/Leapforce-nl/go_geo"
 )
 
 const (

@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	exactonline "github.com/leapforce-nl/go_exactonline"
+	exactonline "github.com/Leapforce-nl/go_exactonline"
 
-	errortools "github.com/leapforce-nl/go_errortools"
+	errortools "github.com/Leapforce-nl/go_errortools"
 )
 
 // Organisation store Organisation from Insightly

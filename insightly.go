@@ -138,11 +138,10 @@ func (i *Insightly) UpdateOrganisationRemovePushToEO(o *Organisation) error {
 
 	err = i.Put(url, b)
 	if err != nil {
+		fmt.Println("ERROR in UpdateOrganisationRemovePushToEO:", err)
+		fmt.Println("url:", urlStr)
 		return err
 	}
-
-	//fmt.Println("unchecked:", o.ORGANISATION_ID)
-	//time.Sleep(1 * time.Second)
 
 	return nil
 }

@@ -29,6 +29,8 @@ github.com/Leapforce-nl/go_exactonline v0.0.0-20200126220752-40ae1d29878c h1:2b7
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200126220752-40ae1d29878c/go.mod h1:fznRXw5+jGS3PRoMdEaXuHDC4vFmJvduzVJWx4hnStg=
 github.com/Leapforce-nl/go_geo v0.0.0-20200126213902-b38a5484fa46 h1:NWhJI5JHQO9iXiaTbygYvnfz9LQ0astnmaLY0By+CXw=
 github.com/Leapforce-nl/go_geo v0.0.0-20200126213902-b38a5484fa46/go.mod h1:pBtFR/jwc06GKVa5Cz9OZafceI620teZoWPRg+po9dg=
+github.com/Leapforce-nl/go_geo v0.0.0-20200126231400-5ff73fdd0ccb h1:L9fuIjLBnr7DkF/EDvVZHitXpIneTMaLA5jnKex+p20=
+github.com/Leapforce-nl/go_geo v0.0.0-20200126231400-5ff73fdd0ccb/go.mod h1:pBtFR/jwc06GKVa5Cz9OZafceI620teZoWPRg+po9dg=
 github.com/Leapforce-nl/go_types v0.0.0-20200122233829-e541676b96f4/go.mod h1:ysihm2IbP8GMlJqPA47B5CT59bXb+7QzmMJSGCSKTR0=
 github.com/Leapforce-nl/go_types v0.0.0-20200126202922-ba4900de15b8 h1:q0/mdn+TnZqBB439lOeuLPHPnQaVYCQL2B4BRLbCbuQ=
 github.com/Leapforce-nl/go_types v0.0.0-20200126202922-ba4900de15b8/go.mod h1:AuUJ0pyk3Xc6IgEuzCr5NvEl277YQwiIgJ12/SfmByI=

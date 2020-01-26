@@ -11,6 +11,7 @@ import (
 
 	types "github.com/Leapforce-nl/go_types"
 
+	bigquerytools "github.com/Leapforce-nl/go_bigquerytools"
 	geo "github.com/Leapforce-nl/go_geo"
 )
 
@@ -35,9 +36,13 @@ type Insightly struct {
 	Contacts      []Contact
 	Token         string
 	ApiUrl        string
-	Geo           *geo.Geo
 	OnlyPushToEO  bool
 	FromTimestamp time.Time
+	// geo
+	Geo               *geo.Geo
+	BigQuery          *bigquerytools.BigQuery
+	BigQueryDataset   string
+	BigQueryTableName string
 }
 
 // Init initializes all settings in the Insightly struct
@@ -105,7 +110,9 @@ func (i *Insightly) Init() error {
 	i.RelationTypes.Append("Opgezegd", 6, "", nil)
 
 	i.Geo = new(geo.Geo)
-	i.Geo.InitBigQuery()
+	i.Geo.BigQuery = i.BigQuery
+	i.Geo.BigQueryDataset = i.BigQueryDataset
+	i.Geo.BigQueryTablenameCountries = i.BigQueryTableName
 
 	return nil
 }

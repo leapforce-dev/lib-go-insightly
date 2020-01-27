@@ -105,22 +105,14 @@ func (o *Organisation) Process(i *Insightly) bool {
 	}
 	if i.OnlyPushToEO {
 		if o.PushToEO {
-			//fmt.Println("ToExactOnline 1")
 			return true
 		} else {
 			return false
 		}
 	}
 	if o.Updated(i) {
-		//fmt.Println("ToExactOnline 2", o.DateUpdated, i.FromTimestamp)
 		return true
 	}
-	/*if o.MainContact != nil {
-		if o.MainContact.DateUpdated.After(i.FromTimestamp) {
-			//fmt.Println("ToExactOnline 3", o.MainContact.DateUpdated, i.FromTimestamp)
-			return true
-		}
-	}*/
 
 	return false
 }
@@ -132,7 +124,7 @@ func (o *Organisation) ProcessSubscriptions() bool {
 func (i *Insightly) GetOrganisation(id int) (*Organisation, error) {
 	urlStr := "%sOrganisations/%v"
 	url := fmt.Sprintf(urlStr, i.ApiUrl, id)
-	fmt.Println(url)
+	//fmt.Println(url)
 
 	o := Organisation{}
 
@@ -162,7 +154,7 @@ func (i *Insightly) GetOrganisations() error {
 
 	for rowCount > 0 {
 		url := fmt.Sprintf(urlStr, i.ApiUrl, from, strconv.Itoa(skip), strconv.Itoa(top))
-		fmt.Println(url)
+		//fmt.Println(url)
 
 		os := []Organisation{}
 

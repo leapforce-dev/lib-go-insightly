@@ -110,7 +110,7 @@ func (i *Insightly) GetContactsInternal(updatedAfterUTC bool, fieldName, fieldVa
 
 	for rowCount > 0 {
 		url := fmt.Sprintf(urlStr, i.ApiUrl, searchstring, strconv.Itoa(skip), strconv.Itoa(top))
-		fmt.Printf(url)
+		//fmt.Printf(url)
 
 		cs := []Contact{}
 

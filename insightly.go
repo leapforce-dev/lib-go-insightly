@@ -25,6 +25,7 @@ const (
 	customFieldNamePushToEO                = "Push_to_EO__c"
 	customFieldNamePartnerSinds            = "Partner_sinds__c"
 	customFieldNameBeeindigingPartnerschap = "Beindiging_partnerschap__c"
+	customFieldNameOpzegdatum              = "Opzegdatum__c"
 	customFieldNameAantalMedewerkers       = "Aantal_medewerkers__c"
 )
 

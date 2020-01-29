@@ -14,16 +14,16 @@ import (
 // Organisation store Organisation from Insightly
 //
 type Organisation struct {
-	ORGANISATION_ID          int           `json:"ORGANISATION_ID"`
-	ORGANISATION_NAME        string        `json:"ORGANISATION_NAME"`
-	ADDRESS_BILLING_STREET   string        `json:"ADDRESS_BILLING_STREET"`
-	ADDRESS_BILLING_CITY     string        `json:"ADDRESS_BILLING_CITY"`
-	ADDRESS_BILLING_STATE    string        `json:"ADDRESS_BILLING_STATE"`
-	ADDRESS_BILLING_COUNTRY  string        `json:"ADDRESS_BILLING_COUNTRY"`
-	ADDRESS_BILLING_POSTCODE string        `json:"ADDRESS_BILLING_POSTCODE"`
-	DATE_UPDATED_UTC         string        `json:"DATE_UPDATED_UTC"`
-	CUSTOMFIELDS             []CustomField `json:"CUSTOMFIELDS"`
-	DateUpdated              time.Time
+	ORGANISATION_ID       int           `json:"ORGANISATION_ID"`
+	ORGANISATION_NAME     string        `json:"ORGANISATION_NAME"`
+	ADDRESS_SHIP_STREET   string        `json:"ADDRESS_SHIP_STREET"`
+	ADDRESS_SHIP_CITY     string        `json:"ADDRESS_SHIP_CITY"`
+	ADDRESS_SHIP_STATE    string        `json:"ADDRESS_SHIP_STATE"`
+	ADDRESS_SHIP_COUNTRY  string        `json:"ADDRESS_SHIP_COUNTRY"`
+	ADDRESS_SHIP_POSTCODE string        `json:"ADDRESS_SHIP_POSTCODE"`
+	DATE_UPDATED_UTC      string        `json:"DATE_UPDATED_UTC"`
+	CUSTOMFIELDS          []CustomField `json:"CUSTOMFIELDS"`
+	DateUpdated           time.Time
 	//RelationTypeName         string
 	//RelationType *RelationType
 	KvKNummer                   string
@@ -32,6 +32,8 @@ type Organisation struct {
 	PartnerSindsTime            *time.Time
 	BeeindigingPartnerschap     string
 	BeeindigingPartnerschapTime *time.Time
+	Opzegdatum                  string
+	OpzegdatumTime              *time.Time
 	AantalMedewerkers           string
 	PushToEO                    bool
 	Opgezegd                    bool
@@ -217,12 +219,18 @@ func (i *Insightly) PrepareOrganisation(o *Organisation) error {
 		t1, err := time.Parse("2006-01-02 15:04:05", o.BeeindigingPartnerschap)
 		errortools.Fatal(err)
 		o.BeeindigingPartnerschapTime = &t1
+	}
 
-		//fmt.Println("o.BeeindigingPartnerschapTime", o.BeeindigingPartnerschap, t1)
+	// get Opzegdatum from custom field
+	o.Opzegdatum = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameOpzegdatum)
+	if o.Opzegdatum != "" {
+		t1, err := time.Parse("2006-01-02 15:04:05", o.Opzegdatum)
+		errortools.Fatal(err)
+		o.OpzegdatumTime = &t1
 	}
 
 	// find CountryId
-	id, err := i.Geo.FindCountryId(o.ADDRESS_BILLING_COUNTRY, "", "", "")
+	id, err := i.Geo.FindCountryId(o.ADDRESS_SHIP_COUNTRY, "", "", "")
 	if err != nil {
 		return err
 	}

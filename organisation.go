@@ -187,6 +187,9 @@ func (i *Insightly) PrepareOrganisation(o *Organisation) error {
 	}
 
 	// parse DATE_UPDATED_UTC to time.Time
+	if o.DATE_UPDATED_UTC == "" {
+		o.DATE_UPDATED_UTC = "1800-01-01 00:00:00"
+	}
 	t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
 	errortools.Fatal(err)
 	o.DateUpdated = t

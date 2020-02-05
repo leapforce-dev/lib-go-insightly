@@ -19,14 +19,14 @@ const (
 	customFieldNameRelationType            = "Relatietype__c"
 	customFieldNameKvKNummer               = "KVKnummer__c"
 	customFieldNameOrganizationOwner       = "Organization_Owner__c"
-	customFieldNameMainContactPerson       = "Main_contact_person__c"
-	customFieldNameInitials                = "initialen__c"
-	customFieldNameGender                  = "Gender__c"
 	customFieldNamePushToEO                = "Push_to_EO__c"
 	customFieldNamePartnerSinds            = "Partner_sinds__c"
 	customFieldNameBeeindigingPartnerschap = "Beindiging_partnerschap__c"
 	customFieldNameOpzegdatum              = "Opzegdatum__c"
 	customFieldNameAantalMedewerkers       = "Aantal_medewerkers__c"
+	customFieldNameMainContactPerson       = "Main_contactperson__c"
+	customFieldNameInitials                = "initialen__c"
+	customFieldNameGender                  = "Gender__c"
 )
 
 // type

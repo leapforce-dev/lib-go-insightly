@@ -44,6 +44,7 @@ type Insightly struct {
 	BigQuery          *bigquerytools.BigQuery
 	BigQueryDataset   string
 	BigQueryTableName string
+	IsLive            bool
 }
 
 // Init initializes all settings in the Insightly struct

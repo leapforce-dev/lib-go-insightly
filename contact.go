@@ -149,7 +149,9 @@ func (i *Insightly) GetContactsInternal(updatedAfterUTC bool, fieldName, fieldVa
 				if err != nil {
 					message := fmt.Sprintf("invalid emailadress in Insightly: %s", c.EMAIL_ADDRESS)
 					fmt.Println(message)
-					sentry.CaptureMessage(message)
+					if i.IsLive {
+						sentry.CaptureMessage(message)
+					}
 				} else {
 					c.Email = c.EMAIL_ADDRESS
 				}

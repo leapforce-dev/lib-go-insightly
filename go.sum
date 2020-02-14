@@ -34,6 +34,8 @@ github.com/Leapforce-nl/go_errortools v0.0.0-20200126202751-1b80e3ae9245 h1:prY6
 github.com/Leapforce-nl/go_errortools v0.0.0-20200126202751-1b80e3ae9245/go.mod h1:jKOzO0ajmzk9eqGhEm0H3WSKy5IV4bKSLwKtcQi/uhY=
 github.com/Leapforce-nl/go_errortools v0.0.0-20200127102802-10abfc97c326 h1:ZlB6ltpDp57sCZyRabs6SKL7smr0CpyF9elfZFtHTvs=
 github.com/Leapforce-nl/go_errortools v0.0.0-20200127102802-10abfc97c326/go.mod h1:NTl2wTwlbDIBix/XfGA0M+ma+Tdxd08HU4OMOL0zrgM=
+github.com/Leapforce-nl/go_errortools v0.0.0-20200214111959-15597fcb17cb h1:YjRNhUnOkKOPs48g8zGYomnZD9ak/M++KyXXhn0hAGo=
+github.com/Leapforce-nl/go_errortools v0.0.0-20200214111959-15597fcb17cb/go.mod h1:NTl2wTwlbDIBix/XfGA0M+ma+Tdxd08HU4OMOL0zrgM=
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200126220752-40ae1d29878c h1:2b7gE+EjC1V8xZBVXpNV5r4osAhY98AXUTSeq5LocwM=
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200126220752-40ae1d29878c/go.mod h1:fznRXw5+jGS3PRoMdEaXuHDC4vFmJvduzVJWx4hnStg=
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200127113304-f57fe49597ac h1:oioLdMhb8PsYCosmNZRRpfME2R5MES+i48m2bMQCL6A=
@@ -52,6 +54,8 @@ github.com/Leapforce-nl/go_exactonline v0.0.0-20200204012856-e466c800e35c h1:cB+
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200204012856-e466c800e35c/go.mod h1:wLgzR8PM2OruAGA6CWyvYPvdLR+3sIGAcCc7ZKvY8oQ=
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200205130613-276d05a8d63e h1:3BgdM/BCPARrX7bnnhpDJsmAyRmGCurdFy3+OGwZ/fM=
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200205130613-276d05a8d63e/go.mod h1:nvitSIljp6hKqjclDo6bTtOYBnHvk0R5lZ/VdTd0YNQ=
+github.com/Leapforce-nl/go_exactonline v0.0.0-20200214112825-bb9e06655ebf h1:mHGkU67GYstYomE07v3CLVJUPdiN82ZUoIXeMf+6RWw=
+github.com/Leapforce-nl/go_exactonline v0.0.0-20200214112825-bb9e06655ebf/go.mod h1:rz32QkYXQecLuPqaIeC6QR93rgK+rD3YG5QjohnRnZU=
 github.com/Leapforce-nl/go_geo v0.0.0-20200126213902-b38a5484fa46 h1:NWhJI5JHQO9iXiaTbygYvnfz9LQ0astnmaLY0By+CXw=
 github.com/Leapforce-nl/go_geo v0.0.0-20200126213902-b38a5484fa46/go.mod h1:pBtFR/jwc06GKVa5Cz9OZafceI620teZoWPRg+po9dg=
 github.com/Leapforce-nl/go_geo v0.0.0-20200126231400-5ff73fdd0ccb h1:L9fuIjLBnr7DkF/EDvVZHitXpIneTMaLA5jnKex+p20=
@@ -96,6 +100,8 @@ github.com/getsentry/sentry-go v0.4.0 h1:WqRI2/7EiALbdG9qGB47c0Aks1tdznG5DZd6GSQ
 github.com/getsentry/sentry-go v0.4.0/go.mod h1:xkGcb82SipKQloDNa5b7hTV4VdEyc2bhwd1/UczP52k=
 github.com/getsentry/sentry-go v0.5.0 h1:TvIiQJIm9lQj8v4CGPL3oSfN+hqc6PTfEBBbt3rrE3c=
 github.com/getsentry/sentry-go v0.5.0/go.mod h1:B8H7x8TYDPkeWPRzGpIiFO97LZP6rL8A3hEt8lUItMw=
+github.com/getsentry/sentry-go v0.5.1 h1:MIPe7ScHADsrK2vznqmhksIUFxq7m0JfTh+ZIMkI+VQ=
+github.com/getsentry/sentry-go v0.5.1/go.mod h1:B8H7x8TYDPkeWPRzGpIiFO97LZP6rL8A3hEt8lUItMw=
 github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3/go.mod h1:VJ0WA2NBN22VlZ2dKZQPAPnyWw5XTlK1KymzLKsr59s=
 github.com/gin-gonic/gin v1.4.0/go.mod h1:OW2EZn3DO8Ln9oIKOvM++LBO+5UPHJJDH72/q/3rZdM=
 github.com/go-check/check v0.0.0-20180628173108-788fd7840127/go.mod h1:9ES+weclKsC9YodN5RgxqK/VD9HM9JsCSh7rNhMZE98=
@@ -373,6 +379,8 @@ google.golang.org/api v0.15.0 h1:yzlyyDW/J0w8yNFJIhiAJy4kq74S+1DOLdawELNxFMA=
 google.golang.org/api v0.15.0/go.mod h1:iLdEw5Ide6rF15KTC1Kkl0iskquN2gFfn9o9XIsbkAI=
 google.golang.org/api v0.16.0 h1:hhRbpE9nkabqMxGCewz2sikMYxm8yYWov7h2Eo4j3Is=
 google.golang.org/api v0.16.0/go.mod h1:BwFmGc8tA3vsd7r/7kR8DY7iEEGSU04BFxCo5jP/sfE=
+google.golang.org/api v0.17.0 h1:0q95w+VuFtv4PAx4PZVQdBMmYbaCHbnfKaEiDIcVyag=
+google.golang.org/api v0.17.0/go.mod h1:BwFmGc8tA3vsd7r/7kR8DY7iEEGSU04BFxCo5jP/sfE=
 google.golang.org/appengine v1.1.0/go.mod h1:EbEs0AVv82hx2wNQdGPgUI5lhzA/G0D9YwlJXL52JkM=
 google.golang.org/appengine v1.4.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
 google.golang.org/appengine v1.5.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=

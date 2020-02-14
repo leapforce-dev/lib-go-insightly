@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/getsentry/sentry-go"
+
 	errortools "github.com/Leapforce-nl/go_errortools"
 )
 
@@ -145,7 +147,9 @@ func (i *Insightly) GetContactsInternal(updatedAfterUTC bool, fieldName, fieldVa
 			if c.EMAIL_ADDRESS != "" {
 				err := ValidateFormat(c.EMAIL_ADDRESS)
 				if err != nil {
-					fmt.Println("invalid emailadress:", c.EMAIL_ADDRESS)
+					message := fmt.Sprintf("invalid emailadress in Insightly: %s", c.EMAIL_ADDRESS)
+					fmt.Println(message)
+					sentry.CaptureMessage(message)
 				} else {
 					c.Email = c.EMAIL_ADDRESS
 				}

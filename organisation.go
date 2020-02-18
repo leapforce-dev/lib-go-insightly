@@ -1,126 +1,131 @@
 package insightly
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
-
-	exactonline "github.com/Leapforce-nl/go_exactonline"
 
 	errortools "github.com/Leapforce-nl/go_errortools"
 )
 
-// Organisation store Organisation from Insightly
+// Organisation stores Organisation from Insightly
 //
 type Organisation struct {
-	ORGANISATION_ID       int           `json:"ORGANISATION_ID"`
-	ORGANISATION_NAME     string        `json:"ORGANISATION_NAME"`
-	ADDRESS_SHIP_STREET   string        `json:"ADDRESS_SHIP_STREET"`
-	ADDRESS_SHIP_CITY     string        `json:"ADDRESS_SHIP_CITY"`
-	ADDRESS_SHIP_STATE    string        `json:"ADDRESS_SHIP_STATE"`
-	ADDRESS_SHIP_COUNTRY  string        `json:"ADDRESS_SHIP_COUNTRY"`
-	ADDRESS_SHIP_POSTCODE string        `json:"ADDRESS_SHIP_POSTCODE"`
-	DATE_UPDATED_UTC      string        `json:"DATE_UPDATED_UTC"`
-	CUSTOMFIELDS          []CustomField `json:"CUSTOMFIELDS"`
-	DateUpdated           time.Time
-	//RelationTypeName         string
-	//RelationType *RelationType
-	KvKNummer                   string
-	CountryId                   string
-	PartnerSinds                string
-	PartnerSindsTime            *time.Time
-	BeeindigingPartnerschap     string
-	BeeindigingPartnerschapTime *time.Time
-	Opzegdatum                  string
-	OpzegdatumTime              *time.Time
-	AantalMedewerkers           string
-	PushToEO                    bool
-	Opgezegd                    bool
-	MainContact                 *Contact
-	ExactOnlineAccount          *exactonline.Account          //the matched account from exact online
-	ExactOnlineMainContact      *exactonline.Contact          //the matched main contact from exact online
-	ExactOnlineSubscriptionType *exactonline.SubscriptionType //the matched SubscriptionType from exact online
-	ExactOnlineItem             *exactonline.Item             //the matched Item from exact online
+	ORGANISATION_ID          int           `json:"ORGANISATION_ID"`
+	ORGANISATION_NAME        string        `json:"ORGANISATION_NAME"`
+	BACKGROUND               string        `json:"BACKGROUND"`
+	IMAGE_URL                string        `json:"IMAGE_URL"`
+	OWNER_USER_ID            int           `json:"OWNER_USER_ID"`
+	DATE_CREATED_UTC         string        `json:"DATE_CREATED_UTC"`
+	DATE_UPDATED_UTC         string        `json:"DATE_UPDATED_UTC"`
+	LAST_ACTIVITY_DATE_UTC   string        `json:"LAST_ACTIVITY_DATE_UTC"`
+	NEXT_ACTIVITY_DATE_UTC   string        `json:"NEXT_ACTIVITY_DATE_UTC"`
+	CREATED_USER_ID          int           `json:"CREATED_USER_ID"`
+	PHONE                    string        `json:"PHONE"`
+	PHONE_FAX                string        `json:"PHONE_FAX"`
+	WEBSITE                  string        `json:"WEBSITE"`
+	ADDRESS_BILLING_STREET   string        `json:"ADDRESS_BILLING_STREET"`
+	ADDRESS_BILLING_CITY     string        `json:"ADDRESS_BILLING_CITY"`
+	ADDRESS_BILLING_STATE    string        `json:"ADDRESS_BILLING_STATE"`
+	ADDRESS_BILLING_COUNTRY  string        `json:"ADDRESS_BILLING_COUNTRY"`
+	ADDRESS_BILLING_POSTCODE string        `json:"ADDRESS_BILLING_POSTCODE"`
+	ADDRESS_SHIP_STREET      string        `json:"ADDRESS_SHIP_STREET"`
+	ADDRESS_SHIP_CITY        string        `json:"ADDRESS_SHIP_CITY"`
+	ADDRESS_SHIP_STATE       string        `json:"ADDRESS_SHIP_STATE"`
+	ADDRESS_SHIP_COUNTRY     string        `json:"ADDRESS_SHIP_COUNTRY"`
+	ADDRESS_SHIP_POSTCODE    string        `json:"ADDRESS_SHIP_POSTCODE"`
+	SOCIAL_LINKEDIN          string        `json:"SOCIAL_LINKEDIN"`
+	SOCIAL_FACEBOOK          string        `json:"SOCIAL_FACEBOOK"`
+	SOCIAL_TWITTER           string        `json:"SOCIAL_TWITTER"`
+	CUSTOMFIELDS             []CustomField `json:"CUSTOMFIELDS"`
+	TAGS                     []Tag         `json:"TAGS"`
+	DATES                    []Date        `json:"DATES"`
+	EMAILDOMAINS             []EmailDomain `json:"EMAILDOMAINS"`
+	DateCreated              *time.Time
+	DateUpdated              *time.Time
+	LastActivityDate         *time.Time
+	NextActivityDate         *time.Time
 }
 
-/*
-type iOrganisations struct {
-	Organisations []Organisation
-}*/
-
-// ToExactOnline return whether an organisation should be copied to ExactOnline or not
-//
-/*func (o *Organisation) ToExactOnline(onlyPushToEO bool, maxDateModified time.Time) bool {
-	return o.RelationTypeName != "" && o.KvKNummer != "" && (o.PushToEO || !onlyPushToEO)
-}*/
-
-func (o *Organisation) GetExactOnlineSubscriptionTypeAndItem(relationTypes *RelationTypes) {
-	var relationType *RelationType = nil
-	relationTypeRank := 1000
-	//value := ""
-
-	for _, cf := range o.CUSTOMFIELDS {
-
-		if cf.FIELD_NAME == customFieldNameRelationType {
-			//value = cf.FieldValueString
-
-			for _, fv := range cf.GetFieldValues() {
-				rt := relationTypes.FindRelationType(fv)
-				if rt != nil {
-					if rt.Rank < relationTypeRank {
-						relationTypeRank = rt.Rank
-						relationType = rt
-					}
-				}
-			}
-		}
-	}
-
-	if relationType != nil {
-		o.Opgezegd = strings.ToLower(relationType.Name) == "opgezegd"
-		o.ExactOnlineSubscriptionType = relationType.ExactOnlineSubscriptionType
-
-		if !o.Opgezegd {
-			for ii, a := range relationType.Articles {
-				if a.AantalMedewerkers == o.AantalMedewerkers {
-					o.ExactOnlineItem = relationType.Articles[ii].ExactOnlineItem
-				}
-			}
-		}
-	}
-
-	//fmt.Println("RelationType", value, "AantalMedewerkers", o.AantalMedewerkers, "\nExactOnlineSubscriptionType", o.ExactOnlineSubscriptionType, "ExactOnlineItem", o.ExactOnlineItem)
+type OrganisationBQ struct {
+	ORGANISATION_ID          int             `json:"ORGANISATION_ID"`
+	ORGANISATION_NAME        string          `json:"ORGANISATION_NAME"`
+	BACKGROUND               string          `json:"BACKGROUND"`
+	IMAGE_URL                string          `json:"IMAGE_URL"`
+	OWNER_USER_ID            int             `json:"OWNER_USER_ID"`
+	DATE_CREATED_UTC         *time.Time      `json:"DATE_CREATED_UTC"`
+	DATE_UPDATED_UTC         *time.Time      `json:"DATE_UPDATED_UTC"`
+	LAST_ACTIVITY_DATE_UTC   *time.Time      `json:"LAST_ACTIVITY_DATE_UTC"`
+	NEXT_ACTIVITY_DATE_UTC   *time.Time      `json:"NEXT_ACTIVITY_DATE_UTC"`
+	CREATED_USER_ID          int             `json:"CREATED_USER_ID"`
+	PHONE                    string          `json:"PHONE"`
+	PHONE_FAX                string          `json:"PHONE_FAX"`
+	WEBSITE                  string          `json:"WEBSITE"`
+	ADDRESS_BILLING_STREET   string          `json:"ADDRESS_BILLING_STREET"`
+	ADDRESS_BILLING_CITY     string          `json:"ADDRESS_BILLING_CITY"`
+	ADDRESS_BILLING_STATE    string          `json:"ADDRESS_BILLING_STATE"`
+	ADDRESS_BILLING_COUNTRY  string          `json:"ADDRESS_BILLING_COUNTRY"`
+	ADDRESS_BILLING_POSTCODE string          `json:"ADDRESS_BILLING_POSTCODE"`
+	ADDRESS_SHIP_STREET      string          `json:"ADDRESS_SHIP_STREET"`
+	ADDRESS_SHIP_CITY        string          `json:"ADDRESS_SHIP_CITY"`
+	ADDRESS_SHIP_STATE       string          `json:"ADDRESS_SHIP_STATE"`
+	ADDRESS_SHIP_COUNTRY     string          `json:"ADDRESS_SHIP_COUNTRY"`
+	ADDRESS_SHIP_POSTCODE    string          `json:"ADDRESS_SHIP_POSTCODE"`
+	SOCIAL_LINKEDIN          string          `json:"SOCIAL_LINKEDIN"`
+	SOCIAL_FACEBOOK          string          `json:"SOCIAL_FACEBOOK"`
+	SOCIAL_TWITTER           string          `json:"SOCIAL_TWITTER"`
+	CUSTOMFIELDS             []CustomFieldBQ `json:"CUSTOMFIELDS"`
+	TAGS                     []Tag           `json:"TAGS"`
+	DATES                    []DateBQ        `json:"DATES"`
+	EMAILDOMAINS             []EmailDomain   `json:"EMAILDOMAINS"`
 }
 
-func (o *Organisation) Updated(i *Insightly) bool {
-	return o.DateUpdated.After(i.FromTimestamp)
-}
+func (o *Organisation) ToBQ() OrganisationBQ {
+	customFields := []CustomFieldBQ{}
 
-func (o *Organisation) Process(i *Insightly) bool {
-	//fmt.Println(o.ExactOnlineSubscriptionType == nil, o.Opgezegd, o.KvKNummer, i.OnlyPushToEO, o.DateUpdated)
-	if o.ExactOnlineSubscriptionType == nil && !o.Opgezegd {
-		return false
-	}
-	if o.KvKNummer == "" {
-		return false
-	}
-	if i.OnlyPushToEO {
-		if o.PushToEO {
-			return true
-		} else {
-			return false
-		}
-	}
-	if o.Updated(i) {
-		return true
+	for _, c := range o.CUSTOMFIELDS {
+		customFields = append(customFields, c.ToBQ())
 	}
 
-	return false
-}
+	dates := []DateBQ{}
 
-func (o *Organisation) ProcessSubscriptions() bool {
-	return (o.ExactOnlineSubscriptionType != nil && o.ExactOnlineItem != nil) || o.Opgezegd
+	for _, d := range o.DATES {
+		dates = append(dates, d.ToBQ())
+	}
+
+	return OrganisationBQ{
+		o.ORGANISATION_ID,
+		o.ORGANISATION_NAME,
+		o.BACKGROUND,
+		o.IMAGE_URL,
+		o.OWNER_USER_ID,
+		o.DateCreated,
+		o.DateUpdated,
+		o.LastActivityDate,
+		o.NextActivityDate,
+		o.CREATED_USER_ID,
+		o.PHONE,
+		o.PHONE_FAX,
+		o.WEBSITE,
+		o.ADDRESS_BILLING_STREET,
+		o.ADDRESS_BILLING_CITY,
+		o.ADDRESS_BILLING_STATE,
+		o.ADDRESS_BILLING_COUNTRY,
+		o.ADDRESS_BILLING_POSTCODE,
+		o.ADDRESS_SHIP_STREET,
+		o.ADDRESS_SHIP_CITY,
+		o.ADDRESS_SHIP_STATE,
+		o.ADDRESS_SHIP_COUNTRY,
+		o.ADDRESS_SHIP_POSTCODE,
+		o.SOCIAL_LINKEDIN,
+		o.SOCIAL_FACEBOOK,
+		o.SOCIAL_TWITTER,
+		customFields,
+		o.TAGS,
+		dates,
+		o.EMAILDOMAINS,
+	}
 }
 
 func (i *Insightly) GetOrganisation(id int) (*Organisation, error) {
@@ -135,109 +140,142 @@ func (i *Insightly) GetOrganisation(id int) (*Organisation, error) {
 		return nil, err
 	}
 
-	err = i.PrepareOrganisation(&o)
-	if err != nil {
-		return nil, err
-	}
-
-	//fmt.Println(o)
-	//i.Organisations = append(i.Organisations, o)
+	o.ParseDates()
 
 	return &o, nil
 }
 
-func (i *Insightly) GetOrganisations() error {
-	urlStr := "%sOrganisations/Search?updated_after_utc=%s&skip=%s&top=%s"
+// GetOrganisations returns all organisations
+//
+func (i *Insightly) GetOrganisations() ([]Organisation, error) {
+	return i.GetOrganisationsInternal("")
+}
+
+// GetOrganisationsUpdatedAfter returns all organisations updated after certain date
+//
+func (i *Insightly) GetOrganisationsUpdatedAfter(updatedAfter time.Time) ([]Organisation, error) {
+	from := updatedAfter.Format("2006-01-02")
+	searchFilter := fmt.Sprintf("updated_after_utc=%s&", from)
+	return i.GetOrganisationsInternal(searchFilter)
+}
+
+// GetOrganisationsFiltered returns all contacts fulfulling the specified filter
+//
+func (i *Insightly) GetOrganisationsFiltered(fieldname string, fieldvalue string) ([]Organisation, error) {
+	searchFilter := fmt.Sprintf("field_name=%s&field_value=%s&", fieldname, fieldvalue)
+	return i.GetOrganisationsInternal(searchFilter)
+}
+
+// GetOrganisationsInternal is the generic function retrieving Contacts from Insightly
+//
+func (i *Insightly) GetOrganisationsInternal(searchFilter string) ([]Organisation, error) {
+	searchString := ""
+
+	if searchFilter != "" {
+		searchString = "/Search?" + searchFilter
+	} else {
+		searchString = "?"
+	}
+
+	urlStr := "%sOrganisations%sskip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := 1
 
-	from := i.FromTimestamp.Format("2006-01-02")
+	organisations := []Organisation{}
 
 	for rowCount > 0 {
-		url := fmt.Sprintf(urlStr, i.ApiUrl, from, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, i.ApiUrl, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		os := []Organisation{}
 
 		err := i.Get(url, &os)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		for _, o := range os {
-			err = i.PrepareOrganisation(&o)
-			errortools.Fatal(err)
-
-			//fmt.Println(o)
-			i.Organisations = append(i.Organisations, o)
+			o.ParseDates()
+			organisations = append(organisations, o)
 		}
 
 		rowCount = len(os)
 		skip += top
 	}
 
-	return nil
+	if len(organisations) == 0 {
+		organisations = nil
+	}
+
+	return organisations, nil
 }
 
-func (i *Insightly) PrepareOrganisation(o *Organisation) error {
-	// unmarshal custom fields
-	for ii := range o.CUSTOMFIELDS {
-		o.CUSTOMFIELDS[ii].UnmarshalValue()
+func (o *Organisation) ParseDates() {
+	// parse DATE_CREATED_UTC to time.Time
+	if o.DATE_CREATED_UTC != "" {
+		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_CREATED_UTC+" +0000 UTC")
+		errortools.Fatal(err)
+		o.DateCreated = &t
 	}
 
 	// parse DATE_UPDATED_UTC to time.Time
-	if o.DATE_UPDATED_UTC == "" {
-		o.DATE_UPDATED_UTC = "1800-01-01 00:00:00"
-	}
-	t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
-	errortools.Fatal(err)
-	o.DateUpdated = t
-
-	// get KvKNummer from custom field
-	o.KvKNummer = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameKvKNummer)
-
-	// get Aantal Medewerkers from custom field
-	o.AantalMedewerkers = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameAantalMedewerkers)
-
-	// get RelationTypeName from custom field
-	o.GetExactOnlineSubscriptionTypeAndItem(&i.RelationTypes)
-
-	// get PushToEO from custom field
-	o.PushToEO = i.FindCustomFieldValueBool(o.CUSTOMFIELDS, customFieldNamePushToEO)
-
-	// get PartnerSinds from custom field
-	o.PartnerSinds = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNamePartnerSinds)
-	if o.PartnerSinds != "" {
-		t1, err := time.Parse("2006-01-02 15:04:05", o.PartnerSinds)
+	if o.DATE_UPDATED_UTC != "" {
+		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
 		errortools.Fatal(err)
-		o.PartnerSindsTime = &t1
-
-		//fmt.Println("o.PartnerSindsTime", t1)
+		o.DateUpdated = &t
 	}
 
-	// get BeeindigingPartnerschap from custom field
-	o.BeeindigingPartnerschap = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameBeeindigingPartnerschap)
-	if o.BeeindigingPartnerschap != "" {
-		t1, err := time.Parse("2006-01-02 15:04:05", o.BeeindigingPartnerschap)
+	// parse LAST_ACTIVITY_DATE_UTC to time.Time
+	if o.LAST_ACTIVITY_DATE_UTC != "" {
+		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.LAST_ACTIVITY_DATE_UTC+" +0000 UTC")
 		errortools.Fatal(err)
-		o.BeeindigingPartnerschapTime = &t1
+		o.LastActivityDate = &t
 	}
 
-	// get Opzegdatum from custom field
-	o.Opzegdatum = i.FindCustomFieldValue(o.CUSTOMFIELDS, customFieldNameOpzegdatum)
-	if o.Opzegdatum != "" {
-		t1, err := time.Parse("2006-01-02 15:04:05", o.Opzegdatum)
+	// parse NEXT_ACTIVITY_DATE_UTC to time.Time
+	if o.NEXT_ACTIVITY_DATE_UTC != "" {
+		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.NEXT_ACTIVITY_DATE_UTC+" +0000 UTC")
 		errortools.Fatal(err)
-		o.OpzegdatumTime = &t1
+		o.NextActivityDate = &t
 	}
 
-	// find CountryId
-	id, err := i.Geo.FindCountryId(o.ADDRESS_SHIP_COUNTRY, "", "", "")
+	// parse dates in DATES
+	for _, d := range o.DATES {
+		d.ParseDates()
+	}
+}
+
+func (i *Insightly) UpdateOrganisationRemoveCustomField(organisationID int, customFieldName string) error {
+	urlStr := "%sOrganisations"
+	url := fmt.Sprintf(urlStr, i.ApiUrl)
+
+	type CustomFieldDelete struct {
+		FIELD_NAME      string
+		CUSTOM_FIELD_ID string
+	}
+
+	type OrganisationID struct {
+		ORGANISATION_ID int
+		CUSTOMFIELDS    []CustomFieldDelete
+	}
+
+	o1 := OrganisationID{}
+	o1.ORGANISATION_ID = organisationID
+	o1.CUSTOMFIELDS = make([]CustomFieldDelete, 1)
+	o1.CUSTOMFIELDS[0] = CustomFieldDelete{customFieldName, customFieldName}
+
+	b, err := json.Marshal(o1)
 	if err != nil {
+		fmt.Println("error:", err)
+	}
+
+	err = i.Put(url, b)
+	if err != nil {
+		fmt.Println("ERROR in UpdateOrganisationRemovePushToEO:", err)
+		fmt.Println("url:", urlStr)
 		return err
 	}
-	o.CountryId = id
 
 	return nil
 }

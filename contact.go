@@ -3,115 +3,198 @@ package insightly
 import (
 	"fmt"
 	"strconv"
-	"strings"
 	"time"
 
-	"github.com/getsentry/sentry-go"
-
 	errortools "github.com/Leapforce-nl/go_errortools"
+	types "github.com/Leapforce-nl/go_types"
 )
 
 type Contact struct {
-	CONTACT_ID       int           `json:"CONTACT_ID"`
-	FIRST_NAME       string        `json:"FIRST_NAME"`
-	LAST_NAME        string        `json:"LAST_NAME"`
-	ORGANISATION_ID  int           `json:"ORGANISATION_ID"`
-	EMAIL_ADDRESS    string        `json:"EMAIL_ADDRESS"`
-	DATE_UPDATED_UTC string        `json:"DATE_UPDATED_UTC"`
-	CUSTOMFIELDS     []CustomField `json:"CUSTOMFIELDS"`
-	DateUpdated      time.Time
-	Initials         string
-	Gender           string
-	Title            string
-	Email            string
-	IsMainContact    bool
-	PushToEO         bool
+	CONTACT_ID             int           `json:"CONTACT_ID"`
+	SALUTATION             string        `json:"SALUTATION"`
+	FIRST_NAME             string        `json:"FIRST_NAME"`
+	LAST_NAME              string        `json:"LAST_NAME"`
+	IMAGE_URL              string        `json:"IMAGE_URL"`
+	BACKGROUND             string        `json:"BACKGROUND"`
+	OWNER_USER_ID          int           `json:"OWNER_USER_ID"`
+	DATE_CREATED_UTC       string        `json:"DATE_CREATED_UTC"`
+	DATE_UPDATED_UTC       string        `json:"DATE_UPDATED_UTC"`
+	SOCIAL_LINKEDIN        string        `json:"SOCIAL_LINKEDIN"`
+	SOCIAL_FACEBOOK        string        `json:"SOCIAL_FACEBOOK"`
+	SOCIAL_TWITTER         string        `json:"SOCIAL_TWITTER"`
+	DATE_OF_BIRTH          string        `json:"DATE_OF_BIRTH"`
+	PHONE                  string        `json:"PHONE"`
+	PHONE_HOME             string        `json:"PHONE_HOME"`
+	PHONE_MOBILE           string        `json:"PHONE_MOBILE"`
+	PHONE_OTHER            string        `json:"PHONE_OTHER"`
+	PHONE_ASSISTANT        string        `json:"PHONE_ASSISTANT"`
+	PHONE_FAX              string        `json:"PHONE_FAX"`
+	EMAIL_ADDRESS          string        `json:"EMAIL_ADDRESS"`
+	ASSISTANT_NAME         string        `json:"ASSISTANT_NAME"`
+	ADDRESS_MAIL_STREET    string        `json:"ADDRESS_MAIL_STREET"`
+	ADDRESS_MAIL_CITY      string        `json:"ADDRESS_MAIL_CITY"`
+	ADDRESS_MAIL_STATE     string        `json:"ADDRESS_MAIL_STATE"`
+	ADDRESS_MAIL_POSTCODE  string        `json:"ADDRESS_MAIL_POSTCODE"`
+	ADDRESS_MAIL_COUNTRY   string        `json:"ADDRESS_MAIL_COUNTRY"`
+	ADDRESS_OTHER_STREET   string        `json:"ADDRESS_OTHER_STREET"`
+	ADDRESS_OTHER_CITY     string        `json:"ADDRESS_OTHER_CITY"`
+	ADDRESS_OTHER_STATE    string        `json:"ADDRESS_OTHER_STATE"`
+	ADDRESS_OTHER_POSTCODE string        `json:"ADDRESS_OTHER_POSTCODE"`
+	LAST_ACTIVITY_DATE_UTC string        `json:"LAST_ACTIVITY_DATE_UTC"`
+	NEXT_ACTIVITY_DATE_UTC string        `json:"NEXT_ACTIVITY_DATE_UTC"`
+	CREATED_USER_ID        int           `json:"CREATED_USER_ID"`
+	ORGANISATION_ID        int           `json:"ORGANISATION_ID"`
+	TITLE                  string        `json:"TITLE"`
+	EMAIL_OPTED_OUT        bool          `json:"EMAIL_OPTED_OUT"`
+	CUSTOMFIELDS           []CustomField `json:"CUSTOMFIELDS"`
+	TAGS                   []Tag         `json:"TAGS"`
+	DATES                  []Date        `json:"DATES"`
+	DateCreated            *time.Time
+	DateUpdated            *time.Time
+	DateOfBirth            *time.Time
+	LastActivityDate       *time.Time
+	NextActivityDate       *time.Time
 }
 
-/*
-type iContacts struct {
-	Contacts []Contact
-}*/
+type ContactBQ struct {
+	CONTACT_ID             int             `json:"CONTACT_ID"`
+	SALUTATION             string          `json:"SALUTATION"`
+	FIRST_NAME             string          `json:"FIRST_NAME"`
+	LAST_NAME              string          `json:"LAST_NAME"`
+	IMAGE_URL              string          `json:"IMAGE_URL"`
+	BACKGROUND             string          `json:"BACKGROUND"`
+	OWNER_USER_ID          int             `json:"OWNER_USER_ID"`
+	DATE_CREATED_UTC       *time.Time      `json:"DATE_CREATED_UTC"`
+	DATE_UPDATED_UTC       *time.Time      `json:"DATE_UPDATED_UTC"`
+	SOCIAL_LINKEDIN        string          `json:"SOCIAL_LINKEDIN"`
+	SOCIAL_FACEBOOK        string          `json:"SOCIAL_FACEBOOK"`
+	SOCIAL_TWITTER         string          `json:"SOCIAL_TWITTER"`
+	DATE_OF_BIRTH          *time.Time      `json:"DATE_OF_BIRTH"`
+	PHONE                  string          `json:"PHONE"`
+	PHONE_HOME             string          `json:"PHONE_HOME"`
+	PHONE_MOBILE           string          `json:"PHONE_MOBILE"`
+	PHONE_OTHER            string          `json:"PHONE_OTHER"`
+	PHONE_ASSISTANT        string          `json:"PHONE_ASSISTANT"`
+	PHONE_FAX              string          `json:"PHONE_FAX"`
+	EMAIL_ADDRESS          string          `json:"EMAIL_ADDRESS"`
+	ASSISTANT_NAME         string          `json:"ASSISTANT_NAME"`
+	ADDRESS_MAIL_STREET    string          `json:"ADDRESS_MAIL_STREET"`
+	ADDRESS_MAIL_CITY      string          `json:"ADDRESS_MAIL_CITY"`
+	ADDRESS_MAIL_STATE     string          `json:"ADDRESS_MAIL_STATE"`
+	ADDRESS_MAIL_POSTCODE  string          `json:"ADDRESS_MAIL_POSTCODE"`
+	ADDRESS_MAIL_COUNTRY   string          `json:"ADDRESS_MAIL_COUNTRY"`
+	ADDRESS_OTHER_STREET   string          `json:"ADDRESS_OTHER_STREET"`
+	ADDRESS_OTHER_CITY     string          `json:"ADDRESS_OTHER_CITY"`
+	ADDRESS_OTHER_STATE    string          `json:"ADDRESS_OTHER_STATE"`
+	ADDRESS_OTHER_POSTCODE string          `json:"ADDRESS_OTHER_POSTCODE"`
+	LAST_ACTIVITY_DATE_UTC *time.Time      `json:"LAST_ACTIVITY_DATE_UTC"`
+	NEXT_ACTIVITY_DATE_UTC *time.Time      `json:"NEXT_ACTIVITY_DATE_UTC"`
+	CREATED_USER_ID        int             `json:"CREATED_USER_ID"`
+	ORGANISATION_ID        int             `json:"ORGANISATION_ID"`
+	TITLE                  string          `json:"TITLE"`
+	EMAIL_OPTED_OUT        bool            `json:"EMAIL_OPTED_OUT"`
+	CUSTOMFIELDS           []CustomFieldBQ `json:"CUSTOMFIELDS"`
+	TAGS                   []Tag           `json:"TAGS"`
+	DATES                  []DateBQ        `json:"DATES"`
+}
 
-func (c *Contact) GenderToGender(gender string) string {
-	if strings.ToLower(gender) == "man" {
-		return "Mannelijk"
-	} else if strings.ToLower(gender) == "vrouw" {
-		return "Vrouwelijk"
+func (c *Contact) ToBQ() ContactBQ {
+	customFields := []CustomFieldBQ{}
+
+	for _, c := range c.CUSTOMFIELDS {
+		customFields = append(customFields, c.ToBQ())
 	}
 
-	return "Onbekend"
-}
+	dates := []DateBQ{}
 
-func (c *Contact) GenderToTitle(gender string) string {
-	if strings.ToLower(gender) == "man" {
-		return "DHR"
-	} else if strings.ToLower(gender) == "vrouw" {
-		return "MEVR"
+	for _, d := range c.DATES {
+		dates = append(dates, d.ToBQ())
 	}
 
-	return ""
+	return ContactBQ{
+		c.CONTACT_ID,
+		c.SALUTATION,
+		c.FIRST_NAME,
+		c.LAST_NAME,
+		c.IMAGE_URL,
+		c.BACKGROUND,
+		c.OWNER_USER_ID,
+		c.DateCreated,
+		c.DateUpdated,
+		c.SOCIAL_LINKEDIN,
+		c.SOCIAL_FACEBOOK,
+		c.SOCIAL_TWITTER,
+		c.DateOfBirth,
+		c.PHONE,
+		c.PHONE_HOME,
+		c.PHONE_MOBILE,
+		c.PHONE_OTHER,
+		c.PHONE_ASSISTANT,
+		c.PHONE_FAX,
+		c.EMAIL_ADDRESS,
+		c.ASSISTANT_NAME,
+		c.ADDRESS_MAIL_STREET,
+		c.ADDRESS_MAIL_CITY,
+		c.ADDRESS_MAIL_STATE,
+		c.ADDRESS_MAIL_POSTCODE,
+		c.ADDRESS_MAIL_COUNTRY,
+		c.ADDRESS_OTHER_STREET,
+		c.ADDRESS_OTHER_CITY,
+		c.ADDRESS_OTHER_STATE,
+		c.ADDRESS_OTHER_POSTCODE,
+		c.LastActivityDate,
+		c.NextActivityDate,
+		c.CREATED_USER_ID,
+		c.ORGANISATION_ID,
+		c.TITLE,
+		c.EMAIL_OPTED_OUT,
+		customFields,
+		c.TAGS,
+		dates,
+	}
 }
 
-func (c *Contact) Updated(i *Insightly) bool {
-	return c.DateUpdated.After(i.FromTimestamp)
-}
-
-// GetContacts returns all contacts updated after FromTimestamp date
+// GetContacts returns all contacts
 //
-func (i *Insightly) GetContacts() error {
-	co, err := i.GetContactsInternal(true, "", "")
+func (i *Insightly) GetContacts() ([]Contact, error) {
+	return i.GetContactsInternal("")
+}
 
-	i.Contacts = co
-
-	//for _, c := range i.Contacts {
-	//	fmt.Println(c)
-	//}
-
-	return err
+// GetContactsUpdatedAfter returns all contacts updated after certain date
+//
+func (i *Insightly) GetContactsUpdatedAfter(updatedAfter time.Time) ([]Contact, error) {
+	from := updatedAfter.Format("2006-01-02")
+	searchFilter := fmt.Sprintf("updated_after_utc=%s&", from)
+	return i.GetContactsInternal(searchFilter)
 }
 
 // GetContactsFiltered returns all contacts fulfulling the specified filter
 //
 func (i *Insightly) GetContactsFiltered(fieldname string, fieldvalue string) ([]Contact, error) {
-	return i.GetContactsInternal(false, fieldname, fieldvalue)
+	searchFilter := fmt.Sprintf("field_name=%s&field_value=%s&", fieldname, fieldvalue)
+	return i.GetContactsInternal(searchFilter)
 }
 
 // GetContactsInternal is the generic function retrieving Contacts from Insightly
 //
-func (i *Insightly) GetContactsInternal(updatedAfterUTC bool, fieldName, fieldValue string) ([]Contact, error) {
-	search := false
-	updated := ""
-	fieldname := ""
-	fieldvalue := ""
-	searchstring := ""
-	if updatedAfterUTC {
-		search = true
-		from := i.FromTimestamp.Format("2006-01-02")
-		updated = fmt.Sprintf("updated_after_utc=%s&", from)
-	}
-	if fieldName != "" && fieldValue != "" {
-		search = true
-		updated = fmt.Sprintf("field_name=%s&field_value=%s&", fieldName, fieldValue)
-	}
+func (i *Insightly) GetContactsInternal(searchFilter string) ([]Contact, error) {
+	searchString := ""
 
-	if search {
-		searchstring = "/Search?" + updated + fieldname + fieldvalue
+	if searchFilter != "" {
+		searchString = "/Search?" + searchFilter
 	} else {
-		searchstring = "?"
+		searchString = "?"
 	}
 
 	urlStr := "%sContacts%sskip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := 1
-	isMainContactCount := 1
-	pushToEOCount := 1
 
 	contacts := []Contact{}
 
 	for rowCount > 0 {
-		url := fmt.Sprintf(urlStr, i.ApiUrl, searchstring, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, i.ApiUrl, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Printf(url)
 
 		cs := []Contact{}
@@ -122,64 +205,72 @@ func (i *Insightly) GetContactsInternal(updatedAfterUTC bool, fieldName, fieldVa
 		}
 
 		for _, c := range cs {
-			// unmarshal custom fields
-			for ii := range c.CUSTOMFIELDS {
-				c.CUSTOMFIELDS[ii].UnmarshalValue()
-			}
-
-			// get Initials from custom field
-			c.Initials = i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameInitials)
-
-			// get Gender from custom field
-			c.Gender = c.GenderToGender(i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameGender))
-
-			// get Title from custom field
-			c.Title = c.GenderToTitle(i.FindCustomFieldValue(c.CUSTOMFIELDS, customFieldNameGender))
-
-			// parse DATE_UPDATED_UTC to time.Time
-			t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.DATE_UPDATED_UTC+" +0000 UTC")
-			errortools.Fatal(err)
-			c.DateUpdated = t
-
-			//fmt.Println("o.DATE_UPDATED_UTC", c.DATE_UPDATED_UTC, "o.DateUpdated", c.DateUpdated, "Now", time.Now(), "Diff", time.Now().Sub(c.DateUpdated))
-
-			// validate email
-			if c.EMAIL_ADDRESS != "" {
-				err := ValidateFormat(c.EMAIL_ADDRESS)
-				if err != nil {
-					message := fmt.Sprintf("invalid emailadress in Insightly: %s", c.EMAIL_ADDRESS)
-					fmt.Println(message)
-					if i.IsLive {
-						sentry.CaptureMessage(message)
-					}
-				} else {
-					c.Email = c.EMAIL_ADDRESS
-				}
-			}
-
-			c.IsMainContact = i.FindCustomFieldValueBool(c.CUSTOMFIELDS, customFieldNameMainContactPerson)
-			if c.IsMainContact {
-				isMainContactCount++
-			}
-
-			c.PushToEO = i.FindCustomFieldValueBool(c.CUSTOMFIELDS, customFieldNamePushToEO)
-			if c.PushToEO {
-				pushToEOCount++
-			}
-
+			c.ParseDates()
 			contacts = append(contacts, c)
 		}
 
 		rowCount = len(cs)
+		//rowCount = 0
 		skip += top
 	}
-
-	//fmt.Println("isMainContactCount:", isMainContactCount)
-	//fmt.Println("pushToEOCount (Contact):", pushToEOCount)
 
 	if len(contacts) == 0 {
 		contacts = nil
 	}
 
 	return contacts, nil
+}
+
+func (c *Contact) ValidateEmail() error {
+	// validate email
+	if c.EMAIL_ADDRESS != "" {
+		err := ValidateFormat(c.EMAIL_ADDRESS)
+		if err != nil {
+			return &types.ErrorString{fmt.Sprintf("invalid emailadress in Insightly: %s", c.EMAIL_ADDRESS)}
+		}
+	}
+
+	return nil
+}
+
+func (c *Contact) ParseDates() {
+	// parse DATE_CREATED_UTC to time.Time
+	if c.DATE_CREATED_UTC != "" {
+		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.DATE_CREATED_UTC+" +0000 UTC")
+		errortools.Fatal(err)
+		c.DateCreated = &t
+	}
+
+	// parse DATE_UPDATED_UTC to time.Time
+	if c.DATE_UPDATED_UTC != "" {
+		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.DATE_UPDATED_UTC+" +0000 UTC")
+		errortools.Fatal(err)
+		c.DateUpdated = &t
+	}
+
+	// parse DATE_OF_BIRTH to time.Time
+	if c.DATE_OF_BIRTH != "" {
+		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.DATE_OF_BIRTH+" +0000 UTC")
+		errortools.Fatal(err)
+		c.DateOfBirth = &t
+	}
+
+	// parse LAST_ACTIVITY_DATE_UTC to time.Time
+	if c.LAST_ACTIVITY_DATE_UTC != "" {
+		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.LAST_ACTIVITY_DATE_UTC+" +0000 UTC")
+		errortools.Fatal(err)
+		c.LastActivityDate = &t
+	}
+
+	// parse NEXT_ACTIVITY_DATE_UTC to time.Time
+	if c.NEXT_ACTIVITY_DATE_UTC != "" {
+		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.NEXT_ACTIVITY_DATE_UTC+" +0000 UTC")
+		errortools.Fatal(err)
+		c.NextActivityDate = &t
+	}
+
+	// parse dates in DATES
+	for _, d := range c.DATES {
+		d.ParseDates()
+	}
 }

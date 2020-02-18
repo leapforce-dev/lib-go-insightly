@@ -7,44 +7,26 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-	"time"
 
 	types "github.com/Leapforce-nl/go_types"
-
-	bigquerytools "github.com/Leapforce-nl/go_bigquerytools"
-	geo "github.com/Leapforce-nl/go_geo"
-)
-
-const (
-	customFieldNameRelationType            = "Relatietype__c"
-	customFieldNameKvKNummer               = "KVKnummer__c"
-	customFieldNameOrganizationOwner       = "Organization_Owner__c"
-	customFieldNamePushToEO                = "Push_to_EO__c"
-	customFieldNamePartnerSinds            = "Partner_sinds__c"
-	customFieldNameBeeindigingPartnerschap = "Beindiging_partnerschap__c"
-	customFieldNameOpzegdatum              = "Opzegdatum__c"
-	customFieldNameAantalMedewerkers       = "Aantal_medewerkers__c"
-	customFieldNameMainContactPerson       = "Main_contactperson__c"
-	customFieldNameInitials                = "initialen__c"
-	customFieldNameGender                  = "Gender__c"
 )
 
 // type
 //
 type Insightly struct {
-	RelationTypes RelationTypes
-	Organisations []Organisation
-	Contacts      []Contact
-	Token         string
-	ApiUrl        string
-	OnlyPushToEO  bool
-	FromTimestamp time.Time
+	//RelationTypes RelationTypes
+	//Organisations []Organisation
+	//Contacts      []Contact
+	Token  string
+	ApiUrl string
+	//OnlyPushToEO  bool
+	//FromTimestamp time.Time
 	// geo
-	Geo               *geo.Geo
-	BigQuery          *bigquerytools.BigQuery
-	BigQueryDataset   string
-	BigQueryTableName string
-	IsLive            bool
+	//Geo               *geo.Geo
+	//BigQuery          *bigquerytools.BigQuery
+	//BigQueryDataset   string
+	//BigQueryTableName string
+	//IsLive            bool
 }
 
 // Init initializes all settings in the Insightly struct
@@ -61,67 +43,12 @@ func (i *Insightly) Init() error {
 		i.ApiUrl = i.ApiUrl + "/"
 	}
 
-	i.OnlyPushToEO = false
-	i.FromTimestamp, _ = time.Parse("2006-01-02", "1800-01-01")
-
-	// SamPartner
-	articles := []Article{
-		Article{"1-10", "S1", nil},
-		Article{"11-100", "S2", nil},
-		Article{"101-250", "S3", nil},
-		Article{"251-500", "S4", nil},
-		Article{"500+", "S5", nil},
-	}
-	i.RelationTypes.Append("In kind partners", 1, "SamPartner", articles)
-	// Koploper
-	articles = []Article{
-		Article{"1-10", "K1", nil},
-		Article{"11-100", "K2", nil},
-		Article{"101-250", "K3", nil},
-		Article{"251-500", "K4", nil},
-		Article{"500+", "K5", nil},
-	}
-	i.RelationTypes.Append("Koploper", 2, "Koploper", articles)
-	// GBN
-	articles = []Article{
-		Article{"500+", "GBN", nil},
-	}
-	i.RelationTypes.Append("GBN", 3, "GBN", articles)
-	// Netwerkpartner
-	articles = []Article{
-		Article{"1-10", "N1", nil},
-		Article{"11-100", "N2", nil},
-		Article{"101-250", "N3", nil},
-		Article{"251-500", "N4", nil},
-		Article{"500+", "N5", nil},
-	}
-	i.RelationTypes.Append("Netwerkpartner", 4, "Netwerk", articles)
-	articles = []Article{
-		Article{"500+", "GBN", nil},
-	}
-	// Partner
-	articles = []Article{
-		Article{"1-10", "P1", nil},
-		Article{"11-100", "P2", nil},
-		Article{"101-250", "P3", nil},
-		Article{"251-500", "P4", nil},
-		Article{"500+", "P5", nil},
-	}
-	i.RelationTypes.Append("Partner", 5, "Partner", articles)
-	// Opgezegd
-	i.RelationTypes.Append("Opgezegd", 6, "", nil)
-
-	i.Geo = new(geo.Geo)
-	i.Geo.BigQuery = i.BigQuery
-	i.Geo.BigQueryDataset = i.BigQueryDataset
-	i.Geo.BigQueryTablenameCountries = i.BigQueryTableName
-
 	return nil
 }
 
 // UpdateOrganisationRemovePushToEO remove PushToEo ( = true) custom value for specified organisation
 //
-func (i *Insightly) UpdateOrganisationRemovePushToEO(o *Organisation) error {
+/*func (i *Insightly) UpdateOrganisationRemovePushToEO(o *Organisation) error {
 	urlStr := "%sOrganisations"
 	url := fmt.Sprintf(urlStr, i.ApiUrl)
 
@@ -153,9 +80,8 @@ func (i *Insightly) UpdateOrganisationRemovePushToEO(o *Organisation) error {
 	}
 
 	return nil
-}
+}*/
 
-//
 // generic Get method
 //
 func (i *Insightly) Get(url string, model interface{}) error {
@@ -185,6 +111,9 @@ func (i *Insightly) Get(url string, model interface{}) error {
 
 	return nil
 }
+
+// generic Put method
+//
 func (i *Insightly) Put(url string, json []byte) error {
 	client := &http.Client{}
 
@@ -206,37 +135,5 @@ func (i *Insightly) Put(url string, json []byte) error {
 		return &types.ErrorString{fmt.Sprintf("Server returned statuscode %v: %s", res.StatusCode, err.Error())}
 	}
 
-	//fmt.Println(res)
-
 	return nil
 }
-
-/*
-func (i *Insightly) ToExactOnline(o *Organisation) bool {
-	if o.RelationType == nil {
-		return false
-	}
-	if o.KvKNummer == "" {
-		return false
-	}
-	if i.OnlyPushToEO {
-		if o.PushToEO {
-			//fmt.Println("ToExactOnline 1")
-			return true
-		} else {
-			return false
-		}
-	}
-	if o.DateUpdated.After(i.FromTimestamp) {
-		//fmt.Println("ToExactOnline 2", o.DateUpdated, i.FromTimestamp)
-		return true
-	}
-	if o.MainContact != nil {
-		if o.MainContact.DateUpdated.After(i.FromTimestamp) {
-			//fmt.Println("ToExactOnline 3", o.MainContact.DateUpdated, i.FromTimestamp)
-			return true
-		}
-	}
-
-	return false
-}*/

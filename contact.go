@@ -95,7 +95,7 @@ func (i *Insightly) GetContactsInternal(searchFilter string) ([]Contact, error) 
 	contacts := []Contact{}
 
 	for rowCount > 0 {
-		url := fmt.Sprintf(urlStr, i.ApiUrl, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, i.apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Printf(url)
 
 		cs := []Contact{}

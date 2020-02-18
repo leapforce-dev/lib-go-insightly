@@ -48,7 +48,7 @@ type Organisation struct {
 
 func (i *Insightly) GetOrganisation(id int) (*Organisation, error) {
 	urlStr := "%sOrganisations/%v"
-	url := fmt.Sprintf(urlStr, i.ApiUrl, id)
+	url := fmt.Sprintf(urlStr, i.apiURL, id)
 	//fmt.Println(url)
 
 	o := Organisation{}
@@ -103,7 +103,7 @@ func (i *Insightly) GetOrganisationsInternal(searchFilter string) ([]Organisatio
 	organisations := []Organisation{}
 
 	for rowCount > 0 {
-		url := fmt.Sprintf(urlStr, i.ApiUrl, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, i.apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		os := []Organisation{}
@@ -166,7 +166,7 @@ func (o *Organisation) ParseDates() {
 
 func (i *Insightly) UpdateOrganisationRemoveCustomField(organisationID int, customFieldName string) error {
 	urlStr := "%sOrganisations"
-	url := fmt.Sprintf(urlStr, i.ApiUrl)
+	url := fmt.Sprintf(urlStr, i.apiURL)
 
 	type CustomFieldDelete struct {
 		FIELD_NAME      string

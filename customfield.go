@@ -16,24 +16,6 @@ type CustomField struct {
 	FieldValueBool   bool
 }
 
-type CustomFieldBQ struct {
-	FIELD_NAME         string `json:"FIELD_NAME"`
-	FIELD_VALUE_BOOL   bool   `json:"FIELD_VALUE_BOOL"`
-	FIELD_VALUE_STRING string `json:"FIELD_VALUE_STRING"`
-	CUSTOM_FIELD_ID    string `json:"CUSTOM_FIELD_ID"`
-}
-
-func (c *CustomField) ToBQ() CustomFieldBQ {
-	c.UnmarshalValue()
-
-	return CustomFieldBQ{
-		c.FIELD_NAME,
-		c.FieldValueBool,
-		c.FieldValueString,
-		c.CUSTOM_FIELD_ID,
-	}
-}
-
 // methods
 //
 func (i *Insightly) FindCustomField(cfs []CustomField, fieldName string) *CustomField {

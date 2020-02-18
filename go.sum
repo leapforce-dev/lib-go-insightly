@@ -36,6 +36,8 @@ github.com/Leapforce-nl/go_errortools v0.0.0-20200127102802-10abfc97c326 h1:ZlB6
 github.com/Leapforce-nl/go_errortools v0.0.0-20200127102802-10abfc97c326/go.mod h1:NTl2wTwlbDIBix/XfGA0M+ma+Tdxd08HU4OMOL0zrgM=
 github.com/Leapforce-nl/go_errortools v0.0.0-20200214111959-15597fcb17cb h1:YjRNhUnOkKOPs48g8zGYomnZD9ak/M++KyXXhn0hAGo=
 github.com/Leapforce-nl/go_errortools v0.0.0-20200214111959-15597fcb17cb/go.mod h1:NTl2wTwlbDIBix/XfGA0M+ma+Tdxd08HU4OMOL0zrgM=
+github.com/Leapforce-nl/go_errortools v0.0.0-20200218153539-4164a66df4e0 h1:u6SoALgNUWL1qytkLCMRIcHWmNzl/CYgkxxZ6OUhdIU=
+github.com/Leapforce-nl/go_errortools v0.0.0-20200218153539-4164a66df4e0/go.mod h1:goG+xW3RRxvv/HpoxmaTFMdH+a/YeiZseoGzL9RwBAE=
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200126220752-40ae1d29878c h1:2b7gE+EjC1V8xZBVXpNV5r4osAhY98AXUTSeq5LocwM=
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200126220752-40ae1d29878c/go.mod h1:fznRXw5+jGS3PRoMdEaXuHDC4vFmJvduzVJWx4hnStg=
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200127113304-f57fe49597ac h1:oioLdMhb8PsYCosmNZRRpfME2R5MES+i48m2bMQCL6A=
@@ -56,6 +58,8 @@ github.com/Leapforce-nl/go_exactonline v0.0.0-20200205130613-276d05a8d63e h1:3Bg
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200205130613-276d05a8d63e/go.mod h1:nvitSIljp6hKqjclDo6bTtOYBnHvk0R5lZ/VdTd0YNQ=
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200214112825-bb9e06655ebf h1:mHGkU67GYstYomE07v3CLVJUPdiN82ZUoIXeMf+6RWw=
 github.com/Leapforce-nl/go_exactonline v0.0.0-20200214112825-bb9e06655ebf/go.mod h1:rz32QkYXQecLuPqaIeC6QR93rgK+rD3YG5QjohnRnZU=
+github.com/Leapforce-nl/go_exactonline v0.0.0-20200218153559-8232581d3c54 h1:BDBvg/S7S1lNoegOR+paNbyapHIbzudbqLrQHuyJudU=
+github.com/Leapforce-nl/go_exactonline v0.0.0-20200218153559-8232581d3c54/go.mod h1:rz32QkYXQecLuPqaIeC6QR93rgK+rD3YG5QjohnRnZU=
 github.com/Leapforce-nl/go_geo v0.0.0-20200126213902-b38a5484fa46 h1:NWhJI5JHQO9iXiaTbygYvnfz9LQ0astnmaLY0By+CXw=
 github.com/Leapforce-nl/go_geo v0.0.0-20200126213902-b38a5484fa46/go.mod h1:pBtFR/jwc06GKVa5Cz9OZafceI620teZoWPRg+po9dg=
 github.com/Leapforce-nl/go_geo v0.0.0-20200126231400-5ff73fdd0ccb h1:L9fuIjLBnr7DkF/EDvVZHitXpIneTMaLA5jnKex+p20=

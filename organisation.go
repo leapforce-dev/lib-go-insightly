@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"time"
-
-	errortools "github.com/Leapforce-nl/go_errortools"
 )
 
 // Organisation stores Organisation from Insightly
@@ -46,86 +44,6 @@ type Organisation struct {
 	DateUpdated              *time.Time
 	LastActivityDate         *time.Time
 	NextActivityDate         *time.Time
-}
-
-type OrganisationBQ struct {
-	ORGANISATION_ID          int             `json:"ORGANISATION_ID"`
-	ORGANISATION_NAME        string          `json:"ORGANISATION_NAME"`
-	BACKGROUND               string          `json:"BACKGROUND"`
-	IMAGE_URL                string          `json:"IMAGE_URL"`
-	OWNER_USER_ID            int             `json:"OWNER_USER_ID"`
-	DATE_CREATED_UTC         *time.Time      `json:"DATE_CREATED_UTC"`
-	DATE_UPDATED_UTC         *time.Time      `json:"DATE_UPDATED_UTC"`
-	LAST_ACTIVITY_DATE_UTC   *time.Time      `json:"LAST_ACTIVITY_DATE_UTC"`
-	NEXT_ACTIVITY_DATE_UTC   *time.Time      `json:"NEXT_ACTIVITY_DATE_UTC"`
-	CREATED_USER_ID          int             `json:"CREATED_USER_ID"`
-	PHONE                    string          `json:"PHONE"`
-	PHONE_FAX                string          `json:"PHONE_FAX"`
-	WEBSITE                  string          `json:"WEBSITE"`
-	ADDRESS_BILLING_STREET   string          `json:"ADDRESS_BILLING_STREET"`
-	ADDRESS_BILLING_CITY     string          `json:"ADDRESS_BILLING_CITY"`
-	ADDRESS_BILLING_STATE    string          `json:"ADDRESS_BILLING_STATE"`
-	ADDRESS_BILLING_COUNTRY  string          `json:"ADDRESS_BILLING_COUNTRY"`
-	ADDRESS_BILLING_POSTCODE string          `json:"ADDRESS_BILLING_POSTCODE"`
-	ADDRESS_SHIP_STREET      string          `json:"ADDRESS_SHIP_STREET"`
-	ADDRESS_SHIP_CITY        string          `json:"ADDRESS_SHIP_CITY"`
-	ADDRESS_SHIP_STATE       string          `json:"ADDRESS_SHIP_STATE"`
-	ADDRESS_SHIP_COUNTRY     string          `json:"ADDRESS_SHIP_COUNTRY"`
-	ADDRESS_SHIP_POSTCODE    string          `json:"ADDRESS_SHIP_POSTCODE"`
-	SOCIAL_LINKEDIN          string          `json:"SOCIAL_LINKEDIN"`
-	SOCIAL_FACEBOOK          string          `json:"SOCIAL_FACEBOOK"`
-	SOCIAL_TWITTER           string          `json:"SOCIAL_TWITTER"`
-	CUSTOMFIELDS             []CustomFieldBQ `json:"CUSTOMFIELDS"`
-	TAGS                     []Tag           `json:"TAGS"`
-	DATES                    []DateBQ        `json:"DATES"`
-	EMAILDOMAINS             []EmailDomain   `json:"EMAILDOMAINS"`
-}
-
-func (o *Organisation) ToBQ() OrganisationBQ {
-	customFields := []CustomFieldBQ{}
-
-	for _, c := range o.CUSTOMFIELDS {
-		customFields = append(customFields, c.ToBQ())
-	}
-
-	dates := []DateBQ{}
-
-	for _, d := range o.DATES {
-		dates = append(dates, d.ToBQ())
-	}
-
-	return OrganisationBQ{
-		o.ORGANISATION_ID,
-		o.ORGANISATION_NAME,
-		o.BACKGROUND,
-		o.IMAGE_URL,
-		o.OWNER_USER_ID,
-		o.DateCreated,
-		o.DateUpdated,
-		o.LastActivityDate,
-		o.NextActivityDate,
-		o.CREATED_USER_ID,
-		o.PHONE,
-		o.PHONE_FAX,
-		o.WEBSITE,
-		o.ADDRESS_BILLING_STREET,
-		o.ADDRESS_BILLING_CITY,
-		o.ADDRESS_BILLING_STATE,
-		o.ADDRESS_BILLING_COUNTRY,
-		o.ADDRESS_BILLING_POSTCODE,
-		o.ADDRESS_SHIP_STREET,
-		o.ADDRESS_SHIP_CITY,
-		o.ADDRESS_SHIP_STATE,
-		o.ADDRESS_SHIP_COUNTRY,
-		o.ADDRESS_SHIP_POSTCODE,
-		o.SOCIAL_LINKEDIN,
-		o.SOCIAL_FACEBOOK,
-		o.SOCIAL_TWITTER,
-		customFields,
-		o.TAGS,
-		dates,
-		o.EMAILDOMAINS,
-	}
 }
 
 func (i *Insightly) GetOrganisation(id int) (*Organisation, error) {
@@ -214,29 +132,29 @@ func (i *Insightly) GetOrganisationsInternal(searchFilter string) ([]Organisatio
 func (o *Organisation) ParseDates() {
 	// parse DATE_CREATED_UTC to time.Time
 	if o.DATE_CREATED_UTC != "" {
-		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_CREATED_UTC+" +0000 UTC")
-		errortools.Fatal(err)
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_CREATED_UTC+" +0000 UTC")
+		//errortools.Fatal(err)
 		o.DateCreated = &t
 	}
 
 	// parse DATE_UPDATED_UTC to time.Time
 	if o.DATE_UPDATED_UTC != "" {
-		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
-		errortools.Fatal(err)
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
+		//errortools.Fatal(err)
 		o.DateUpdated = &t
 	}
 
 	// parse LAST_ACTIVITY_DATE_UTC to time.Time
 	if o.LAST_ACTIVITY_DATE_UTC != "" {
-		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.LAST_ACTIVITY_DATE_UTC+" +0000 UTC")
-		errortools.Fatal(err)
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.LAST_ACTIVITY_DATE_UTC+" +0000 UTC")
+		//errortools.Fatal(err)
 		o.LastActivityDate = &t
 	}
 
 	// parse NEXT_ACTIVITY_DATE_UTC to time.Time
 	if o.NEXT_ACTIVITY_DATE_UTC != "" {
-		t, err := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.NEXT_ACTIVITY_DATE_UTC+" +0000 UTC")
-		errortools.Fatal(err)
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.NEXT_ACTIVITY_DATE_UTC+" +0000 UTC")
+		//errortools.Fatal(err)
 		o.NextActivityDate = &t
 	}
 

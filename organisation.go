@@ -98,11 +98,11 @@ func (i *Insightly) GetOrganisationsInternal(searchFilter string) ([]Organisatio
 	urlStr := "%sOrganisations%sskip=%s&top=%s"
 	skip := 0
 	top := 500
-	rowCount := 1
+	rowCount := top
 
 	organisations := []Organisation{}
 
-	for rowCount > 0 {
+	for rowCount >= top {
 		url := fmt.Sprintf(urlStr, i.apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 

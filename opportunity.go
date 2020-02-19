@@ -95,11 +95,11 @@ func (i *Insightly) GetOpportunitiesInternal(searchFilter string) ([]Opportunity
 	urlStr := "%sOpportunities%sskip=%s&top=%s"
 	skip := 0
 	top := 500
-	rowCount := 1
+	rowCount := top
 
 	opportunities := []Opportunity{}
 
-	for rowCount > 0 {
+	for rowCount >= top {
 		url := fmt.Sprintf(urlStr, i.apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 

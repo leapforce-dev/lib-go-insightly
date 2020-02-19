@@ -77,14 +77,14 @@ func (i *Insightly) GetOrganisationsUpdatedAfter(updatedAfter time.Time) ([]Orga
 	return i.GetOrganisationsInternal(searchFilter)
 }
 
-// GetOrganisationsFiltered returns all contacts fulfulling the specified filter
+// GetOrganisationsFiltered returns all organisations fulfulling the specified filter
 //
 func (i *Insightly) GetOrganisationsFiltered(fieldname string, fieldvalue string) ([]Organisation, error) {
 	searchFilter := fmt.Sprintf("field_name=%s&field_value=%s&", fieldname, fieldvalue)
 	return i.GetOrganisationsInternal(searchFilter)
 }
 
-// GetOrganisationsInternal is the generic function retrieving Contacts from Insightly
+// GetOrganisationsInternal is the generic function retrieving organisations from Insightly
 //
 func (i *Insightly) GetOrganisationsInternal(searchFilter string) ([]Organisation, error) {
 	searchString := ""

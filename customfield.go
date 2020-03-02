@@ -13,7 +13,8 @@ type CustomField struct {
 	FIELD_VALUE      json.RawMessage `json:"FIELD_VALUE"`
 	CUSTOM_FIELD_ID  string          `json:"CUSTOM_FIELD_ID"`
 	FieldValueString string
-	FieldValueBool   bool
+	FieldValueInt    *int
+	FieldValueBool   *bool
 }
 
 // methods
@@ -38,11 +39,11 @@ func (i *Insightly) FindCustomFieldValue(cfs []CustomField, fieldName string) st
 	}
 }
 
-func (i *Insightly) FindCustomFieldValueBool(cfs []CustomField, fieldName string) bool {
+func (i *Insightly) FindCustomFieldValueBool(cfs []CustomField, fieldName string) *bool {
 	cf := i.FindCustomField(cfs, fieldName)
 
 	if cf == nil {
-		return false
+		return nil
 	} else {
 		return cf.FieldValueBool
 	}
@@ -54,7 +55,19 @@ func (cf *CustomField) GetFieldValues() []string {
 
 func (cf *CustomField) UnmarshalValue() {
 	j, _ := json.Marshal(&cf.FIELD_VALUE)
-	json.Unmarshal(cf.FIELD_VALUE, &cf.FieldValueString)
-	b, _ := strconv.ParseBool(string(j))
-	cf.FieldValueBool = b
+	// try unmarshalling to string
+	err := json.Unmarshal(cf.FIELD_VALUE, &cf.FieldValueString)
+	// try unmarshalling to int
+	if err != nil {
+		err = json.Unmarshal(cf.FIELD_VALUE, &cf.FieldValueInt)
+	}
+	// try unmarshalling to bool
+	if err != nil {
+		b, err1 := strconv.ParseBool(string(j))
+		if err1 == nil {
+			cf.FieldValueBool = &b
+		} else {
+			cf.FieldValueBool = nil
+		}
+	}
 }

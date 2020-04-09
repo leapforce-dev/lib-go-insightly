@@ -23,7 +23,7 @@ type Opportunity struct {
 	ACTUAL_CLOSE_DATE      string        `json:"ACTUAL_CLOSE_DATE"`
 	DATE_CREATED_UTC       string        `json:"DATE_CREATED_UTC"`
 	DATE_UPDATED_UTC       string        `json:"DATE_UPDATED_UTC"`
-	OPPORTUNITY_VALUE      string        `json:"OPPORTUNITY_VALUE"`
+	OPPORTUNITY_VALUE      float32       `json:"OPPORTUNITY_VALUE"`
 	PROBABILITY            int           `json:"PROBABILITY"`
 	FORECAST_CLOSE_DATE    string        `json:"FORECAST_CLOSE_DATE"`
 	OWNER_USER_ID          int           `json:"OWNER_USER_ID"`

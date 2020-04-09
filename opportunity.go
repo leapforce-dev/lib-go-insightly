@@ -17,7 +17,7 @@ type Opportunity struct {
 	CATEGORY_ID            int           `json:"CATEGORY_ID"`
 	IMAGE_URL              string        `json:"IMAGE_URL"`
 	BID_CURRENCY           string        `json:"BID_CURRENCY"`
-	BID_AMOUNT             string        `json:"BID_AMOUNT"`
+	BID_AMOUNT             float32       `json:"BID_AMOUNT"`
 	BID_TYPE               string        `json:"BID_TYPE"`
 	BID_DURATION           int           `json:"BID_DURATION"`
 	ACTUAL_CLOSE_DATE      string        `json:"ACTUAL_CLOSE_DATE"`

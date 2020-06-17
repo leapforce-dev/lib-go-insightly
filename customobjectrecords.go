@@ -1,6 +1,7 @@
 package insightly
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -18,8 +19,8 @@ type CustomObjectRecord struct {
 	VISIBLE_TO       string        `json:"VISIBLE_TO"`
 	VISIBLE_TEAM_ID  int           `json:"VISIBLE_TEAM_ID"`
 	CUSTOMFIELDS     []CustomField `json:"CUSTOMFIELDS"`
-	DateCreated      *time.Time
-	DateUpdated      *time.Time
+	DateCreated      *time.Time    `json:"-"`
+	DateUpdated      *time.Time    `json:"-"`
 }
 
 // GetCustomObjectRecords returns all customobjectrecords
@@ -78,6 +79,27 @@ func (i *Insightly) GetCustomObjectRecordsInternal(objectName string, searchFilt
 	}
 
 	return customobjectrecords, nil
+}
+
+// GetCustomObjectRecordsInternal is the generic function retrieving customobjectrecords from Insightly
+//
+func (i *Insightly) UpdateCustomObjectRecords(customObjectName string, customObjectRecord CustomObjectRecord) error {
+	urlStr := "%s%s"
+
+	url := fmt.Sprintf(urlStr, i.apiURL, customObjectName)
+	//fmt.Println(url)
+
+	b, err := json.Marshal(customObjectRecord)
+	if err != nil {
+		return err
+	}
+
+	err = i.Put(url, b)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (o *CustomObjectRecord) ParseDates() {

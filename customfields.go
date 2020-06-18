@@ -12,7 +12,7 @@ type CustomField struct {
 	FIELD_NAME       string          `json:"FIELD_NAME"`
 	FIELD_VALUE      json.RawMessage `json:"FIELD_VALUE"`
 	CUSTOM_FIELD_ID  string          `json:"CUSTOM_FIELD_ID"`
-	FieldValueString string          `json:"-"`
+	FieldValueString *string         `json:"-"`
 	FieldValueInt    *int            `json:"-"`
 	FieldValueBool   *bool           `json:"-"`
 }
@@ -42,6 +42,30 @@ func (i *Insightly) FindCustomFieldValue(cfs []CustomField, fieldName string) st
 	}
 }
 
+// FindCustomFieldValueString //
+//
+func (i *Insightly) FindCustomFieldValueString(cfs []CustomField, fieldName string) *string {
+	cf := i.FindCustomField(cfs, fieldName)
+
+	if cf == nil {
+		return nil
+	} else {
+		return cf.FieldValueString
+	}
+}
+
+// FindCustomFieldValueInt //
+//
+func (i *Insightly) FindCustomFieldValueInt(cfs []CustomField, fieldName string) *int {
+	cf := i.FindCustomField(cfs, fieldName)
+
+	if cf == nil {
+		return nil
+	} else {
+		return cf.FieldValueInt
+	}
+}
+
 // FindCustomFieldValueBool //
 //
 func (i *Insightly) FindCustomFieldValueBool(cfs []CustomField, fieldName string) *bool {
@@ -57,7 +81,11 @@ func (i *Insightly) FindCustomFieldValueBool(cfs []CustomField, fieldName string
 // GetFieldValues //
 //
 func (cf *CustomField) GetFieldValues() []string {
-	return strings.Split(string(cf.FieldValueString), ";")
+	if cf.FieldValueString == nil {
+		return nil
+	} else {
+		return strings.Split(string(*cf.FieldValueString), ";")
+	}
 }
 
 // UnmarshalValue //
@@ -83,13 +111,13 @@ func (cf *CustomField) UnmarshalValue() {
 
 // SetCustomField //
 //
-func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueString string, valueInt *int, valueBool *bool) error {
+func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueString *string, valueInt *int, valueBool *bool) error {
 	for index, cf := range cfs {
 		if strings.ToLower(cf.FIELD_NAME) == strings.ToLower(fieldName) {
 			b := []byte{}
 			cfs[index].FieldValueBool = valueBool
 			if valueInt != nil {
-				cfs[index].FieldValueString = ""
+				cfs[index].FieldValueString = nil
 				cfs[index].FieldValueInt = valueInt
 				cfs[index].FieldValueBool = nil
 				_b, err := json.Marshal(valueInt)
@@ -98,7 +126,7 @@ func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueStr
 				}
 				b = _b
 			} else if valueBool != nil {
-				cfs[index].FieldValueString = ""
+				cfs[index].FieldValueString = nil
 				cfs[index].FieldValueInt = nil
 				cfs[index].FieldValueBool = valueBool
 				_b, err := json.Marshal(valueBool)

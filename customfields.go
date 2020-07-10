@@ -14,6 +14,7 @@ type CustomField struct {
 	CUSTOM_FIELD_ID  string          `json:"CUSTOM_FIELD_ID"`
 	FieldValueString *string         `json:"-"`
 	FieldValueInt    *int            `json:"-"`
+	FieldValueFloat  *float64        `json:"-"`
 	FieldValueBool   *bool           `json:"-"`
 }
 
@@ -66,6 +67,18 @@ func (i *Insightly) FindCustomFieldValueInt(cfs []CustomField, fieldName string)
 	}
 }
 
+// FindCustomFieldValueFloat //
+//
+func (i *Insightly) FindCustomFieldValueFloat(cfs []CustomField, fieldName string) *float64 {
+	cf := i.FindCustomField(cfs, fieldName)
+
+	if cf == nil {
+		return nil
+	} else {
+		return cf.FieldValueFloat
+	}
+}
+
 // FindCustomFieldValueBool //
 //
 func (i *Insightly) FindCustomFieldValueBool(cfs []CustomField, fieldName string) *bool {
@@ -96,10 +109,16 @@ func (cf *CustomField) UnmarshalValue() {
 	err := json.Unmarshal(cf.FIELD_VALUE, &cf.FieldValueString)
 	// try unmarshalling to int
 	if err != nil {
+		cf.FieldValueString = nil
 		err = json.Unmarshal(cf.FIELD_VALUE, &cf.FieldValueInt)
+	} // try unmarshalling to float64
+	if err != nil {
+		cf.FieldValueInt = nil
+		err = json.Unmarshal(cf.FIELD_VALUE, &cf.FieldValueFloat)
 	}
 	// try unmarshalling to bool
 	if err != nil {
+		cf.FieldValueFloat = nil
 		b, err1 := strconv.ParseBool(string(j))
 		if err1 == nil {
 			cf.FieldValueBool = &b
@@ -111,7 +130,7 @@ func (cf *CustomField) UnmarshalValue() {
 
 // SetCustomField //
 //
-func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueString *string, valueInt *int, valueBool *bool) error {
+func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueString *string, valueInt *int, valueFloat *float64, valueBool *bool) error {
 	for index, cf := range cfs {
 		if strings.ToLower(cf.FIELD_NAME) == strings.ToLower(fieldName) {
 			b := []byte{}
@@ -119,8 +138,19 @@ func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueStr
 			if valueInt != nil {
 				cfs[index].FieldValueString = nil
 				cfs[index].FieldValueInt = valueInt
+				cfs[index].FieldValueFloat = nil
 				cfs[index].FieldValueBool = nil
 				_b, err := json.Marshal(valueInt)
+				if err != nil {
+					return err
+				}
+				b = _b
+			} else if valueFloat != nil {
+				cfs[index].FieldValueString = nil
+				cfs[index].FieldValueInt = nil
+				cfs[index].FieldValueFloat = valueFloat
+				cfs[index].FieldValueBool = nil
+				_b, err := json.Marshal(valueFloat)
 				if err != nil {
 					return err
 				}
@@ -128,6 +158,7 @@ func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueStr
 			} else if valueBool != nil {
 				cfs[index].FieldValueString = nil
 				cfs[index].FieldValueInt = nil
+				cfs[index].FieldValueFloat = nil
 				cfs[index].FieldValueBool = valueBool
 				_b, err := json.Marshal(valueBool)
 				if err != nil {
@@ -137,6 +168,7 @@ func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueStr
 			} else {
 				cfs[index].FieldValueString = valueString
 				cfs[index].FieldValueInt = nil
+				cfs[index].FieldValueFloat = nil
 				cfs[index].FieldValueBool = nil
 				_b, err := json.Marshal(valueString)
 				if err != nil {

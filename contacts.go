@@ -127,7 +127,7 @@ func (c *Contact) ValidateEmail() error {
 	if c.EMAIL_ADDRESS != "" {
 		err := ValidateFormat(c.EMAIL_ADDRESS)
 		if err != nil {
-			return &types.ErrorString{fmt.Sprintf("Invalid emailadress (between []): [%s] for contact: %s %s (%v", c.EMAIL_ADDRESS, c.FIRST_NAME, c.LAST_NAME, c.CONTACT_ID)}
+			return &types.ErrorString{fmt.Sprintf("Invalid emailadress (between []): [%s] for contact: %s %s (%v)", c.EMAIL_ADDRESS, c.FIRST_NAME, c.LAST_NAME, c.CONTACT_ID)}
 		}
 	}
 

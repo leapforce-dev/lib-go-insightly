@@ -1,5 +1,5 @@
-module github.com/Leapforce-nl/go_insightly
+module github.com/leapforce-libraries/go_insightly
 
 go 1.13
 
-require github.com/Leapforce-nl/go_types v0.0.0-20200126202922-ba4900de15b8
+require github.com/leapforce-libraries/go_types v0.0.0-20201101222114-6d3ec3839c8c

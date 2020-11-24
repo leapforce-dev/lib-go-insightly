@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // User stores User from Insightly
@@ -33,13 +35,13 @@ type User struct {
 
 // GetUsers returns all users
 //
-func (i *Insightly) GetUsers() ([]User, error) {
+func (i *Insightly) GetUsers() ([]User, *errortools.Error) {
 	return i.GetUsersInternal()
 }
 
 // GetUsersInternal is the generic function retrieving users from Insightly
 //
-func (i *Insightly) GetUsersInternal() ([]User, error) {
+func (i *Insightly) GetUsersInternal() ([]User, *errortools.Error) {
 	urlStr := "%sUsers?skip=%s&top=%s"
 	skip := 0
 	top := 500
@@ -53,9 +55,9 @@ func (i *Insightly) GetUsersInternal() ([]User, error) {
 
 		ls := []User{}
 
-		err := i.Get(url, &ls)
-		if err != nil {
-			return nil, err
+		e := i.Get(url, &ls)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, l := range ls {

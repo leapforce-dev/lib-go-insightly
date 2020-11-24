@@ -3,6 +3,8 @@ package insightly
 import (
 	"fmt"
 	"strconv"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // LeadSource stores LeadSource from Insightly
@@ -16,7 +18,7 @@ type LeadSource struct {
 
 // GetLeadSources returns all leadSources
 //
-func (i *Insightly) GetLeadSources() ([]LeadSource, error) {
+func (i *Insightly) GetLeadSources() ([]LeadSource, *errortools.Error) {
 	urlStr := "%sLeadSources?skip=%s&top=%s"
 	skip := 0
 	top := 500
@@ -30,9 +32,9 @@ func (i *Insightly) GetLeadSources() ([]LeadSource, error) {
 
 		ls := []LeadSource{}
 
-		err := i.Get(url, &ls)
-		if err != nil {
-			return nil, err
+		e := i.Get(url, &ls)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, l := range ls {

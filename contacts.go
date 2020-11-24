@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	types "github.com/leapforce-libraries/go_types"
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 type Contact struct {
@@ -57,13 +57,13 @@ type Contact struct {
 
 // GetContacts returns all contacts
 //
-func (i *Insightly) GetContacts() ([]Contact, error) {
+func (i *Insightly) GetContacts() ([]Contact, *errortools.Error) {
 	return i.GetContactsInternal("")
 }
 
 // GetContactsUpdatedAfter returns all contacts updated after certain date
 //
-func (i *Insightly) GetContactsUpdatedAfter(updatedAfter time.Time) ([]Contact, error) {
+func (i *Insightly) GetContactsUpdatedAfter(updatedAfter time.Time) ([]Contact, *errortools.Error) {
 	from := updatedAfter.Format("2006-01-02")
 	searchFilter := fmt.Sprintf("updated_after_utc=%s&", from)
 	return i.GetContactsInternal(searchFilter)
@@ -71,14 +71,14 @@ func (i *Insightly) GetContactsUpdatedAfter(updatedAfter time.Time) ([]Contact, 
 
 // GetContactsFiltered returns all contacts fulfulling the specified filter
 //
-func (i *Insightly) GetContactsFiltered(fieldname string, fieldvalue string) ([]Contact, error) {
+func (i *Insightly) GetContactsFiltered(fieldname string, fieldvalue string) ([]Contact, *errortools.Error) {
 	searchFilter := fmt.Sprintf("field_name=%s&field_value=%s&", fieldname, fieldvalue)
 	return i.GetContactsInternal(searchFilter)
 }
 
 // GetContactsInternal is the generic function retrieving Contacts from Insightly
 //
-func (i *Insightly) GetContactsInternal(searchFilter string) ([]Contact, error) {
+func (i *Insightly) GetContactsInternal(searchFilter string) ([]Contact, *errortools.Error) {
 	searchString := ""
 
 	if searchFilter != "" {
@@ -122,12 +122,12 @@ func (i *Insightly) GetContactsInternal(searchFilter string) ([]Contact, error) 
 	return contacts, nil
 }
 
-func (c *Contact) ValidateEmail() error {
+func (c *Contact) ValidateEmail() *errortools.Error {
 	// validate email
 	if c.EMAIL_ADDRESS != "" {
 		err := ValidateFormat(c.EMAIL_ADDRESS)
 		if err != nil {
-			return &types.ErrorString{fmt.Sprintf("Invalid emailadress (between []): [%s] for contact: %s %s (%v)", c.EMAIL_ADDRESS, c.FIRST_NAME, c.LAST_NAME, c.CONTACT_ID)}
+			return errortools.ErrorMessage(fmt.Sprintf("Invalid emailadress (between []): [%s] for contact: %s %s (%v)", c.EMAIL_ADDRESS, c.FIRST_NAME, c.LAST_NAME, c.CONTACT_ID))
 		}
 	}
 

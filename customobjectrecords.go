@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // CustomObjectRecord stores CustomObjectRecord from Insightly
@@ -25,20 +27,20 @@ type CustomObjectRecord struct {
 
 // GetCustomObjectRecords returns all customobjectrecords
 //
-func (i *Insightly) GetCustomObjectRecords(objectName string) ([]CustomObjectRecord, error) {
+func (i *Insightly) GetCustomObjectRecords(objectName string) ([]CustomObjectRecord, *errortools.Error) {
 	return i.GetCustomObjectRecordsInternal(objectName, "")
 }
 
 // GetCustomObjectRecordsFiltered returns all customobjectrecords fulfulling the specified filter
 //
-func (i *Insightly) GetCustomObjectRecordsFiltered(objectName string, fieldname string, fieldvalue string) ([]CustomObjectRecord, error) {
+func (i *Insightly) GetCustomObjectRecordsFiltered(objectName string, fieldname string, fieldvalue string) ([]CustomObjectRecord, *errortools.Error) {
 	searchFilter := fmt.Sprintf("field_name=%s&field_value=%s&", fieldname, fieldvalue)
 	return i.GetCustomObjectRecordsInternal(objectName, searchFilter)
 }
 
 // GetCustomObjectRecordsInternal is the generic function retrieving customobjectrecords from Insightly
 //
-func (i *Insightly) GetCustomObjectRecordsInternal(objectName string, searchFilter string) ([]CustomObjectRecord, error) {
+func (i *Insightly) GetCustomObjectRecordsInternal(objectName string, searchFilter string) ([]CustomObjectRecord, *errortools.Error) {
 	searchString := ""
 
 	if searchFilter != "" {
@@ -83,7 +85,7 @@ func (i *Insightly) GetCustomObjectRecordsInternal(objectName string, searchFilt
 
 // GetCustomObjectRecordsInternal is the generic function retrieving customobjectrecords from Insightly
 //
-func (i *Insightly) UpdateCustomObjectRecords(customObjectName string, customObjectRecord CustomObjectRecord) error {
+func (i *Insightly) UpdateCustomObjectRecords(customObjectName string, customObjectRecord CustomObjectRecord) *errortools.Error {
 	urlStr := "%s%s"
 
 	url := fmt.Sprintf(urlStr, i.apiURL, customObjectName)
@@ -91,12 +93,12 @@ func (i *Insightly) UpdateCustomObjectRecords(customObjectName string, customObj
 
 	b, err := json.Marshal(customObjectRecord)
 	if err != nil {
-		return err
+		return errortools.ErrorMessage(err)
 	}
 
-	err = i.Put(url, b)
-	if err != nil {
-		return err
+	e := i.Put(url, b)
+	if e != nil {
+		return e
 	}
 
 	return nil

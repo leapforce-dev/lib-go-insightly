@@ -3,6 +3,8 @@ package insightly
 import (
 	"fmt"
 	"time"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // CustomObject stores CustomObject from Insightly
@@ -26,7 +28,7 @@ type CustomObject struct {
 
 // GetCustomObjects returns all customobjects
 //
-func (i *Insightly) GetCustomObjects() ([]CustomObject, error) {
+func (i *Insightly) GetCustomObjects() ([]CustomObject, *errortools.Error) {
 	urlStr := "%sCustomObjects"
 
 	customobjects := []CustomObject{}

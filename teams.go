@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // Team stores Team from Insightly
@@ -21,13 +23,13 @@ type Team struct {
 
 // GetTeams returns all teams
 //
-func (i *Insightly) GetTeams() ([]Team, error) {
+func (i *Insightly) GetTeams() ([]Team, *errortools.Error) {
 	return i.GetTeamsInternal()
 }
 
 // GetTeamsInternal is the generic function retrieving teams from Insightly
 //
-func (i *Insightly) GetTeamsInternal() ([]Team, error) {
+func (i *Insightly) GetTeamsInternal() ([]Team, *errortools.Error) {
 	urlStr := "%sTeams?skip=%s&top=%s"
 	skip := 0
 	top := 500
@@ -41,9 +43,9 @@ func (i *Insightly) GetTeamsInternal() ([]Team, error) {
 
 		ls := []Team{}
 
-		err := i.Get(url, &ls)
-		if err != nil {
-			return nil, err
+		e := i.Get(url, &ls)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, l := range ls {

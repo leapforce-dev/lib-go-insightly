@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // Product stores Product from Insightly
@@ -28,16 +30,16 @@ type Product struct {
 	DateUpdated       *time.Time
 }
 
-func (i *Insightly) GetProduct(id int) (*Product, error) {
+func (i *Insightly) GetProduct(id int) (*Product, *errortools.Error) {
 	urlStr := "%sProduct/%v"
 	url := fmt.Sprintf(urlStr, i.apiURL, id)
 	//fmt.Println(url)
 
 	o := Product{}
 
-	err := i.Get(url, &o)
-	if err != nil {
-		return nil, err
+	e := i.Get(url, &o)
+	if e != nil {
+		return nil, e
 	}
 
 	o.ParseDates()
@@ -47,13 +49,13 @@ func (i *Insightly) GetProduct(id int) (*Product, error) {
 
 // GetProducts returns all products
 //
-func (i *Insightly) GetProducts() ([]Product, error) {
+func (i *Insightly) GetProducts() ([]Product, *errortools.Error) {
 	return i.GetProductsInternal("")
 }
 
 // GetProductsUpdatedAfter returns all products updated after certain date
 //
-func (i *Insightly) GetProductsUpdatedAfter(updatedAfter time.Time) ([]Product, error) {
+func (i *Insightly) GetProductsUpdatedAfter(updatedAfter time.Time) ([]Product, *errortools.Error) {
 	from := updatedAfter.Format("2006-01-02")
 	searchFilter := fmt.Sprintf("updated_after_utc=%s&", from)
 	return i.GetProductsInternal(searchFilter)
@@ -61,14 +63,14 @@ func (i *Insightly) GetProductsUpdatedAfter(updatedAfter time.Time) ([]Product, 
 
 // GetProductsFiltered returns all products fulfulling the specified filter
 //
-func (i *Insightly) GetProductsFiltered(fieldname string, fieldvalue string) ([]Product, error) {
+func (i *Insightly) GetProductsFiltered(fieldname string, fieldvalue string) ([]Product, *errortools.Error) {
 	searchFilter := fmt.Sprintf("field_name=%s&field_value=%s&", fieldname, fieldvalue)
 	return i.GetProductsInternal(searchFilter)
 }
 
 // GetProductsInternal is the generic function retrieving products from Insightly
 //
-func (i *Insightly) GetProductsInternal(searchFilter string) ([]Product, error) {
+func (i *Insightly) GetProductsInternal(searchFilter string) ([]Product, *errortools.Error) {
 	searchString := ""
 
 	if searchFilter != "" {
@@ -90,9 +92,9 @@ func (i *Insightly) GetProductsInternal(searchFilter string) ([]Product, error) 
 
 		os := []Product{}
 
-		err := i.Get(url, &os)
-		if err != nil {
-			return nil, err
+		e := i.Get(url, &os)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, o := range os {

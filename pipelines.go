@@ -3,6 +3,8 @@ package insightly
 import (
 	"fmt"
 	"strconv"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // Pipeline stores Pipeline from Insightly
@@ -17,13 +19,13 @@ type Pipeline struct {
 
 // GetPipelines returns all pipelines
 //
-func (i *Insightly) GetPipelines() ([]Pipeline, error) {
+func (i *Insightly) GetPipelines() ([]Pipeline, *errortools.Error) {
 	return i.GetPipelinesInternal()
 }
 
 // GetPipelinesInternal is the generic function retrieving pipelines from Insightly
 //
-func (i *Insightly) GetPipelinesInternal() ([]Pipeline, error) {
+func (i *Insightly) GetPipelinesInternal() ([]Pipeline, *errortools.Error) {
 	urlStr := "%sPipelines?skip=%s&top=%s"
 	skip := 0
 	top := 500
@@ -37,9 +39,9 @@ func (i *Insightly) GetPipelinesInternal() ([]Pipeline, error) {
 
 		ls := []Pipeline{}
 
-		err := i.Get(url, &ls)
-		if err != nil {
-			return nil, err
+		e := i.Get(url, &ls)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, l := range ls {

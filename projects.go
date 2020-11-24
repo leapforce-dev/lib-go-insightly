@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // Project stores Project from Insightly
@@ -37,16 +39,16 @@ type Project struct {
 	NextActivityDate       *time.Time
 }
 
-func (i *Insightly) GetProject(id int) (*Project, error) {
+func (i *Insightly) GetProject(id int) (*Project, *errortools.Error) {
 	urlStr := "%sProjects/%v"
 	url := fmt.Sprintf(urlStr, i.apiURL, id)
 	//fmt.Println(url)
 
 	o := Project{}
 
-	err := i.Get(url, &o)
-	if err != nil {
-		return nil, err
+	e := i.Get(url, &o)
+	if e != nil {
+		return nil, e
 	}
 
 	o.ParseDates()
@@ -56,13 +58,13 @@ func (i *Insightly) GetProject(id int) (*Project, error) {
 
 // GetProjects returns all projects
 //
-func (i *Insightly) GetProjects() ([]Project, error) {
+func (i *Insightly) GetProjects() ([]Project, *errortools.Error) {
 	return i.GetProjectsInternal("")
 }
 
 // GetProjectsUpdatedAfter returns all projects updated after certain date
 //
-func (i *Insightly) GetProjectsUpdatedAfter(updatedAfter time.Time) ([]Project, error) {
+func (i *Insightly) GetProjectsUpdatedAfter(updatedAfter time.Time) ([]Project, *errortools.Error) {
 	from := updatedAfter.Format("2006-01-02")
 	searchFilter := fmt.Sprintf("updated_after_utc=%s&", from)
 	return i.GetProjectsInternal(searchFilter)
@@ -70,14 +72,14 @@ func (i *Insightly) GetProjectsUpdatedAfter(updatedAfter time.Time) ([]Project, 
 
 // GetProjectsFiltered returns all projects fulfulling the specified filter
 //
-func (i *Insightly) GetProjectsFiltered(fieldname string, fieldvalue string) ([]Project, error) {
+func (i *Insightly) GetProjectsFiltered(fieldname string, fieldvalue string) ([]Project, *errortools.Error) {
 	searchFilter := fmt.Sprintf("field_name=%s&field_value=%s&", fieldname, fieldvalue)
 	return i.GetProjectsInternal(searchFilter)
 }
 
 // GetProjectsInternal is the generic function retrieving projects from Insightly
 //
-func (i *Insightly) GetProjectsInternal(searchFilter string) ([]Project, error) {
+func (i *Insightly) GetProjectsInternal(searchFilter string) ([]Project, *errortools.Error) {
 	searchString := ""
 
 	if searchFilter != "" {

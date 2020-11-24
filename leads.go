@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // Lead stores Lead from Insightly
@@ -56,13 +58,13 @@ type Lead struct {
 
 // GetLeads returns all leads
 //
-func (i *Insightly) GetLeads() ([]Lead, error) {
+func (i *Insightly) GetLeads() ([]Lead, *errortools.Error) {
 	return i.GetLeadsInternal("")
 }
 
 // GetLeadsUpdatedAfter returns all leads updated after certain date
 //
-func (i *Insightly) GetLeadsUpdatedAfter(updatedAfter time.Time) ([]Lead, error) {
+func (i *Insightly) GetLeadsUpdatedAfter(updatedAfter time.Time) ([]Lead, *errortools.Error) {
 	from := updatedAfter.Format("2006-01-02")
 	searchFilter := fmt.Sprintf("updated_after_utc=%s&", from)
 	return i.GetLeadsInternal(searchFilter)
@@ -70,14 +72,14 @@ func (i *Insightly) GetLeadsUpdatedAfter(updatedAfter time.Time) ([]Lead, error)
 
 // GetLeadsFiltered returns all leads fulfulling the specified filter
 //
-func (i *Insightly) GetLeadsFiltered(fieldname string, fieldvalue string) ([]Lead, error) {
+func (i *Insightly) GetLeadsFiltered(fieldname string, fieldvalue string) ([]Lead, *errortools.Error) {
 	searchFilter := fmt.Sprintf("field_name=%s&field_value=%s&", fieldname, fieldvalue)
 	return i.GetLeadsInternal(searchFilter)
 }
 
 // GetLeadsInternal is the generic function retrieving leads from Insightly
 //
-func (i *Insightly) GetLeadsInternal(searchFilter string) ([]Lead, error) {
+func (i *Insightly) GetLeadsInternal(searchFilter string) ([]Lead, *errortools.Error) {
 	searchString := ""
 
 	if searchFilter != "" {
@@ -99,9 +101,9 @@ func (i *Insightly) GetLeadsInternal(searchFilter string) ([]Lead, error) {
 
 		ls := []Lead{}
 
-		err := i.Get(url, &ls)
-		if err != nil {
-			return nil, err
+		e := i.Get(url, &ls)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, l := range ls {

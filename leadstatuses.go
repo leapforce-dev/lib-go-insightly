@@ -3,6 +3,8 @@ package insightly
 import (
 	"fmt"
 	"strconv"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // LeadStatus stores LeadStatus from Insightly
@@ -17,7 +19,7 @@ type LeadStatus struct {
 
 // GetLeadStatuses returns all leadStatuses
 //
-func (i *Insightly) GetLeadStatuses() ([]LeadStatus, error) {
+func (i *Insightly) GetLeadStatuses() ([]LeadStatus, *errortools.Error) {
 	urlStr := "%sLeadStatuses?skip=%s&top=%s"
 	skip := 0
 	top := 500
@@ -31,9 +33,9 @@ func (i *Insightly) GetLeadStatuses() ([]LeadStatus, error) {
 
 		ls := []LeadStatus{}
 
-		err := i.Get(url, &ls)
-		if err != nil {
-			return nil, err
+		e := i.Get(url, &ls)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, l := range ls {

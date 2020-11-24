@@ -3,6 +3,8 @@ package insightly
 import (
 	"fmt"
 	"strconv"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // TeamMember stores TeamMember from Insightly
@@ -15,13 +17,13 @@ type TeamMember struct {
 
 // GetTeamMembers returns all TeamMembers
 //
-func (i *Insightly) GetTeamMembers() ([]TeamMember, error) {
+func (i *Insightly) GetTeamMembers() ([]TeamMember, *errortools.Error) {
 	return i.GetTeamMembersInternal()
 }
 
 // GetTeamMembersInternal is the generic function retrieving TeamMembers from Insightly
 //
-func (i *Insightly) GetTeamMembersInternal() ([]TeamMember, error) {
+func (i *Insightly) GetTeamMembersInternal() ([]TeamMember, *errortools.Error) {
 	urlStr := "%sTeamMembers?skip=%s&top=%s"
 	skip := 0
 	top := 500
@@ -35,9 +37,9 @@ func (i *Insightly) GetTeamMembersInternal() ([]TeamMember, error) {
 
 		oc := []TeamMember{}
 
-		err := i.Get(url, &oc)
-		if err != nil {
-			return nil, err
+		e := i.Get(url, &oc)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, o := range oc {

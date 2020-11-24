@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // Opportunity stores Opportunity from Insightly
@@ -43,7 +45,7 @@ type Opportunity struct {
 	NextActivityDate       *time.Time
 }
 
-func (i *Insightly) GetOpportunity(id int) (*Opportunity, error) {
+func (i *Insightly) GetOpportunity(id int) (*Opportunity, *errortools.Error) {
 	urlStr := "%sOpportunities/%v"
 	url := fmt.Sprintf(urlStr, i.apiURL, id)
 	//fmt.Println(url)
@@ -62,13 +64,13 @@ func (i *Insightly) GetOpportunity(id int) (*Opportunity, error) {
 
 // GetOpportunities returns all opportunities
 //
-func (i *Insightly) GetOpportunities() ([]Opportunity, error) {
+func (i *Insightly) GetOpportunities() ([]Opportunity, *errortools.Error) {
 	return i.GetOpportunitiesInternal("")
 }
 
 // GetOpportunitiesUpdatedAfter returns all opportunities updated after certain date
 //
-func (i *Insightly) GetOpportunitiesUpdatedAfter(updatedAfter time.Time) ([]Opportunity, error) {
+func (i *Insightly) GetOpportunitiesUpdatedAfter(updatedAfter time.Time) ([]Opportunity, *errortools.Error) {
 	from := updatedAfter.Format("2006-01-02")
 	searchFilter := fmt.Sprintf("updated_after_utc=%s&", from)
 	return i.GetOpportunitiesInternal(searchFilter)
@@ -76,14 +78,14 @@ func (i *Insightly) GetOpportunitiesUpdatedAfter(updatedAfter time.Time) ([]Oppo
 
 // GetOpportunitiesFiltered returns all opportunities fulfulling the specified filter
 //
-func (i *Insightly) GetOpportunitiesFiltered(fieldname string, fieldvalue string) ([]Opportunity, error) {
+func (i *Insightly) GetOpportunitiesFiltered(fieldname string, fieldvalue string) ([]Opportunity, *errortools.Error) {
 	searchFilter := fmt.Sprintf("field_name=%s&field_value=%s&", fieldname, fieldvalue)
 	return i.GetOpportunitiesInternal(searchFilter)
 }
 
 // GetOpportunitiesInternal is the generic function retrieving opportunities from Insightly
 //
-func (i *Insightly) GetOpportunitiesInternal(searchFilter string) ([]Opportunity, error) {
+func (i *Insightly) GetOpportunitiesInternal(searchFilter string) ([]Opportunity, *errortools.Error) {
 	searchString := ""
 
 	if searchFilter != "" {

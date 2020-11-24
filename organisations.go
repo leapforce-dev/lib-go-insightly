@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // Organisation stores Organisation from Insightly
@@ -46,16 +48,16 @@ type Organisation struct {
 	NextActivityDate         *time.Time
 }
 
-func (i *Insightly) GetOrganisation(id int) (*Organisation, error) {
+func (i *Insightly) GetOrganisation(id int) (*Organisation, *errortools.Error) {
 	urlStr := "%sOrganisations/%v"
 	url := fmt.Sprintf(urlStr, i.apiURL, id)
 	//fmt.Println(url)
 
 	o := Organisation{}
 
-	err := i.Get(url, &o)
-	if err != nil {
-		return nil, err
+	e := i.Get(url, &o)
+	if e != nil {
+		return nil, e
 	}
 
 	o.ParseDates()
@@ -65,13 +67,13 @@ func (i *Insightly) GetOrganisation(id int) (*Organisation, error) {
 
 // GetOrganisations returns all organisations
 //
-func (i *Insightly) GetOrganisations() ([]Organisation, error) {
+func (i *Insightly) GetOrganisations() ([]Organisation, *errortools.Error) {
 	return i.GetOrganisationsInternal("")
 }
 
 // GetOrganisationsUpdatedAfter returns all organisations updated after certain date
 //
-func (i *Insightly) GetOrganisationsUpdatedAfter(updatedAfter time.Time) ([]Organisation, error) {
+func (i *Insightly) GetOrganisationsUpdatedAfter(updatedAfter time.Time) ([]Organisation, *errortools.Error) {
 	from := updatedAfter.Format("2006-01-02")
 	searchFilter := fmt.Sprintf("updated_after_utc=%s&", from)
 	return i.GetOrganisationsInternal(searchFilter)
@@ -79,14 +81,14 @@ func (i *Insightly) GetOrganisationsUpdatedAfter(updatedAfter time.Time) ([]Orga
 
 // GetOrganisationsFiltered returns all organisations fulfulling the specified filter
 //
-func (i *Insightly) GetOrganisationsFiltered(fieldname string, fieldvalue string) ([]Organisation, error) {
+func (i *Insightly) GetOrganisationsFiltered(fieldname string, fieldvalue string) ([]Organisation, *errortools.Error) {
 	searchFilter := fmt.Sprintf("field_name=%s&field_value=%s&", fieldname, fieldvalue)
 	return i.GetOrganisationsInternal(searchFilter)
 }
 
 // GetOrganisationsInternal is the generic function retrieving organisations from Insightly
 //
-func (i *Insightly) GetOrganisationsInternal(searchFilter string) ([]Organisation, error) {
+func (i *Insightly) GetOrganisationsInternal(searchFilter string) ([]Organisation, *errortools.Error) {
 	searchString := ""
 
 	if searchFilter != "" {
@@ -164,7 +166,7 @@ func (o *Organisation) ParseDates() {
 	}
 }
 
-func (i *Insightly) UpdateOrganisationRemoveCustomField(organisationID int, customFieldName string) error {
+func (i *Insightly) UpdateOrganisationRemoveCustomField(organisationID int, customFieldName string) *errortools.Error {
 	urlStr := "%sOrganisations"
 	url := fmt.Sprintf(urlStr, i.apiURL)
 
@@ -185,14 +187,12 @@ func (i *Insightly) UpdateOrganisationRemoveCustomField(organisationID int, cust
 
 	b, err := json.Marshal(o1)
 	if err != nil {
-		fmt.Println("error:", err)
+		return errortools.ErrorMessage(err)
 	}
 
-	err = i.Put(url, b)
-	if err != nil {
-		fmt.Println("ERROR in UpdateOrganisationRemovePushToEO:", err)
-		fmt.Println("url:", urlStr)
-		return err
+	e := i.Put(url, b)
+	if e != nil {
+		return e
 	}
 
 	return nil

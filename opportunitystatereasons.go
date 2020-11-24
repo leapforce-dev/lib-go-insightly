@@ -3,6 +3,8 @@ package insightly
 import (
 	"fmt"
 	"strconv"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // OpportunityStateReason stores OpportunityStateReason from Insightly
@@ -15,7 +17,7 @@ type OpportunityStateReason struct {
 
 // GetOpportunityStateReasons returns all opportunityStateReasons
 //
-func (i *Insightly) GetOpportunityStateReasons() ([]OpportunityStateReason, error) {
+func (i *Insightly) GetOpportunityStateReasons() ([]OpportunityStateReason, *errortools.Error) {
 	urlStr := "%sOpportunityStateReasons?skip=%s&top=%s"
 	skip := 0
 	top := 500
@@ -29,9 +31,9 @@ func (i *Insightly) GetOpportunityStateReasons() ([]OpportunityStateReason, erro
 
 		ls := []OpportunityStateReason{}
 
-		err := i.Get(url, &ls)
-		if err != nil {
-			return nil, err
+		e := i.Get(url, &ls)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, l := range ls {

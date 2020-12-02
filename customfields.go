@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strconv"
 	"strings"
+
+	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
 // types
@@ -130,7 +132,7 @@ func (cf *CustomField) UnmarshalValue() {
 
 // SetCustomField //
 //
-func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueString *string, valueInt *int, valueFloat *float64, valueBool *bool) error {
+func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueString *string, valueInt *int, valueFloat *float64, valueBool *bool) *errortools.Error {
 	for index, cf := range cfs {
 		if strings.ToLower(cf.FIELD_NAME) == strings.ToLower(fieldName) {
 			b := []byte{}
@@ -142,7 +144,7 @@ func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueStr
 				cfs[index].FieldValueBool = nil
 				_b, err := json.Marshal(valueInt)
 				if err != nil {
-					return err
+					return errortools.ErrorMessage(err)
 				}
 				b = _b
 			} else if valueFloat != nil {
@@ -152,7 +154,7 @@ func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueStr
 				cfs[index].FieldValueBool = nil
 				_b, err := json.Marshal(valueFloat)
 				if err != nil {
-					return err
+					return errortools.ErrorMessage(err)
 				}
 				b = _b
 			} else if valueBool != nil {
@@ -162,7 +164,7 @@ func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueStr
 				cfs[index].FieldValueBool = valueBool
 				_b, err := json.Marshal(valueBool)
 				if err != nil {
-					return err
+					return errortools.ErrorMessage(err)
 				}
 				b = _b
 			} else {
@@ -172,7 +174,7 @@ func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueStr
 				cfs[index].FieldValueBool = nil
 				_b, err := json.Marshal(valueString)
 				if err != nil {
-					return err
+					return errortools.ErrorMessage(err)
 				}
 				b = _b
 			}

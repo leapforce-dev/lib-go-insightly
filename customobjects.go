@@ -10,20 +10,20 @@ import (
 // CustomObject stores CustomObject from Insightly
 //
 type CustomObject struct {
-	OBJECT_NAME                string `json:"OBJECT_NAME"`
-	SINGULAR_LABEL             string `json:"SINGULAR_LABEL"`
-	PLURAL_LABEL               string `json:"PLURAL_LABEL"`
-	DESCRIPTION                string `json:"DESCRIPTION"`
-	RECORD_NAME_LABEL          string `json:"RECORD_NAME_LABEL"`
-	RECORD_NAME_TYPE           string `json:"RECORD_NAME_TYPE"`
-	RECORD_NAME_DISPLAY_FORMAT string `json:"RECORD_NAME_DISPLAY_FORMAT"`
-	ENABLE_NAVBAR              bool   `json:"ENABLE_NAVBAR"`
-	ENABLE_WORKFLOWS           bool   `json:"ENABLE_WORKFLOWS"`
-	CREATED_USER_ID            int    `json:"CREATED_USER_ID"`
-	DATE_CREATED_UTC           string `json:"DATE_CREATED_UTC"`
-	DATE_UPDATED_UTC           string `json:"DATE_UPDATED_UTC"`
-	DateCreated                *time.Time
-	DateUpdated                *time.Time
+	ObjectName              string `json:"OBJECT_NAME"`
+	SingularLabel           string `json:"SINGULAR_LABEL"`
+	PluralLabel             string `json:"PLURAL_LABEL"`
+	Description             string `json:"DESCRIPTION"`
+	RecordNameLabel         string `json:"RECORD_NAME_LABEL"`
+	RecordNameType          string `json:"RECORD_NAME_TYPE"`
+	RecordNameDisplayFormat string `json:"RECORD_NAME_DISPLAY_FORMAT"`
+	EnableNavbar            bool   `json:"ENABLE_NAVBAR"`
+	EnableWorkflows         bool   `json:"ENABLE_WORKFLOWS"`
+	CreatedUserID           int    `json:"CREATED_USER_ID"`
+	DateCreatedUTC          string `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC          string `json:"DATE_UPDATED_UTC"`
+	DateCreatedT            *time.Time
+	DateUpdatedT            *time.Time
 }
 
 // GetCustomObjects returns all customobjects
@@ -33,18 +33,18 @@ func (i *Insightly) GetCustomObjects() ([]CustomObject, *errortools.Error) {
 
 	customobjects := []CustomObject{}
 
-	url := fmt.Sprintf(urlStr, i.apiURL)
+	url := fmt.Sprintf(urlStr, apiURL)
 	//fmt.Println(url)
 
 	os := []CustomObject{}
 
-	err := i.Get(url, &os)
+	_, _, err := i.get(url, nil, &os)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, o := range os {
-		o.ParseDates()
+		o.parseDates()
 		customobjects = append(customobjects, o)
 	}
 
@@ -55,18 +55,18 @@ func (i *Insightly) GetCustomObjects() ([]CustomObject, *errortools.Error) {
 	return customobjects, nil
 }
 
-func (o *CustomObject) ParseDates() {
+func (o *CustomObject) parseDates() {
 	// parse DATE_CREATED_UTC to time.Time
-	if o.DATE_CREATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_CREATED_UTC+" +0000 UTC")
+	if o.DateCreatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DateCreatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.DateCreated = &t
+		o.DateCreatedT = &t
 	}
 
 	// parse DATE_UPDATED_UTC to time.Time
-	if o.DATE_UPDATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
+	if o.DateUpdatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DateUpdatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.DateUpdated = &t
+		o.DateUpdatedT = &t
 	}
 }

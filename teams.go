@@ -11,14 +11,14 @@ import (
 // Team stores Team from Insightly
 //
 type Team struct {
-	TEAM_ID          int          `json:"TEAM_ID"`
-	TEAM_NAME        string       `json:"TEAM_NAME"`
-	ANONYMOUS_TEAM   bool         `json:"ANONYMOUS_TEAM"`
-	DATE_CREATED_UTC string       `json:"DATE_CREATED_UTC"`
-	DATE_UPDATED_UTC string       `json:"DATE_UPDATED_UTC"`
-	TEAMMEMBERS      []TeamMember `json:"TEAMMEMBERS"`
-	DateCreated      *time.Time
-	DateUpdated      *time.Time
+	TeamID         int          `json:"TEAM_ID"`
+	TeamName       string       `json:"TEAM_NAME"`
+	AnonymousTeam  bool         `json:"ANONYMOUS_TEAM"`
+	DateCreatedUTC string       `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC string       `json:"DATE_UPDATED_UTC"`
+	TeamMembers    []TeamMember `json:"TEAMMEMBERS"`
+	DateCreatedT   *time.Time
+	DateUpdatedT   *time.Time
 }
 
 // GetTeams returns all teams
@@ -38,18 +38,18 @@ func (i *Insightly) GetTeamsInternal() ([]Team, *errortools.Error) {
 	teams := []Team{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		ls := []Team{}
 
-		e := i.Get(url, &ls)
+		_, _, e := i.get(url, nil, &ls)
 		if e != nil {
 			return nil, e
 		}
 
 		for _, l := range ls {
-			l.ParseDates()
+			l.parseDates()
 			teams = append(teams, l)
 		}
 
@@ -64,18 +64,18 @@ func (i *Insightly) GetTeamsInternal() ([]Team, *errortools.Error) {
 	return teams, nil
 }
 
-func (l *Team) ParseDates() {
+func (l *Team) parseDates() {
 	// parse DATE_CREATED_UTC to time.Time
-	if l.DATE_CREATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DATE_CREATED_UTC+" +0000 UTC")
+	if l.DateCreatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DateCreatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		l.DateCreated = &t
+		l.DateCreatedT = &t
 	}
 
 	// parse DATE_UPDATED_UTC to time.Time
-	if l.DATE_UPDATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DATE_UPDATED_UTC+" +0000 UTC")
+	if l.DateUpdatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DateUpdatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		l.DateUpdated = &t
+		l.DateUpdatedT = &t
 	}
 }

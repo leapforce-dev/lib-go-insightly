@@ -10,10 +10,10 @@ import (
 // OpportunityCategory stores OpportunityCategory from Insightly
 //
 type OpportunityCategory struct {
-	CATEGORY_ID      int    `json:"CATEGORY_ID"`
-	CATEGORY_NAME    string `json:"CATEGORY_NAME"`
-	ACTIVE           bool   `json:"ACTIVE"`
-	BACKGROUND_COLOR string `json:"BACKGROUND_COLOR"`
+	CategoryID      int    `json:"CATEGORY_ID"`
+	CategoryName    string `json:"CATEGORY_NAME"`
+	Active          bool   `json:"ACTIVE"`
+	BackgroundColor string `json:"BACKGROUND_COLOR"`
 }
 
 // GetOpportunityCategories returns all opportunitycategories
@@ -33,12 +33,12 @@ func (i *Insightly) GetOpportunityCategoriesInternal() ([]OpportunityCategory, *
 	opportunityCategories := []OpportunityCategory{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		oc := []OpportunityCategory{}
 
-		e := i.Get(url, &oc)
+		_, _, e := i.get(url, nil, &oc)
 		if e != nil {
 			return nil, e
 		}

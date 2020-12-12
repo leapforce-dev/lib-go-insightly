@@ -11,38 +11,38 @@ import (
 // Product stores Product from Insightly
 //
 type Product struct {
-	PRODUCT_ID        int           `json:"PRODUCT_ID"`
-	PRODUCT_NAME      string        `json:"PRODUCT_NAME"`
-	PRODUCT_CODE      string        `json:"PRODUCT_CODE"`
-	PRODUCT_SKU       string        `json:"PRODUCT_SKU"`
-	DESCRIPTION       string        `json:"DESCRIPTION"`
-	PRODUCT_FAMILY    string        `json:"PRODUCT_FAMILY"`
-	PRODUCT_IMAGE_URL string        `json:"PRODUCT_IMAGE_URL"`
-	CURRENCY_CODE     string        `json:"CURRENCY_CODE"`
-	DEFAULT_PRICE     int           `json:"DEFAULT_PRICE"`
-	DATE_CREATED_UTC  string        `json:"DATE_CREATED_UTC"`
-	DATE_UPDATED_UTC  string        `json:"DATE_UPDATED_UTC"`
-	CREATED_USER_ID   int           `json:"CREATED_USER_ID"`
-	OWNER_USER_ID     int           `json:"OWNER_USER_ID"`
-	ACTIVE            bool          `json:"ACTIVE"`
-	CUSTOMFIELDS      []CustomField `json:"CUSTOMFIELDS"`
-	DateCreated       *time.Time
-	DateUpdated       *time.Time
+	ProductID       int           `json:"PRODUCT_ID"`
+	ProductName     string        `json:"PRODUCT_NAME"`
+	ProductCode     string        `json:"PRODUCT_CODE"`
+	ProductSKU      string        `json:"PRODUCT_SKU"`
+	Description     string        `json:"DESCRIPTION"`
+	ProductFamily   string        `json:"PRODUCT_FAMILY"`
+	ProductImageURL string        `json:"PRODUCT_IMAGE_URL"`
+	CurrencyCode    string        `json:"CURRENCY_CODE"`
+	DefaultPrice    int           `json:"DEFAULT_PRICE"`
+	DateCreatedUTC  string        `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC  string        `json:"DATE_UPDATED_UTC"`
+	CreatedUserID   int           `json:"CREATED_USER_ID"`
+	OwnerUserID     int           `json:"OWNER_USER_ID"`
+	Active          bool          `json:"ACTIVE"`
+	CustomFields    []CustomField `json:"CUSTOMFIELDS"`
+	DateCreatedT    *time.Time
+	DateUpdatedT    *time.Time
 }
 
 func (i *Insightly) GetProduct(id int) (*Product, *errortools.Error) {
 	urlStr := "%sProduct/%v"
-	url := fmt.Sprintf(urlStr, i.apiURL, id)
+	url := fmt.Sprintf(urlStr, apiURL, id)
 	//fmt.Println(url)
 
 	o := Product{}
 
-	e := i.Get(url, &o)
+	_, _, e := i.get(url, nil, &o)
 	if e != nil {
 		return nil, e
 	}
 
-	o.ParseDates()
+	o.parseDates()
 
 	return &o, nil
 }
@@ -87,18 +87,18 @@ func (i *Insightly) GetProductsInternal(searchFilter string) ([]Product, *errort
 	products := []Product{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		os := []Product{}
 
-		e := i.Get(url, &os)
+		_, _, e := i.get(url, nil, &os)
 		if e != nil {
 			return nil, e
 		}
 
 		for _, o := range os {
-			o.ParseDates()
+			o.parseDates()
 			products = append(products, o)
 		}
 
@@ -113,18 +113,18 @@ func (i *Insightly) GetProductsInternal(searchFilter string) ([]Product, *errort
 	return products, nil
 }
 
-func (o *Product) ParseDates() {
+func (o *Product) parseDates() {
 	// parse DATE_CREATED_UTC to time.Time
-	if o.DATE_CREATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_CREATED_UTC+" +0000 UTC")
+	if o.DateCreatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DateCreatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.DateCreated = &t
+		o.DateCreatedT = &t
 	}
 
 	// parse DATE_UPDATED_UTC to time.Time
-	if o.DATE_UPDATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
+	if o.DateUpdatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DateUpdatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.DateUpdated = &t
+		o.DateUpdatedT = &t
 	}
 }

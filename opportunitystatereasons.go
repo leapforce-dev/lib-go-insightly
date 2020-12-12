@@ -10,9 +10,9 @@ import (
 // OpportunityStateReason stores OpportunityStateReason from Insightly
 //
 type OpportunityStateReason struct {
-	STATE_REASON_ID       int    `json:"STATE_REASON_ID"`
-	STATE_REASON          string `json:"STATE_REASON"`
-	FOR_OPPORTUNITY_STATE string `json:"FOR_OPPORTUNITY_STATE"`
+	StateReasonID       int    `json:"STATE_REASON_ID"`
+	StateReason         string `json:"STATE_REASON"`
+	ForOpportunityState string `json:"FOR_OPPORTUNITY_STATE"`
 }
 
 // GetOpportunityStateReasons returns all opportunityStateReasons
@@ -26,12 +26,12 @@ func (i *Insightly) GetOpportunityStateReasons() ([]OpportunityStateReason, *err
 	opportunityStateReasons := []OpportunityStateReason{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		ls := []OpportunityStateReason{}
 
-		e := i.Get(url, &ls)
+		_, _, e := i.get(url, nil, &ls)
 		if e != nil {
 			return nil, e
 		}

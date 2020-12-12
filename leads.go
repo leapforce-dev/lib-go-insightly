@@ -11,49 +11,49 @@ import (
 // Lead stores Lead from Insightly
 //
 type Lead struct {
-	LEAD_ID                   int           `json:"LEAD_ID"`
-	SALUTATION                string        `json:"SALUTATION"`
-	FIRST_NAME                string        `json:"FIRST_NAME"`
-	LAST_NAME                 string        `json:"LAST_NAME"`
-	LEAD_SOURCE_ID            int           `json:"LEAD_SOURCE_ID"`
-	LEAD_STATUS_ID            int           `json:"LEAD_STATUS_ID"`
-	TITLE                     string        `json:"TITLE"`
-	CONVERTED                 bool          `json:"CONVERTED"`
-	CONVERTED_CONTACT_ID      int           `json:"CONVERTED_CONTACT_ID"`
-	CONVERTED_DATE_UTC        string        `json:"CONVERTED_DATE_UTC"`
-	CONVERTED_OPPORTUNITY_ID  int           `json:"CONVERTED_OPPORTUNITY_ID"`
-	CONVERTED_ORGANISATION_ID int           `json:"CONVERTED_ORGANISATION_ID"`
-	DATE_CREATED_UTC          string        `json:"DATE_CREATED_UTC"`
-	DATE_UPDATED_UTC          string        `json:"DATE_UPDATED_UTC"`
-	EMAIL                     string        `json:"EMAIL"`
-	EMPLOYEE_COUNT            int           `json:"EMPLOYEE_COUNT"`
-	FAX                       string        `json:"FAX"`
-	INDUSTRY                  string        `json:"INDUSTRY"`
-	LEAD_DESCRIPTION          string        `json:"LEAD_DESCRIPTION"`
-	LEAD_RATING               int           `json:"LEAD_RATING"`
-	MOBILE                    string        `json:"MOBILE"`
-	OWNER_USER_ID             int           `json:"OWNER_USER_ID"`
-	PHONE                     string        `json:"PHONE"`
-	RESPONSIBLE_USER_ID       int           `json:"RESPONSIBLE_USER_ID"`
-	WEBSITE                   string        `json:"WEBSITE"`
-	ADDRESS_STREET            string        `json:"ADDRESS_STREET"`
-	ADDRESS_CITY              string        `json:"ADDRESS_CITY"`
-	ADDRESS_STATE             string        `json:"ADDRESS_STATE"`
-	ADDRESS_POSTCODE          string        `json:"ADDRESS_POSTCODE"`
-	ADDRESS_COUNTRY           string        `json:"ADDRESS_COUNTRY"`
-	LAST_ACTIVITY_DATE_UTC    string        `json:"LAST_ACTIVITY_DATE_UTC"`
-	NEXT_ACTIVITY_DATE_UTC    string        `json:"NEXT_ACTIVITY_DATE_UTC"`
-	ORGANISATION_NAME         string        `json:"ORGANISATION_NAME"`
-	CREATED_USER_ID           int           `json:"CREATED_USER_ID"`
-	IMAGE_URL                 string        `json:"IMAGE_URL"`
-	EMAIL_OPTED_OUT           bool          `json:"EMAIL_OPTED_OUT"`
-	CUSTOMFIELDS              []CustomField `json:"CUSTOMFIELDS"`
-	TAGS                      []Tag         `json:"TAGS"`
-	ConvertedDate             *time.Time
-	DateCreated               *time.Time
-	DateUpdated               *time.Time
-	LastActivityDate          *time.Time
-	NextActivityDate          *time.Time
+	LeadID                  int           `json:"LEAD_ID"`
+	Salutation              string        `json:"SALUTATION"`
+	FirstName               string        `json:"FIRST_NAME"`
+	LastName                string        `json:"LAST_NAME"`
+	LeadSourceID            int           `json:"LEAD_SOURCE_ID"`
+	LeadStatusID            int           `json:"LEAD_STATUS_ID"`
+	Title                   string        `json:"TITLE"`
+	Converted               bool          `json:"CONVERTED"`
+	ConvertedContactID      int           `json:"CONVERTED_CONTACT_ID"`
+	ConvertedDateUTC        string        `json:"CONVERTED_DATE_UTC"`
+	ConvertedOpportunityID  int           `json:"CONVERTED_OPPORTUNITY_ID"`
+	ConvertedOrganisationID int           `json:"CONVERTED_ORGANISATION_ID"`
+	DateCreateUTC           string        `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC          string        `json:"DATE_UPDATED_UTC"`
+	Email                   string        `json:"EMAIL"`
+	EmployeeCount           int           `json:"EMPLOYEE_COUNT"`
+	Fax                     string        `json:"FAX"`
+	Industry                string        `json:"INDUSTRY"`
+	LeadDescription         string        `json:"LEAD_DESCRIPTION"`
+	LeadRating              int           `json:"LEAD_RATING"`
+	Mobile                  string        `json:"MOBILE"`
+	OwnerUserID             int           `json:"OWNER_USER_ID"`
+	Phone                   string        `json:"PHONE"`
+	ResponsibleUserID       int           `json:"RESPONSIBLE_USER_ID"`
+	Website                 string        `json:"WEBSITE"`
+	AddressStreet           string        `json:"ADDRESS_STREET"`
+	AddressCity             string        `json:"ADDRESS_CITY"`
+	AddressState            string        `json:"ADDRESS_STATE"`
+	AddressPostcode         string        `json:"ADDRESS_POSTCODE"`
+	AddressCountry          string        `json:"ADDRESS_COUNTRY"`
+	LastActivityDateUTC     string        `json:"LAST_ACTIVITY_DATE_UTC"`
+	NextActivityDateUTC     string        `json:"NEXT_ACTIVITY_DATE_UTC"`
+	OrganisationName        string        `json:"ORGANISATION_NAME"`
+	CreatedUserID           int           `json:"CREATED_USER_ID"`
+	ImageURL                string        `json:"IMAGE_URL"`
+	EmailOptedOut           bool          `json:"EMAIL_OPTED_OUT"`
+	CustomFields            []CustomField `json:"CUSTOMFIELDS"`
+	Tags                    []Tag         `json:"TAGS"`
+	ConvertedDateT          *time.Time
+	DateCreatedT            *time.Time
+	DateUpdatedT            *time.Time
+	LastActivityDateT       *time.Time
+	NextActivityDateT       *time.Time
 }
 
 // GetLeads returns all leads
@@ -96,18 +96,18 @@ func (i *Insightly) GetLeadsInternal(searchFilter string) ([]Lead, *errortools.E
 	leads := []Lead{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		ls := []Lead{}
 
-		e := i.Get(url, &ls)
+		_, _, e := i.get(url, nil, &ls)
 		if e != nil {
 			return nil, e
 		}
 
 		for _, l := range ls {
-			l.ParseDates()
+			l.parseDates()
 			leads = append(leads, l)
 		}
 
@@ -122,39 +122,39 @@ func (i *Insightly) GetLeadsInternal(searchFilter string) ([]Lead, *errortools.E
 	return leads, nil
 }
 
-func (l *Lead) ParseDates() {
+func (l *Lead) parseDates() {
 	// parse CONVERTED_DATE_UTC to time.Time
-	if l.CONVERTED_DATE_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.CONVERTED_DATE_UTC+" +0000 UTC")
+	if l.ConvertedDateUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.ConvertedDateUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		l.ConvertedDate = &t
+		l.ConvertedDateT = &t
 	}
 
 	// parse DATE_CREATED_UTC to time.Time
-	if l.DATE_CREATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DATE_CREATED_UTC+" +0000 UTC")
+	if l.DateCreateUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DateCreateUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		l.DateCreated = &t
+		l.DateCreatedT = &t
 	}
 
 	// parse DATE_UPDATED_UTC to time.Time
-	if l.DATE_UPDATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DATE_UPDATED_UTC+" +0000 UTC")
+	if l.DateUpdatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DateUpdatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		l.DateUpdated = &t
+		l.DateUpdatedT = &t
 	}
 
 	// parse LAST_ACTIVITY_DATE_UTC to time.Time
-	if l.LAST_ACTIVITY_DATE_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.LAST_ACTIVITY_DATE_UTC+" +0000 UTC")
+	if l.LastActivityDateUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.LastActivityDateUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		l.LastActivityDate = &t
+		l.LastActivityDateT = &t
 	}
 
 	// parse NEXT_ACTIVITY_DATE_UTC to time.Time
-	if l.NEXT_ACTIVITY_DATE_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.NEXT_ACTIVITY_DATE_UTC+" +0000 UTC")
+	if l.NextActivityDateUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.NextActivityDateUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		l.NextActivityDate = &t
+		l.NextActivityDateT = &t
 	}
 }

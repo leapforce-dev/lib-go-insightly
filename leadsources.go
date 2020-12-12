@@ -10,10 +10,10 @@ import (
 // LeadSource stores LeadSource from Insightly
 //
 type LeadSource struct {
-	LEAD_SOURCE_ID int    `json:"LEAD_SOURCE_ID"`
-	LEAD_SOURCE    string `json:"LEAD_SOURCE"`
-	DEFAULT_VALUE  bool   `json:"DEFAULT_VALUE"`
-	FIELD_ORDER    int    `json:"FIELD_ORDER"`
+	LeadSourceID int    `json:"LEAD_SOURCE_ID"`
+	LeadSource   string `json:"LEAD_SOURCE"`
+	DefaultValue bool   `json:"DEFAULT_VALUE"`
+	FieldOrder   int    `json:"FIELD_ORDER"`
 }
 
 // GetLeadSources returns all leadSources
@@ -27,12 +27,12 @@ func (i *Insightly) GetLeadSources() ([]LeadSource, *errortools.Error) {
 	leadSources := []LeadSource{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		ls := []LeadSource{}
 
-		e := i.Get(url, &ls)
+		_, _, e := i.get(url, nil, &ls)
 		if e != nil {
 			return nil, e
 		}

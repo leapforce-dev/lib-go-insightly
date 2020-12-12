@@ -1,7 +1,6 @@
 package insightly
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -12,55 +11,55 @@ import (
 // Organisation stores Organisation from Insightly
 //
 type Organisation struct {
-	ORGANISATION_ID          int           `json:"ORGANISATION_ID"`
-	ORGANISATION_NAME        string        `json:"ORGANISATION_NAME"`
-	BACKGROUND               string        `json:"BACKGROUND"`
-	IMAGE_URL                string        `json:"IMAGE_URL"`
-	OWNER_USER_ID            int           `json:"OWNER_USER_ID"`
-	DATE_CREATED_UTC         string        `json:"DATE_CREATED_UTC"`
-	DATE_UPDATED_UTC         string        `json:"DATE_UPDATED_UTC"`
-	LAST_ACTIVITY_DATE_UTC   string        `json:"LAST_ACTIVITY_DATE_UTC"`
-	NEXT_ACTIVITY_DATE_UTC   string        `json:"NEXT_ACTIVITY_DATE_UTC"`
-	CREATED_USER_ID          int           `json:"CREATED_USER_ID"`
-	PHONE                    string        `json:"PHONE"`
-	PHONE_FAX                string        `json:"PHONE_FAX"`
-	WEBSITE                  string        `json:"WEBSITE"`
-	ADDRESS_BILLING_STREET   string        `json:"ADDRESS_BILLING_STREET"`
-	ADDRESS_BILLING_CITY     string        `json:"ADDRESS_BILLING_CITY"`
-	ADDRESS_BILLING_STATE    string        `json:"ADDRESS_BILLING_STATE"`
-	ADDRESS_BILLING_COUNTRY  string        `json:"ADDRESS_BILLING_COUNTRY"`
-	ADDRESS_BILLING_POSTCODE string        `json:"ADDRESS_BILLING_POSTCODE"`
-	ADDRESS_SHIP_STREET      string        `json:"ADDRESS_SHIP_STREET"`
-	ADDRESS_SHIP_CITY        string        `json:"ADDRESS_SHIP_CITY"`
-	ADDRESS_SHIP_STATE       string        `json:"ADDRESS_SHIP_STATE"`
-	ADDRESS_SHIP_COUNTRY     string        `json:"ADDRESS_SHIP_COUNTRY"`
-	ADDRESS_SHIP_POSTCODE    string        `json:"ADDRESS_SHIP_POSTCODE"`
-	SOCIAL_LINKEDIN          string        `json:"SOCIAL_LINKEDIN"`
-	SOCIAL_FACEBOOK          string        `json:"SOCIAL_FACEBOOK"`
-	SOCIAL_TWITTER           string        `json:"SOCIAL_TWITTER"`
-	CUSTOMFIELDS             []CustomField `json:"CUSTOMFIELDS"`
-	TAGS                     []Tag         `json:"TAGS"`
-	DATES                    []Date        `json:"DATES"`
-	EMAILDOMAINS             []EmailDomain `json:"EMAILDOMAINS"`
-	DateCreated              *time.Time
-	DateUpdated              *time.Time
-	LastActivityDate         *time.Time
-	NextActivityDate         *time.Time
+	OrganisationID         int           `json:"ORGANISATION_ID"`
+	OrganisationName       string        `json:"ORGANISATION_NAME"`
+	Background             string        `json:"BACKGROUND"`
+	ImageURL               string        `json:"IMAGE_URL"`
+	OwnerUserID            int           `json:"OWNER_USER_ID"`
+	DateCreatedUTC         string        `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC         string        `json:"DATE_UPDATED_UTC"`
+	LastActivityDateUTC    string        `json:"LAST_ACTIVITY_DATE_UTC"`
+	NextActivityDateUTC    string        `json:"NEXT_ACTIVITY_DATE_UTC"`
+	CreatedUserID          int           `json:"CREATED_USER_ID"`
+	Phone                  string        `json:"PHONE"`
+	PhoneFax               string        `json:"PHONE_FAX"`
+	Website                string        `json:"WEBSITE"`
+	AddressBillingStreet   string        `json:"ADDRESS_BILLING_STREET"`
+	AddressBillingCity     string        `json:"ADDRESS_BILLING_CITY"`
+	AddressBillingState    string        `json:"ADDRESS_BILLING_STATE"`
+	AddressBillingCountry  string        `json:"ADDRESS_BILLING_COUNTRY"`
+	AddressBillingPostcode string        `json:"ADDRESS_BILLING_POSTCODE"`
+	AddressShipStreet      string        `json:"ADDRESS_SHIP_STREET"`
+	AddressShipCity        string        `json:"ADDRESS_SHIP_CITY"`
+	AddressShipState       string        `json:"ADDRESS_SHIP_STATE"`
+	AddressShipCountry     string        `json:"ADDRESS_SHIP_COUNTRY"`
+	AddressShipPostcode    string        `json:"ADDRESS_SHIP_POSTCODE"`
+	SocialLinkedin         string        `json:"SOCIAL_LINKEDIN"`
+	SocialFacebook         string        `json:"SOCIAL_FACEBOOK"`
+	SocialTwitter          string        `json:"SOCIAL_TWITTER"`
+	CustomFields           []CustomField `json:"CUSTOMFIELDS"`
+	Tags                   []Tag         `json:"TAGS"`
+	Dates                  []Date        `json:"DATES"`
+	EmailDomains           []EmailDomain `json:"EMAILDOMAINS"`
+	DateCreatedT           *time.Time
+	DateUpdatedT           *time.Time
+	LastActivityDateT      *time.Time
+	NextActivityDateT      *time.Time
 }
 
 func (i *Insightly) GetOrganisation(id int) (*Organisation, *errortools.Error) {
 	urlStr := "%sOrganisations/%v"
-	url := fmt.Sprintf(urlStr, i.apiURL, id)
+	url := fmt.Sprintf(urlStr, apiURL, id)
 	//fmt.Println(url)
 
 	o := Organisation{}
 
-	e := i.Get(url, &o)
+	_, _, e := i.get(url, nil, &o)
 	if e != nil {
 		return nil, e
 	}
 
-	o.ParseDates()
+	o.parseDates()
 
 	return &o, nil
 }
@@ -105,18 +104,18 @@ func (i *Insightly) GetOrganisationsInternal(searchFilter string) ([]Organisatio
 	organisations := []Organisation{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		os := []Organisation{}
 
-		err := i.Get(url, &os)
-		if err != nil {
-			return nil, err
+		_, _, e := i.get(url, nil, &os)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, o := range os {
-			o.ParseDates()
+			o.parseDates()
 			organisations = append(organisations, o)
 		}
 
@@ -131,44 +130,44 @@ func (i *Insightly) GetOrganisationsInternal(searchFilter string) ([]Organisatio
 	return organisations, nil
 }
 
-func (o *Organisation) ParseDates() {
+func (o *Organisation) parseDates() {
 	// parse DATE_CREATED_UTC to time.Time
-	if o.DATE_CREATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_CREATED_UTC+" +0000 UTC")
+	if o.DateCreatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DateCreatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.DateCreated = &t
+		o.DateCreatedT = &t
 	}
 
 	// parse DATE_UPDATED_UTC to time.Time
-	if o.DATE_UPDATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
+	if o.DateUpdatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DateUpdatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.DateUpdated = &t
+		o.DateUpdatedT = &t
 	}
 
 	// parse LAST_ACTIVITY_DATE_UTC to time.Time
-	if o.LAST_ACTIVITY_DATE_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.LAST_ACTIVITY_DATE_UTC+" +0000 UTC")
+	if o.LastActivityDateUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.LastActivityDateUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.LastActivityDate = &t
+		o.LastActivityDateT = &t
 	}
 
 	// parse NEXT_ACTIVITY_DATE_UTC to time.Time
-	if o.NEXT_ACTIVITY_DATE_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.NEXT_ACTIVITY_DATE_UTC+" +0000 UTC")
+	if o.NextActivityDateUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.NextActivityDateUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.NextActivityDate = &t
+		o.NextActivityDateT = &t
 	}
 
 	// parse dates in DATES
-	for _, d := range o.DATES {
-		d.ParseDates()
+	for _, d := range o.Dates {
+		d.parseDates()
 	}
 }
 
 func (i *Insightly) UpdateOrganisationRemoveCustomField(organisationID int, customFieldName string) *errortools.Error {
 	urlStr := "%sOrganisations"
-	url := fmt.Sprintf(urlStr, i.apiURL)
+	url := fmt.Sprintf(urlStr, apiURL)
 
 	type CustomFieldDelete struct {
 		FIELD_NAME      string
@@ -185,12 +184,7 @@ func (i *Insightly) UpdateOrganisationRemoveCustomField(organisationID int, cust
 	o1.CUSTOMFIELDS = make([]CustomFieldDelete, 1)
 	o1.CUSTOMFIELDS[0] = CustomFieldDelete{customFieldName, customFieldName}
 
-	b, err := json.Marshal(o1)
-	if err != nil {
-		return errortools.ErrorMessage(err)
-	}
-
-	e := i.Put(url, b)
+	_, _, e := i.put(url, o1, nil)
 	if e != nil {
 		return e
 	}

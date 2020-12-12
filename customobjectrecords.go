@@ -1,7 +1,6 @@
 package insightly
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -12,17 +11,17 @@ import (
 // CustomObjectRecord stores CustomObjectRecord from Insightly
 //
 type CustomObjectRecord struct {
-	RECORD_ID        int           `json:"RECORD_ID"`
-	RECORD_NAME      string        `json:"RECORD_NAME"`
-	OWNER_USER_ID    int           `json:"OWNER_USER_ID"`
-	DATE_CREATED_UTC string        `json:"DATE_CREATED_UTC"`
-	DATE_UPDATED_UTC string        `json:"DATE_UPDATED_UTC"`
-	CREATED_USER_ID  int           `json:"CREATED_USER_ID"`
-	VISIBLE_TO       string        `json:"VISIBLE_TO"`
-	VISIBLE_TEAM_ID  int           `json:"VISIBLE_TEAM_ID"`
-	CUSTOMFIELDS     []CustomField `json:"CUSTOMFIELDS"`
-	DateCreated      *time.Time    `json:"-"`
-	DateUpdated      *time.Time    `json:"-"`
+	RecordID       int           `json:"RECORD_ID"`
+	RecordName     string        `json:"RECORD_NAME"`
+	OwnerUserID    int           `json:"OWNER_USER_ID"`
+	DateCreatedUTC string        `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC string        `json:"DATE_UPDATED_UTC"`
+	CreatedUserID  int           `json:"CREATED_USER_ID"`
+	VisibleTo      string        `json:"VISIBLE_TO"`
+	VisibleTeamID  int           `json:"VISIBLE_TEAM_ID"`
+	CustomFields   []CustomField `json:"CUSTOMFIELDS"`
+	DateCreatedT   *time.Time    `json:"-"`
+	DateUpdatedT   *time.Time    `json:"-"`
 }
 
 // GetCustomObjectRecords returns all customobjectrecords
@@ -57,12 +56,12 @@ func (i *Insightly) GetCustomObjectRecordsInternal(objectName string, searchFilt
 	customobjectrecords := []CustomObjectRecord{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, objectName, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, objectName, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		os := []CustomObjectRecord{}
 
-		err := i.Get(url, &os)
+		_, _, err := i.get(url, nil, &os)
 		if err != nil {
 			return nil, err
 		}
@@ -88,15 +87,10 @@ func (i *Insightly) GetCustomObjectRecordsInternal(objectName string, searchFilt
 func (i *Insightly) UpdateCustomObjectRecords(customObjectName string, customObjectRecord CustomObjectRecord) *errortools.Error {
 	urlStr := "%s%s"
 
-	url := fmt.Sprintf(urlStr, i.apiURL, customObjectName)
+	url := fmt.Sprintf(urlStr, apiURL, customObjectName)
 	//fmt.Println(url)
 
-	b, err := json.Marshal(customObjectRecord)
-	if err != nil {
-		return errortools.ErrorMessage(err)
-	}
-
-	e := i.Put(url, b)
+	_, _, e := i.put(url, customObjectRecord, nil)
 	if e != nil {
 		return e
 	}
@@ -106,16 +100,16 @@ func (i *Insightly) UpdateCustomObjectRecords(customObjectName string, customObj
 
 func (o *CustomObjectRecord) ParseDates() {
 	// parse DATE_CREATED_UTC to time.Time
-	if o.DATE_CREATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_CREATED_UTC+" +0000 UTC")
+	if o.DateCreatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DateCreatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.DateCreated = &t
+		o.DateCreatedT = &t
 	}
 
 	// parse DATE_UPDATED_UTC to time.Time
-	if o.DATE_UPDATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
+	if o.DateUpdatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DateUpdatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.DateUpdated = &t
+		o.DateUpdatedT = &t
 	}
 }

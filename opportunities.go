@@ -11,53 +11,53 @@ import (
 // Opportunity stores Opportunity from Insightly
 //
 type Opportunity struct {
-	OPPORTUNITY_ID         int           `json:"OPPORTUNITY_ID"`
-	OPPORTUNITY_NAME       string        `json:"OPPORTUNITY_NAME"`
-	OPPORTUNITY_DETAILS    string        `json:"OPPORTUNITY_DETAILS"`
-	OPPORTUNITY_STATE      string        `json:"OPPORTUNITY_STATE"`
-	RESPONSIBLE_USER_ID    int           `json:"RESPONSIBLE_USER_ID"`
-	CATEGORY_ID            int           `json:"CATEGORY_ID"`
-	IMAGE_URL              string        `json:"IMAGE_URL"`
-	BID_CURRENCY           string        `json:"BID_CURRENCY"`
-	BID_AMOUNT             float32       `json:"BID_AMOUNT"`
-	BID_TYPE               string        `json:"BID_TYPE"`
-	BID_DURATION           int           `json:"BID_DURATION"`
-	ACTUAL_CLOSE_DATE      string        `json:"ACTUAL_CLOSE_DATE"`
-	DATE_CREATED_UTC       string        `json:"DATE_CREATED_UTC"`
-	DATE_UPDATED_UTC       string        `json:"DATE_UPDATED_UTC"`
-	OPPORTUNITY_VALUE      float32       `json:"OPPORTUNITY_VALUE"`
-	PROBABILITY            int           `json:"PROBABILITY"`
-	FORECAST_CLOSE_DATE    string        `json:"FORECAST_CLOSE_DATE"`
-	OWNER_USER_ID          int           `json:"OWNER_USER_ID"`
-	LAST_ACTIVITY_DATE_UTC string        `json:"LAST_ACTIVITY_DATE_UTC"`
-	NEXT_ACTIVITY_DATE_UTC string        `json:"NEXT_ACTIVITY_DATE_UTC"`
-	PIPELINE_ID            int           `json:"PIPELINE_ID"`
-	STAGE_ID               int           `json:"STAGE_ID"`
-	CREATED_USER_ID        int           `json:"CREATED_USER_ID"`
-	ORGANISATION_ID        int           `json:"ORGANISATION_ID"`
-	CUSTOMFIELDS           []CustomField `json:"CUSTOMFIELDS"`
-	TAGS                   []Tag         `json:"TAGS"`
-	ActualCloseDate        *time.Time
-	DateCreated            *time.Time
-	DateUpdated            *time.Time
-	ForecastCloseDate      *time.Time
-	LastActivityDate       *time.Time
-	NextActivityDate       *time.Time
+	OpportunityID       int           `json:"OPPORTUNITY_ID"`
+	OpportunityName     string        `json:"OPPORTUNITY_NAME"`
+	OpportunityDetails  string        `json:"OPPORTUNITY_DETAILS"`
+	OpportunityState    string        `json:"OPPORTUNITY_STATE"`
+	ResponsibleUserID   int           `json:"RESPONSIBLE_USER_ID"`
+	CategoryID          int           `json:"CATEGORY_ID"`
+	ImageURL            string        `json:"IMAGE_URL"`
+	BidCurrency         string        `json:"BID_CURRENCY"`
+	BidAmount           float32       `json:"BID_AMOUNT"`
+	BidType             string        `json:"BID_TYPE"`
+	BidDuration         int           `json:"BID_DURATION"`
+	ActualCloseDate     string        `json:"ACTUAL_CLOSE_DATE"`
+	DateCreatedUTC      string        `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC      string        `json:"DATE_UPDATED_UTC"`
+	OpportunityValue    float32       `json:"OPPORTUNITY_VALUE"`
+	Probability         int           `json:"PROBABILITY"`
+	ForecastCloseDate   string        `json:"FORECAST_CLOSE_DATE"`
+	OwnerUserID         int           `json:"OWNER_USER_ID"`
+	LastActivityDateUTC string        `json:"LAST_ACTIVITY_DATE_UTC"`
+	NextActivityDateUTC string        `json:"NEXT_ACTIVITY_DATE_UTC"`
+	PipelineID          int           `json:"PIPELINE_ID"`
+	StageID             int           `json:"STAGE_ID"`
+	CreatedUserID       int           `json:"CREATED_USER_ID"`
+	OrganisationID      int           `json:"ORGANISATION_ID"`
+	CustomFields        []CustomField `json:"CUSTOMFIELDS"`
+	Tags                []Tag         `json:"TAGS"`
+	ActualCloseDateT    *time.Time
+	DateCreatedT        *time.Time
+	DateUpdatedT        *time.Time
+	ForecastCloseDateT  *time.Time
+	LastActivityDateT   *time.Time
+	NextActivityDateT   *time.Time
 }
 
 func (i *Insightly) GetOpportunity(id int) (*Opportunity, *errortools.Error) {
 	urlStr := "%sOpportunities/%v"
-	url := fmt.Sprintf(urlStr, i.apiURL, id)
+	url := fmt.Sprintf(urlStr, apiURL, id)
 	//fmt.Println(url)
 
 	o := Opportunity{}
 
-	err := i.Get(url, &o)
-	if err != nil {
-		return nil, err
+	_, _, e := i.get(url, nil, &o)
+	if e != nil {
+		return nil, e
 	}
 
-	o.ParseDates()
+	o.parseDates()
 
 	return &o, nil
 }
@@ -102,18 +102,18 @@ func (i *Insightly) GetOpportunitiesInternal(searchFilter string) ([]Opportunity
 	opportunities := []Opportunity{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		os := []Opportunity{}
 
-		err := i.Get(url, &os)
-		if err != nil {
-			return nil, err
+		_, _, e := i.get(url, nil, &os)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, o := range os {
-			o.ParseDates()
+			o.parseDates()
 			opportunities = append(opportunities, o)
 		}
 
@@ -128,46 +128,46 @@ func (i *Insightly) GetOpportunitiesInternal(searchFilter string) ([]Opportunity
 	return opportunities, nil
 }
 
-func (o *Opportunity) ParseDates() {
+func (o *Opportunity) parseDates() {
 	// parse ACTUAL_CLOSE_DATE to time.Time
-	if o.ACTUAL_CLOSE_DATE != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.ACTUAL_CLOSE_DATE+" +0000 UTC")
+	if o.ActualCloseDate != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.ActualCloseDate+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.ActualCloseDate = &t
+		o.ActualCloseDateT = &t
 	}
 
 	// parse DATE_CREATED_UTC to time.Time
-	if o.DATE_CREATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_CREATED_UTC+" +0000 UTC")
+	if o.DateCreatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DateCreatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.DateCreated = &t
+		o.DateCreatedT = &t
 	}
 
 	// parse DATE_UPDATED_UTC to time.Time
-	if o.DATE_UPDATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DATE_UPDATED_UTC+" +0000 UTC")
+	if o.DateUpdatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.DateUpdatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.DateUpdated = &t
+		o.DateUpdatedT = &t
 	}
 
 	// parse FORECAST_CLOSE_DATE to time.Time
-	if o.FORECAST_CLOSE_DATE != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.FORECAST_CLOSE_DATE+" +0000 UTC")
+	if o.ForecastCloseDate != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.ForecastCloseDate+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.ForecastCloseDate = &t
+		o.ForecastCloseDateT = &t
 	}
 
 	// parse LAST_ACTIVITY_DATE_UTC to time.Time
-	if o.LAST_ACTIVITY_DATE_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.LAST_ACTIVITY_DATE_UTC+" +0000 UTC")
+	if o.LastActivityDateUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.LastActivityDateUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.LastActivityDate = &t
+		o.LastActivityDateT = &t
 	}
 
 	// parse NEXT_ACTIVITY_DATE_UTC to time.Time
-	if o.NEXT_ACTIVITY_DATE_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.NEXT_ACTIVITY_DATE_UTC+" +0000 UTC")
+	if o.NextActivityDateUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", o.NextActivityDateUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		o.NextActivityDate = &t
+		o.NextActivityDateT = &t
 	}
 }

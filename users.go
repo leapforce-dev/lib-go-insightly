@@ -11,26 +11,26 @@ import (
 // User stores User from Insightly
 //
 type User struct {
-	USER_ID                  int    `json:"USER_ID"`
-	CONTACT_ID               int    `json:"CONTACT_ID"`
-	FIRST_NAME               string `json:"FIRST_NAME"`
-	LAST_NAME                string `json:"LAST_NAME"`
-	TIMEZONE_ID              string `json:"TIMEZONE_ID"`
-	EMAIL_ADDRESS            string `json:"EMAIL_ADDRESS"`
-	EMAIL_DROPBOX_IDENTIFIER string `json:"EMAIL_DROPBOX_IDENTIFIER"`
-	EMAIL_DROPBOX_ADDRESS    string `json:"EMAIL_DROPBOX_ADDRESS"`
-	ADMINISTRATOR            bool   `json:"ADMINISTRATOR"`
-	ACCOUNT_OWNER            bool   `json:"ACCOUNT_OWNER"`
-	ACTIVE                   bool   `json:"ACTIVE"`
-	DATE_CREATED_UTC         string `json:"DATE_CREATED_UTC"`
-	DATE_UPDATED_UTC         string `json:"DATE_UPDATED_UTC"`
-	USER_CURRENCY            string `json:"USER_CURRENCY"`
-	CONTACT_DISPLAY          string `json:"CONTACT_DISPLAY"`
-	CONTACT_ORDER            string `json:"CONTACT_ORDER"`
-	TASK_WEEK_START          int    `json:"TASK_WEEK_START"`
-	INSTANCE_ID              int    `json:"INSTANCE_ID"`
-	DateCreated              *time.Time
-	DateUpdated              *time.Time
+	UserID                 int    `json:"USER_ID"`
+	ContactID              int    `json:"CONTACT_ID"`
+	FirstName              string `json:"FIRST_NAME"`
+	LastName               string `json:"LAST_NAME"`
+	TimezoneID             string `json:"TIMEZONE_ID"`
+	EmailAddress           string `json:"EMAIL_ADDRESS"`
+	EmailDropboxIdentifier string `json:"EMAIL_DROPBOX_IDENTIFIER"`
+	EmailDropboxAddress    string `json:"EMAIL_DROPBOX_ADDRESS"`
+	Administrator          bool   `json:"ADMINISTRATOR"`
+	AccountOwner           bool   `json:"ACCOUNT_OWNER"`
+	Active                 bool   `json:"ACTIVE"`
+	DateCreatedUTC         string `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC         string `json:"DATE_UPDATED_UTC"`
+	UserCurrency           string `json:"USER_CURRENCY"`
+	ContactDisplay         string `json:"CONTACT_DISPLAY"`
+	ContactOrder           string `json:"CONTACT_ORDER"`
+	TaskWeekStart          int    `json:"TASK_WEEK_START"`
+	InstanceID             int    `json:"INSTANCE_ID"`
+	DateCreatedT           *time.Time
+	DateUpdatedT           *time.Time
 }
 
 // GetUsers returns all users
@@ -50,18 +50,18 @@ func (i *Insightly) GetUsersInternal() ([]User, *errortools.Error) {
 	users := []User{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		ls := []User{}
 
-		e := i.Get(url, &ls)
+		_, _, e := i.get(url, nil, &ls)
 		if e != nil {
 			return nil, e
 		}
 
 		for _, l := range ls {
-			l.ParseDates()
+			l.parseDates()
 			users = append(users, l)
 		}
 
@@ -76,18 +76,18 @@ func (i *Insightly) GetUsersInternal() ([]User, *errortools.Error) {
 	return users, nil
 }
 
-func (l *User) ParseDates() {
+func (l *User) parseDates() {
 	// parse DATE_CREATED_UTC to time.Time
-	if l.DATE_CREATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DATE_CREATED_UTC+" +0000 UTC")
+	if l.DateCreatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DateCreatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		l.DateCreated = &t
+		l.DateCreatedT = &t
 	}
 
 	// parse DATE_UPDATED_UTC to time.Time
-	if l.DATE_UPDATED_UTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DATE_UPDATED_UTC+" +0000 UTC")
+	if l.DateUpdatedUTC != "" {
+		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", l.DateUpdatedUTC+" +0000 UTC")
 		//errortools.Fatal(err)
-		l.DateUpdated = &t
+		l.DateUpdatedT = &t
 	}
 }

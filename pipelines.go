@@ -10,11 +10,11 @@ import (
 // Pipeline stores Pipeline from Insightly
 //
 type Pipeline struct {
-	PIPELINE_ID       int    `json:"PIPELINE_ID"`
-	PIPELINE_NAME     string `json:"PIPELINE_NAME"`
-	FOR_OPPORTUNITIES bool   `json:"FOR_OPPORTUNITIES"`
-	FOR_PROJECTS      bool   `json:"FOR_PROJECTS"`
-	OWNER_USER_ID     int    `json:"OWNER_USER_ID"`
+	PipelineID       int    `json:"PIPELINE_ID"`
+	PipelineName     string `json:"PIPELINE_NAME"`
+	ForOpportunities bool   `json:"FOR_OPPORTUNITIES"`
+	ForProjects      bool   `json:"FOR_PROJECTS"`
+	OwnerUserID      int    `json:"OWNER_USER_ID"`
 }
 
 // GetPipelines returns all pipelines
@@ -34,12 +34,12 @@ func (i *Insightly) GetPipelinesInternal() ([]Pipeline, *errortools.Error) {
 	pipelines := []Pipeline{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		ls := []Pipeline{}
 
-		e := i.Get(url, &ls)
+		_, _, e := i.get(url, nil, &ls)
 		if e != nil {
 			return nil, e
 		}

@@ -10,9 +10,9 @@ import (
 // TeamMember stores TeamMember from Insightly
 //
 type TeamMember struct {
-	PERMISSION_ID  int `json:"PERMISSION_ID"`
-	TEAM_ID        int `json:"TEAM_ID"`
-	MEMBER_USER_ID int `json:"MEMBER_USER_ID"`
+	PermissionID int `json:"PERMISSION_ID"`
+	TeamID       int `json:"TEAM_ID"`
+	MemberUserID int `json:"MEMBER_USER_ID"`
 }
 
 // GetTeamMembers returns all TeamMembers
@@ -32,12 +32,12 @@ func (i *Insightly) GetTeamMembersInternal() ([]TeamMember, *errortools.Error) {
 	teamMembers := []TeamMember{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		oc := []TeamMember{}
 
-		e := i.Get(url, &oc)
+		_, _, e := i.get(url, nil, &oc)
 		if e != nil {
 			return nil, e
 		}

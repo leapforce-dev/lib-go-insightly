@@ -10,12 +10,12 @@ import (
 // PipelineStage stores PipelineStage from Insightly
 //
 type PipelineStage struct {
-	STAGE_ID       int    `json:"STAGE_ID"`
-	PIPELINE_ID    int    `json:"PIPELINE_ID"`
-	STAGE_NAME     string `json:"STAGE_NAME"`
-	STAGE_ORDER    int    `json:"STAGE_ORDER"`
-	ACTIVITYSET_ID int    `json:"ACTIVITYSET_ID,omitempty"`
-	OWNER_USER_ID  int    `json:"OWNER_USER_ID"`
+	StageID       int    `json:"STAGE_ID"`
+	PipelineID    int    `json:"PIPELINE_ID"`
+	StageName     string `json:"STAGE_NAME"`
+	StageOrder    int    `json:"STAGE_ORDER"`
+	ActivitySetID int    `json:"ACTIVITYSET_ID,omitempty"`
+	OwnerUserID   int    `json:"OWNER_USER_ID"`
 }
 
 // GetPipelineStages returns all pipelinestages
@@ -35,12 +35,12 @@ func (i *Insightly) GetPipelineStagesInternal() ([]PipelineStage, *errortools.Er
 	pipelineStages := []PipelineStage{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, i.apiURL, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		oc := []PipelineStage{}
 
-		e := i.Get(url, &oc)
+		_, _, e := i.get(url, nil, &oc)
 		if e != nil {
 			return nil, e
 		}

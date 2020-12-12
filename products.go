@@ -31,13 +31,13 @@ type Product struct {
 }
 
 func (i *Insightly) GetProduct(id int) (*Product, *errortools.Error) {
-	urlStr := "%sProduct/%v"
-	url := fmt.Sprintf(urlStr, apiURL, id)
-	//fmt.Println(url)
+	endpointStr := "%sProduct/%v"
+	endpoint := fmt.Sprintf(endpointStr, apiURL, id)
+	//fmt.Println(endpoint)
 
 	o := Product{}
 
-	_, _, e := i.get(url, nil, &o)
+	_, _, e := i.get(endpoint, nil, &o)
 	if e != nil {
 		return nil, e
 	}
@@ -79,7 +79,7 @@ func (i *Insightly) GetProductsInternal(searchFilter string) ([]Product, *errort
 		searchString = "?"
 	}
 
-	urlStr := "%sProduct%sskip=%s&top=%s"
+	endpointStr := "Product%sskip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -87,12 +87,12 @@ func (i *Insightly) GetProductsInternal(searchFilter string) ([]Product, *errort
 	products := []Product{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(url)
+		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Println(endpoint)
 
 		os := []Product{}
 
-		_, _, e := i.get(url, nil, &os)
+		_, _, e := i.get(endpoint, nil, &os)
 		if e != nil {
 			return nil, e
 		}

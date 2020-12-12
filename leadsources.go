@@ -19,7 +19,7 @@ type LeadSource struct {
 // GetLeadSources returns all leadSources
 //
 func (i *Insightly) GetLeadSources() ([]LeadSource, *errortools.Error) {
-	urlStr := "%sLeadSources?skip=%s&top=%s"
+	endpointStr := "LeadSources?skip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -27,12 +27,12 @@ func (i *Insightly) GetLeadSources() ([]LeadSource, *errortools.Error) {
 	leadSources := []LeadSource{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(url)
+		endpoint := fmt.Sprintf(endpointStr, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Println(endpoint)
 
 		ls := []LeadSource{}
 
-		_, _, e := i.get(url, nil, &ls)
+		_, _, e := i.get(endpoint, nil, &ls)
 		if e != nil {
 			return nil, e
 		}

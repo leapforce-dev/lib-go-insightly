@@ -10,7 +10,7 @@ import (
 // LeadStatus stores LeadStatus from Insightly
 //
 type LeadStatus struct {
-	LeadStatusID int    `json:"LEAD_STATUS_ID"`
+	LeadStatusID  int    `json:"LEAD_STATUS_ID"`
 	LeadSTatus    string `json:"LEAD_STATUS"`
 	DefaultStatus bool   `json:"DEFAULT_STATUS"`
 	StatusType    int    `json:"STATUS_TYPE"`
@@ -20,7 +20,7 @@ type LeadStatus struct {
 // GetLeadStatuses returns all leadStatuses
 //
 func (i *Insightly) GetLeadStatuses() ([]LeadStatus, *errortools.Error) {
-	urlStr := "%sLeadStatuses?skip=%s&top=%s"
+	endpointStr := "LeadStatuses?skip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -28,12 +28,12 @@ func (i *Insightly) GetLeadStatuses() ([]LeadStatus, *errortools.Error) {
 	leadStatuses := []LeadStatus{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(url)
+		endpoint := fmt.Sprintf(endpointStr, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Println(endpoint)
 
 		ls := []LeadStatus{}
 
-		_, _, e := i.get(url, nil, &ls)
+		_, _, e := i.get(endpoint, nil, &ls)
 		if e != nil {
 			return nil, e
 		}

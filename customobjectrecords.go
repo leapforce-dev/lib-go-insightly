@@ -48,7 +48,7 @@ func (i *Insightly) GetCustomObjectRecordsInternal(objectName string, searchFilt
 		searchString = "?"
 	}
 
-	urlStr := "%s%s%sskip=%s&top=%s"
+	endpointStr := "%s%sskip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -56,12 +56,12 @@ func (i *Insightly) GetCustomObjectRecordsInternal(objectName string, searchFilt
 	customobjectrecords := []CustomObjectRecord{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, objectName, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(url)
+		endpoint := fmt.Sprintf(endpointStr, objectName, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Println(endpoint)
 
 		os := []CustomObjectRecord{}
 
-		_, _, err := i.get(url, nil, &os)
+		_, _, err := i.get(endpoint, nil, &os)
 		if err != nil {
 			return nil, err
 		}
@@ -85,12 +85,10 @@ func (i *Insightly) GetCustomObjectRecordsInternal(objectName string, searchFilt
 // GetCustomObjectRecordsInternal is the generic function retrieving customobjectrecords from Insightly
 //
 func (i *Insightly) UpdateCustomObjectRecords(customObjectName string, customObjectRecord CustomObjectRecord) *errortools.Error {
-	urlStr := "%s%s"
+	endpoint := customObjectName
+	//fmt.Println(endpoint)
 
-	url := fmt.Sprintf(urlStr, apiURL, customObjectName)
-	//fmt.Println(url)
-
-	_, _, e := i.put(url, customObjectRecord, nil)
+	_, _, e := i.put(endpoint, customObjectRecord, nil)
 	if e != nil {
 		return e
 	}

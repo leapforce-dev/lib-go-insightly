@@ -30,7 +30,7 @@ func (i *Insightly) GetTeams() ([]Team, *errortools.Error) {
 // GetTeamsInternal is the generic function retrieving teams from Insightly
 //
 func (i *Insightly) GetTeamsInternal() ([]Team, *errortools.Error) {
-	urlStr := "%sTeams?skip=%s&top=%s"
+	urlStr := "Teams?skip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -38,7 +38,7 @@ func (i *Insightly) GetTeamsInternal() ([]Team, *errortools.Error) {
 	teams := []Team{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		ls := []Team{}

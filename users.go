@@ -42,7 +42,7 @@ func (i *Insightly) GetUsers() ([]User, *errortools.Error) {
 // GetUsersInternal is the generic function retrieving users from Insightly
 //
 func (i *Insightly) GetUsersInternal() ([]User, *errortools.Error) {
-	urlStr := "%sUsers?skip=%s&top=%s"
+	urlStr := "Users?skip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -50,7 +50,7 @@ func (i *Insightly) GetUsersInternal() ([]User, *errortools.Error) {
 	users := []User{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
+		url := fmt.Sprintf(urlStr, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(url)
 
 		ls := []User{}

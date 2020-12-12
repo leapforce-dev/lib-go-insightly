@@ -48,13 +48,13 @@ type Organisation struct {
 }
 
 func (i *Insightly) GetOrganisation(id int) (*Organisation, *errortools.Error) {
-	urlStr := "%sOrganisations/%v"
-	url := fmt.Sprintf(urlStr, apiURL, id)
-	//fmt.Println(url)
+	endpointStr := "%sOrganisations/%v"
+	endpoint := fmt.Sprintf(endpointStr, apiURL, id)
+	//fmt.Println(endpoint)
 
 	o := Organisation{}
 
-	_, _, e := i.get(url, nil, &o)
+	_, _, e := i.get(endpoint, nil, &o)
 	if e != nil {
 		return nil, e
 	}
@@ -96,7 +96,7 @@ func (i *Insightly) GetOrganisationsInternal(searchFilter string) ([]Organisatio
 		searchString = "?"
 	}
 
-	urlStr := "%sOrganisations%sskip=%s&top=%s"
+	endpointStr := "Organisations%sskip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -104,12 +104,12 @@ func (i *Insightly) GetOrganisationsInternal(searchFilter string) ([]Organisatio
 	organisations := []Organisation{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(url)
+		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Println(endpoint)
 
 		os := []Organisation{}
 
-		_, _, e := i.get(url, nil, &os)
+		_, _, e := i.get(endpoint, nil, &os)
 		if e != nil {
 			return nil, e
 		}
@@ -166,8 +166,7 @@ func (o *Organisation) parseDates() {
 }
 
 func (i *Insightly) UpdateOrganisationRemoveCustomField(organisationID int, customFieldName string) *errortools.Error {
-	urlStr := "%sOrganisations"
-	url := fmt.Sprintf(urlStr, apiURL)
+	endpoint := "Organisations"
 
 	type CustomFieldDelete struct {
 		FIELD_NAME      string
@@ -184,7 +183,7 @@ func (i *Insightly) UpdateOrganisationRemoveCustomField(organisationID int, cust
 	o1.CUSTOMFIELDS = make([]CustomFieldDelete, 1)
 	o1.CUSTOMFIELDS[0] = CustomFieldDelete{customFieldName, customFieldName}
 
-	_, _, e := i.put(url, o1, nil)
+	_, _, e := i.put(endpoint, o1, nil)
 	if e != nil {
 		return e
 	}

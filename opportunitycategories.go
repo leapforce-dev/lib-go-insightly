@@ -25,7 +25,7 @@ func (i *Insightly) GetOpportunityCategories() ([]OpportunityCategory, *errortoo
 // GetOpportunityCategoriesInternal is the generic function retrieving opportunitycategories from Insightly
 //
 func (i *Insightly) GetOpportunityCategoriesInternal() ([]OpportunityCategory, *errortools.Error) {
-	urlStr := "%sOpportunityCategories?skip=%s&top=%s"
+	endpointStr := "OpportunityCategories?skip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -33,12 +33,12 @@ func (i *Insightly) GetOpportunityCategoriesInternal() ([]OpportunityCategory, *
 	opportunityCategories := []OpportunityCategory{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(url)
+		endpoint := fmt.Sprintf(endpointStr, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Println(endpoint)
 
 		oc := []OpportunityCategory{}
 
-		_, _, e := i.get(url, nil, &oc)
+		_, _, e := i.get(endpoint, nil, &oc)
 		if e != nil {
 			return nil, e
 		}

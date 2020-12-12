@@ -88,7 +88,7 @@ func (i *Insightly) GetLeadsInternal(searchFilter string) ([]Lead, *errortools.E
 		searchString = "?"
 	}
 
-	urlStr := "%sLeads%sskip=%s&top=%s"
+	endpointStr := "Leads%sskip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -96,12 +96,12 @@ func (i *Insightly) GetLeadsInternal(searchFilter string) ([]Lead, *errortools.E
 	leads := []Lead{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(url)
+		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Println(endpoint)
 
 		ls := []Lead{}
 
-		_, _, e := i.get(url, nil, &ls)
+		_, _, e := i.get(endpoint, nil, &ls)
 		if e != nil {
 			return nil, e
 		}

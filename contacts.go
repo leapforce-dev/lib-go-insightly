@@ -88,7 +88,7 @@ func (i *Insightly) GetContactsInternal(searchFilter string) ([]Contact, *errort
 		searchString = "?"
 	}
 
-	urlStr := "%sContacts%sskip=%s&top=%s"
+	endpointStr := "Contacts%sskip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -96,14 +96,14 @@ func (i *Insightly) GetContactsInternal(searchFilter string) ([]Contact, *errort
 	contacts := []Contact{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Printf(url)
+		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Printf(endpoint)
 
 		cs := []Contact{}
 
-		_, _, err := i.get(url, nil, &cs)
-		if err != nil {
-			return nil, err
+		_, _, e := i.get(endpoint, nil, &cs)
+		if e != nil {
+			return nil, e
 		}
 
 		for _, c := range cs {

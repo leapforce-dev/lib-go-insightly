@@ -40,13 +40,13 @@ type Project struct {
 }
 
 func (i *Insightly) GetProject(id int) (*Project, *errortools.Error) {
-	urlStr := "%sProjects/%v"
-	url := fmt.Sprintf(urlStr, apiURL, id)
-	//fmt.Println(url)
+	endpointStr := "%sProjects/%v"
+	endpoint := fmt.Sprintf(endpointStr, apiURL, id)
+	//fmt.Println(endpoint)
 
 	o := Project{}
 
-	_, _, e := i.get(url, nil, &o)
+	_, _, e := i.get(endpoint, nil, &o)
 	if e != nil {
 		return nil, e
 	}
@@ -88,7 +88,7 @@ func (i *Insightly) GetProjectsInternal(searchFilter string) ([]Project, *errort
 		searchString = "?"
 	}
 
-	urlStr := "%sProjects%sskip=%s&top=%s"
+	endpointStr := "Projects%sskip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -96,12 +96,12 @@ func (i *Insightly) GetProjectsInternal(searchFilter string) ([]Project, *errort
 	projects := []Project{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(url)
+		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Println(endpoint)
 
 		os := []Project{}
 
-		_, _, err := i.get(url, nil, &os)
+		_, _, err := i.get(endpoint, nil, &os)
 		if err != nil {
 			return nil, err
 		}

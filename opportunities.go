@@ -46,13 +46,13 @@ type Opportunity struct {
 }
 
 func (i *Insightly) GetOpportunity(id int) (*Opportunity, *errortools.Error) {
-	urlStr := "%sOpportunities/%v"
-	url := fmt.Sprintf(urlStr, apiURL, id)
-	//fmt.Println(url)
+	endpointStr := "%sOpportunities/%v"
+	endpoint := fmt.Sprintf(endpointStr, apiURL, id)
+	//fmt.Println(endpoint)
 
 	o := Opportunity{}
 
-	_, _, e := i.get(url, nil, &o)
+	_, _, e := i.get(endpoint, nil, &o)
 	if e != nil {
 		return nil, e
 	}
@@ -94,7 +94,7 @@ func (i *Insightly) GetOpportunitiesInternal(searchFilter string) ([]Opportunity
 		searchString = "?"
 	}
 
-	urlStr := "%sOpportunities%sskip=%s&top=%s"
+	endpointStr := "Opportunities%sskip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -102,12 +102,12 @@ func (i *Insightly) GetOpportunitiesInternal(searchFilter string) ([]Opportunity
 	opportunities := []Opportunity{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(url)
+		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Println(endpoint)
 
 		os := []Opportunity{}
 
-		_, _, e := i.get(url, nil, &os)
+		_, _, e := i.get(endpoint, nil, &os)
 		if e != nil {
 			return nil, e
 		}

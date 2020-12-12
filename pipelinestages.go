@@ -27,7 +27,7 @@ func (i *Insightly) GetPipelineStages() ([]PipelineStage, *errortools.Error) {
 // GetPipelineStagesInternal is the generic function retrieving pipelinestages from Insightly
 //
 func (i *Insightly) GetPipelineStagesInternal() ([]PipelineStage, *errortools.Error) {
-	urlStr := "%sPipelineStages?skip=%s&top=%s"
+	endpointStr := "PipelineStages?skip=%s&top=%s"
 	skip := 0
 	top := 500
 	rowCount := top
@@ -35,12 +35,12 @@ func (i *Insightly) GetPipelineStagesInternal() ([]PipelineStage, *errortools.Er
 	pipelineStages := []PipelineStage{}
 
 	for rowCount >= top {
-		url := fmt.Sprintf(urlStr, apiURL, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(url)
+		endpoint := fmt.Sprintf(endpointStr, strconv.Itoa(skip), strconv.Itoa(top))
+		//fmt.Println(endpoint)
 
 		oc := []PipelineStage{}
 
-		_, _, e := i.get(url, nil, &oc)
+		_, _, e := i.get(endpoint, nil, &oc)
 		if e != nil {
 			return nil, e
 		}

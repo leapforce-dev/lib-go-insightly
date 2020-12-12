@@ -58,8 +58,10 @@ func NewInsightly(config InsightlyConfig) (*Insightly, *errortools.Error) {
 	return i, nil
 }
 
-func (ins *Insightly) httpRequest(httpMethod string, url string, requestBody interface{}, responseModel interface{}, errorModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
+func (ins *Insightly) httpRequest(httpMethod string, endpoint string, requestBody interface{}, responseModel interface{}, errorModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
 	e := new(errortools.Error)
+
+	url := fmt.Sprintf("%s/%s", apiURL, endpoint)
 
 	request, err := func() (*http.Request, error) {
 		if requestBody == nil {
@@ -135,20 +137,20 @@ func (ins *Insightly) httpRequest(httpMethod string, url string, requestBody int
 // generic Get method
 //
 
-func (ins *Insightly) get(url string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
-	return ins.httpRequest(http.MethodGet, url, requestBody, responseModel, nil)
+func (ins *Insightly) get(endpoint string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
+	return ins.httpRequest(http.MethodGet, endpoint, requestBody, responseModel, nil)
 }
 
-func (ins *Insightly) post(url string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
-	return ins.httpRequest(http.MethodPost, url, requestBody, responseModel, nil)
+func (ins *Insightly) post(endpoint string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
+	return ins.httpRequest(http.MethodPost, endpoint, requestBody, responseModel, nil)
 }
 
-func (ins *Insightly) put(url string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
-	return ins.httpRequest(http.MethodPut, url, requestBody, responseModel, nil)
+func (ins *Insightly) put(endpoint string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
+	return ins.httpRequest(http.MethodPut, endpoint, requestBody, responseModel, nil)
 }
 
-func (ins *Insightly) delete(url string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
-	return ins.httpRequest(http.MethodDelete, url, requestBody, responseModel, nil)
+func (ins *Insightly) delete(endpoint string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
+	return ins.httpRequest(http.MethodDelete, endpoint, requestBody, responseModel, nil)
 }
 
 func unmarshalError(response *http.Response, errorModel interface{}) *errortools.Error {

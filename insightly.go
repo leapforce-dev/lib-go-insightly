@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -27,7 +28,7 @@ type Insightly struct {
 }
 
 type InsightlyConfig struct {
-	Token                 string
+	APIKey                string
 	MaxRetries            *uint
 	SecondsBetweenRetries *uint32
 }
@@ -35,11 +36,11 @@ type InsightlyConfig struct {
 func NewInsightly(config InsightlyConfig) (*Insightly, *errortools.Error) {
 	i := new(Insightly)
 
-	if config.Token == "" {
-		return nil, errortools.ErrorMessage("Insightly Token not provided")
+	if config.APIKey == "" {
+		return nil, errortools.ErrorMessage("Insightly API Key not provided")
 	}
 
-	i.token = config.Token
+	i.token = base64.URLEncoding.EncodeToString([]byte(config.APIKey))
 
 	if config.MaxRetries != nil {
 		i.maxRetries = *config.MaxRetries

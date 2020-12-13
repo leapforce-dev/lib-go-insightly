@@ -3,6 +3,7 @@ package insightly
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
@@ -17,32 +18,44 @@ type LeadStatus struct {
 	FieldOrder    int    `json:"FIELD_ORDER"`
 }
 
+type GetLeadStatusesFilter struct {
+}
+
 // GetLeadStatuses returns all leadStatuses
 //
-func (i *Insightly) GetLeadStatuses() ([]LeadStatus, *errortools.Error) {
-	endpointStr := "LeadStatuses?skip=%s&top=%s"
+func (i *Insightly) GetLeadStatuses(filter *GetLeadStatusesFilter) (*[]LeadStatus, *errortools.Error) {
+	searchString := "?"
+	searchFilter := []string{}
+
+	if filter != nil {
+	}
+
+	if len(searchFilter) > 0 {
+		searchString = "/Search?" + strings.Join(searchFilter, "&")
+	}
+
+	endpointStr := "LeadStatuses%sskip=%s&top=%s"
 	skip := 0
-	top := 500
+	top := 100
 	rowCount := top
 
 	leadStatuses := []LeadStatus{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, strconv.Itoa(skip), strconv.Itoa(top))
+		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
 		//fmt.Println(endpoint)
 
-		ls := []LeadStatus{}
+		cs := []LeadStatus{}
 
-		_, _, e := i.get(endpoint, nil, &ls)
+		_, _, e := i.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}
 
-		for _, l := range ls {
-			leadStatuses = append(leadStatuses, l)
-		}
+		leadStatuses = append(leadStatuses, cs...)
 
-		rowCount = len(ls)
+		rowCount = len(cs)
+		//rowCount = 0
 		skip += top
 	}
 
@@ -50,5 +63,5 @@ func (i *Insightly) GetLeadStatuses() ([]LeadStatus, *errortools.Error) {
 		leadStatuses = nil
 	}
 
-	return leadStatuses, nil
+	return &leadStatuses, nil
 }

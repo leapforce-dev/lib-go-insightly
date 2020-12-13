@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"reflect"
+	"strconv"
+	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	utilities "github.com/leapforce-libraries/go_utilities"
@@ -26,6 +28,8 @@ type Insightly struct {
 	client                http.Client
 	maxRetries            uint
 	secondsBetweenRetries uint32
+	rateLimitRemaining    *int64
+	retryAt               *time.Time
 }
 
 type InsightlyConfig struct {
@@ -69,6 +73,22 @@ func (ins *Insightly) baseURL() string {
 }
 
 func (ins *Insightly) httpRequest(httpMethod string, endpoint string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
+	// check rate limit
+	if ins.rateLimitRemaining != nil {
+		if *ins.rateLimitRemaining == 0 {
+			if ins.retryAt == nil {
+				return nil, nil, errortools.ErrorMessage("Rate limit exceeded but RetryAt unknown.")
+			}
+
+			duration := ins.retryAt.Sub(time.Now())
+
+			if duration > 0 {
+				errortools.CaptureInfo(fmt.Sprintf("Rate limit exceeded, waiting %v ms.", duration.Milliseconds()))
+				time.Sleep(duration)
+			}
+		}
+	}
+
 	e := new(errortools.Error)
 
 	url := fmt.Sprintf("%s/%s", ins.baseURL(), endpoint)
@@ -104,7 +124,21 @@ func (ins *Insightly) httpRequest(httpMethod string, endpoint string, requestBod
 	response, e := utilities.DoWithRetry(&ins.client, request, ins.maxRetries, ins.secondsBetweenRetries)
 
 	if response != nil {
-		// Check HTTP StatusCode
+		// Read RateLimit headers
+		rateLimitRemaining, err := strconv.ParseInt(response.Header.Get("X-RateLimit-Remaining"), 10, 64)
+		if err == nil {
+			ins.rateLimitRemaining = &rateLimitRemaining
+		} else {
+			ins.rateLimitRemaining = nil
+		}
+		retryAfter, err := strconv.ParseInt(response.Header.Get("Retry-After"), 10, 64)
+		if err == nil {
+			retryAt := time.Now().Add(time.Duration(retryAfter) * time.Second)
+			ins.retryAt = &retryAt
+		} else {
+			ins.retryAt = nil
+		}
+
 		if response.StatusCode < 200 || response.StatusCode > 299 {
 			if e == nil {
 				e = new(errortools.Error)

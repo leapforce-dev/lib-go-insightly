@@ -190,6 +190,7 @@ github.com/leapforce-libraries/go_errortools v0.0.0-20201204210737-d975f1003e2b 
 github.com/leapforce-libraries/go_errortools v0.0.0-20201204210737-d975f1003e2b/go.mod h1:SmFPi+pPS5oWI/PfOv25kuIOBEMgr52dezH+dsmRCfQ=
 github.com/leapforce-libraries/go_types v0.0.0-20201101222114-6d3ec3839c8c h1:4GY1e071Gyk2sBn8mMVi2rI+DUnqIUP3/IAHvND39w8=
 github.com/leapforce-libraries/go_types v0.0.0-20201101222114-6d3ec3839c8c/go.mod h1:0k0QPi4o2OO3yau759B2U5XIEPbuYTf56QxyF8WdV4o=
+github.com/leapforce-libraries/go_types v0.0.0-20201116193520-d5f73916424b h1:HyAuC9pOtQ0yIw7Nkb/R/RxEEyz9lOH88A4UONVhOEo=
 github.com/leapforce-libraries/go_types v0.0.0-20201116193520-d5f73916424b/go.mod h1:0k0QPi4o2OO3yau759B2U5XIEPbuYTf56QxyF8WdV4o=
 github.com/leapforce-libraries/go_utilities v0.0.0-20201208121710-35444d3c0568 h1:9TO4c/n7UIEaEffPJq0pEdQeHpFqZqCX5VLJwc9M8do=
 github.com/leapforce-libraries/go_utilities v0.0.0-20201208121710-35444d3c0568/go.mod h1:KczL99mKoKqB9SZL07QVbTY2uNMhHKDZRqgaWMU7RKI=

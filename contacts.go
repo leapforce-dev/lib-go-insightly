@@ -3,10 +3,10 @@ package insightly
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
-	utilities "github.com/leapforce-libraries/go_utilities"
 )
 
 type Contact struct {
@@ -17,12 +17,12 @@ type Contact struct {
 	ImageURL             string        `json:"IMAGE_URL"`
 	Background           string        `json:"BACKGROUND"`
 	OwnerUserID          int           `json:"OWNER_USER_ID"`
-	DateCreatedUTC       string        `json:"DATE_CREATED_UTC"`
-	DateUpdateUTC        string        `json:"DATE_UPDATED_UTC"`
+	DateCreatedUTC       DateUTC       `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC       DateUTC       `json:"DATE_UPDATED_UTC"`
 	SocialLinkedin       string        `json:"SOCIAL_LINKEDIN"`
 	SocialFacebook       string        `json:"SOCIAL_FACEBOOK"`
 	SocialTwitter        string        `json:"SOCIAL_TWITTER"`
-	DateOfBirth          string        `json:"DATE_OF_BIRTH"`
+	DateOfBirth          DateUTC       `json:"DATE_OF_BIRTH"`
 	Phone                string        `json:"PHONE"`
 	PhoneHome            string        `json:"PHONE_HOME"`
 	PhoneMobile          string        `json:"PHONE_MOBILE"`
@@ -40,8 +40,8 @@ type Contact struct {
 	AddressOtherCity     string        `json:"ADDRESS_OTHER_CITY"`
 	AddressOtherState    string        `json:"ADDRESS_OTHER_STATE"`
 	AddressOtherPostcode string        `json:"ADDRESS_OTHER_POSTCODE"`
-	LastActivityDateUTC  string        `json:"LAST_ACTIVITY_DATE_UTC"`
-	NextActivityDateUTC  string        `json:"NEXT_ACTIVITY_DATE_UTC"`
+	LastActivityDateUTC  DateUTC       `json:"LAST_ACTIVITY_DATE_UTC"`
+	NextActivityDateUTC  DateUTC       `json:"NEXT_ACTIVITY_DATE_UTC"`
 	CreatedUserID        int           `json:"CREATED_USER_ID"`
 	OrganisationID       int           `json:"ORGANISATION_ID"`
 	Title                string        `json:"TITLE"`
@@ -49,55 +49,132 @@ type Contact struct {
 	CustomFields         []CustomField `json:"CUSTOMFIELDS"`
 	Tags                 []Tag         `json:"TAGS"`
 	Dates                []Date        `json:"DATES"`
-	DateCreatedT         *time.Time
-	DateUpdatedT         *time.Time
-	DateOfBirthT         *time.Time
-	LastActivityDateT    *time.Time
-	NextActivityDateT    *time.Time
+}
+
+func (c *Contact) prepareMarshal() interface{} {
+	if c == nil {
+		return nil
+	}
+
+	return &struct {
+		ContactID            int     `json:"CONTACT_ID"`
+		Salutation           string  `json:"SALUTATION"`
+		FirstName            string  `json:"FIRST_NAME"`
+		LastName             string  `json:"LAST_NAME"`
+		ImageURL             string  `json:"IMAGE_URL"`
+		Background           string  `json:"BACKGROUND"`
+		OwnerUserID          int     `json:"OWNER_USER_ID"`
+		SocialLinkedin       string  `json:"SOCIAL_LINKEDIN"`
+		SocialFacebook       string  `json:"SOCIAL_FACEBOOK"`
+		SocialTwitter        string  `json:"SOCIAL_TWITTER"`
+		DateOfBirth          DateUTC `json:"DATE_OF_BIRTH"`
+		Phone                string  `json:"PHONE"`
+		PhoneHome            string  `json:"PHONE_HOME"`
+		PhoneMobile          string  `json:"PHONE_MOBILE"`
+		PhoneOther           string  `json:"PHONE_OTHER"`
+		PhoneAssistant       string  `json:"PHONE_ASSISTANT"`
+		PhoneFax             string  `json:"PHONE_FAX"`
+		EmailAddress         string  `json:"EMAIL_ADDRESS"`
+		AssistantName        string  `json:"ASSISTANT_NAME"`
+		AddressMailStreet    string  `json:"ADDRESS_MAIL_STREET"`
+		AddressMailCity      string  `json:"ADDRESS_MAIL_CITY"`
+		AddressMailState     string  `json:"ADDRESS_MAIL_STATE"`
+		AddressMailPostcode  string  `json:"ADDRESS_MAIL_POSTCODE"`
+		AddressMailCountry   string  `json:"ADDRESS_MAIL_COUNTRY"`
+		AddressOtherStreet   string  `json:"ADDRESS_OTHER_STREET"`
+		AddressOtherCity     string  `json:"ADDRESS_OTHER_CITY"`
+		AddressOtherState    string  `json:"ADDRESS_OTHER_STATE"`
+		AddressOtherPostcode string  `json:"ADDRESS_OTHER_POSTCODE"`
+		OrganisationID       int     `json:"ORGANISATION_ID"`
+		Title                string  `json:"TITLE"`
+	}{
+		c.ContactID,
+		c.Salutation,
+		c.FirstName,
+		c.LastName,
+		c.ImageURL,
+		c.Background,
+		c.OwnerUserID,
+		c.SocialLinkedin,
+		c.SocialFacebook,
+		c.SocialTwitter,
+		c.DateOfBirth,
+		c.Phone,
+		c.PhoneHome,
+		c.PhoneMobile,
+		c.PhoneOther,
+		c.PhoneAssistant,
+		c.PhoneFax,
+		c.EmailAddress,
+		c.AssistantName,
+		c.AddressMailStreet,
+		c.AddressMailCity,
+		c.AddressMailState,
+		c.AddressMailPostcode,
+		c.AddressMailCountry,
+		c.AddressOtherStreet,
+		c.AddressOtherCity,
+		c.AddressOtherState,
+		c.AddressOtherPostcode,
+		c.OrganisationID,
+		c.Title,
+	}
+}
+
+// GetContact returns a specific contact
+//
+func (i *Insightly) GetContact(contactID int) (*Contact, *errortools.Error) {
+	endpoint := fmt.Sprintf("Contacts/%v", contactID)
+
+	contact := Contact{}
+
+	_, _, e := i.get(endpoint, nil, &contact)
+	if e != nil {
+		return nil, e
+	}
+
+	return &contact, nil
+}
+
+type GetContactsFilter struct {
+	UpdatedAfter *time.Time
+	Field        *struct {
+		FieldName  string
+		FieldValue string
+	}
 }
 
 // GetContacts returns all contacts
 //
-func (i *Insightly) GetContacts() ([]Contact, *errortools.Error) {
-	return i.GetContactsInternal("")
-}
+func (i *Insightly) GetContacts(filter *GetContactsFilter) (*[]Contact, *errortools.Error) {
+	searchString := "?"
+	searchFilter := []string{}
 
-// GetContactsUpdatedAfter returns all contacts updated after certain date
-//
-func (i *Insightly) GetContactsUpdatedAfter(updatedAfter time.Time) ([]Contact, *errortools.Error) {
-	from := updatedAfter.Format("2006-01-02")
-	searchFilter := fmt.Sprintf("updated_after_utc=%s&", from)
-	return i.GetContactsInternal(searchFilter)
-}
+	if filter != nil {
+		if filter.UpdatedAfter != nil {
+			from := filter.UpdatedAfter.Format("2006-01-02")
+			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
+		}
 
-// GetContactsFiltered returns all contacts fulfulling the specified filter
-//
-func (i *Insightly) GetContactsFiltered(fieldname string, fieldvalue string) ([]Contact, *errortools.Error) {
-	searchFilter := fmt.Sprintf("field_name=%s&field_value=%s&", fieldname, fieldvalue)
-	return i.GetContactsInternal(searchFilter)
-}
+		if filter.Field != nil {
+			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", filter.Field.FieldName, filter.Field.FieldValue))
+		}
+	}
 
-// GetContactsInternal is the generic function retrieving Contacts from Insightly
-//
-func (i *Insightly) GetContactsInternal(searchFilter string) ([]Contact, *errortools.Error) {
-	searchString := ""
-
-	if searchFilter != "" {
-		searchString = "/Search?" + searchFilter
-	} else {
-		searchString = "?"
+	if len(searchFilter) > 0 {
+		searchString = "/Search?" + strings.Join(searchFilter, "&")
 	}
 
 	endpointStr := "Contacts%sskip=%s&top=%s"
 	skip := 0
-	top := 500
+	top := 100
 	rowCount := top
 
 	contacts := []Contact{}
 
 	for rowCount >= top {
 		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Printf(endpoint)
+		//fmt.Println(endpoint)
 
 		cs := []Contact{}
 
@@ -106,10 +183,7 @@ func (i *Insightly) GetContactsInternal(searchFilter string) ([]Contact, *errort
 			return nil, e
 		}
 
-		for _, c := range cs {
-			c.parseDates()
-			contacts = append(contacts, c)
-		}
+		contacts = append(contacts, cs...)
 
 		rowCount = len(cs)
 		//rowCount = 0
@@ -120,9 +194,61 @@ func (i *Insightly) GetContactsInternal(searchFilter string) ([]Contact, *errort
 		contacts = nil
 	}
 
-	return contacts, nil
+	return &contacts, nil
 }
 
+// CreateContact creates a new contract
+//
+func (i *Insightly) CreateContact(contact *Contact) (*Contact, *errortools.Error) {
+	if contact == nil {
+		return nil, nil
+	}
+
+	endpoint := "Contacts"
+
+	contactNew := Contact{}
+
+	_, _, e := i.post(endpoint, contact.prepareMarshal(), &contactNew)
+	if e != nil {
+		return nil, e
+	}
+
+	return &contactNew, nil
+}
+
+// UpdateContact updates an existing contract
+//
+func (i *Insightly) UpdateContact(contact *Contact) (*Contact, *errortools.Error) {
+	if contact == nil {
+		return nil, nil
+	}
+
+	endpoint := "Contacts"
+
+	contactUpdated := Contact{}
+
+	_, _, e := i.put(endpoint, contact.prepareMarshal(), &contactUpdated)
+	if e != nil {
+		return nil, e
+	}
+
+	return &contactUpdated, nil
+}
+
+// DeleteContact deletes a specific contact
+//
+func (i *Insightly) DeleteContact(contactID int) *errortools.Error {
+	endpoint := fmt.Sprintf("Contacts/%v", contactID)
+
+	_, _, e := i.delete(endpoint, nil, nil)
+	if e != nil {
+		return e
+	}
+
+	return nil
+}
+
+/*
 func (c *Contact) ValidateEmail() *errortools.Error {
 	// validate email
 	if c.EmailAddress != "" {
@@ -133,46 +259,4 @@ func (c *Contact) ValidateEmail() *errortools.Error {
 	}
 
 	return nil
-}
-
-func (c *Contact) parseDates() {
-	// parse DATE_CREATED_UTC to time.Time
-	if c.DateCreatedUTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.DateCreatedUTC+" +0000 UTC")
-		//errortools.Fatal(err)
-		c.DateCreatedT = &t
-	}
-
-	// parse DATE_UPDATED_UTC to time.Time
-	if c.DateUpdateUTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.DateUpdateUTC+" +0000 UTC")
-		//errortools.Fatal(err)
-		c.DateUpdatedT = &t
-	}
-
-	// parse DATE_OF_BIRTH to time.Time
-	if c.DateOfBirth != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.DateOfBirth+" +0000 UTC")
-		//errortools.Fatal(err)
-		c.DateOfBirthT = &t
-	}
-
-	// parse LAST_ACTIVITY_DATE_UTC to time.Time
-	if c.LastActivityDateUTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.LastActivityDateUTC+" +0000 UTC")
-		//errortools.Fatal(err)
-		c.LastActivityDateT = &t
-	}
-
-	// parse NEXT_ACTIVITY_DATE_UTC to time.Time
-	if c.NextActivityDateUTC != "" {
-		t, _ := time.Parse("2006-01-02 15:04:05 +0000 UTC", c.NextActivityDateUTC+" +0000 UTC")
-		//errortools.Fatal(err)
-		c.NextActivityDateT = &t
-	}
-
-	// parse dates in DATES
-	for _, d := range c.Dates {
-		d.parseDates()
-	}
-}
+}*/

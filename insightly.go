@@ -15,12 +15,13 @@ import (
 
 const (
 	apiName string = "Insightly"
-	apiURL  string = "https://api.insightly.com/v3.1"
+	apiURL  string = "https://api.%s.insightly.com/v3.1"
 )
 
 // type
 //
 type Insightly struct {
+	pod                   string
 	token                 string
 	client                http.Client
 	maxRetries            uint
@@ -28,6 +29,7 @@ type Insightly struct {
 }
 
 type InsightlyConfig struct {
+	Pod                   string
 	APIKey                string
 	MaxRetries            *uint
 	SecondsBetweenRetries *uint32
@@ -36,10 +38,14 @@ type InsightlyConfig struct {
 func NewInsightly(config InsightlyConfig) (*Insightly, *errortools.Error) {
 	i := new(Insightly)
 
+	if config.Pod == "" {
+		return nil, errortools.ErrorMessage("Insightly Pod not provided")
+	}
+	i.pod = config.Pod
+
 	if config.APIKey == "" {
 		return nil, errortools.ErrorMessage("Insightly API Key not provided")
 	}
-
 	i.token = base64.URLEncoding.EncodeToString([]byte(config.APIKey))
 
 	if config.MaxRetries != nil {
@@ -58,10 +64,14 @@ func NewInsightly(config InsightlyConfig) (*Insightly, *errortools.Error) {
 	return i, nil
 }
 
-func (ins *Insightly) httpRequest(httpMethod string, endpoint string, requestBody interface{}, responseModel interface{}, errorModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
+func (ins *Insightly) baseURL() string {
+	return fmt.Sprintf(apiURL, ins.pod)
+}
+
+func (ins *Insightly) httpRequest(httpMethod string, endpoint string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
 	e := new(errortools.Error)
 
-	url := fmt.Sprintf("%s/%s", apiURL, endpoint)
+	url := fmt.Sprintf("%s/%s", ins.baseURL(), endpoint)
 
 	request, err := func() (*http.Request, error) {
 		if requestBody == nil {
@@ -107,9 +117,14 @@ func (ins *Insightly) httpRequest(httpMethod string, endpoint string, requestBod
 	}
 
 	if e != nil {
-		if errorModel != nil {
-			err2 := unmarshalError(response, errorModel)
-			errortools.CaptureInfo(err2)
+		if response != nil {
+
+			defer response.Body.Close()
+
+			b, err := ioutil.ReadAll(response.Body)
+			if err == nil {
+				e.SetMessage(string(b))
+			}
 		}
 
 		return request, response, e
@@ -126,6 +141,7 @@ func (ins *Insightly) httpRequest(httpMethod string, endpoint string, requestBod
 
 		err = json.Unmarshal(b, &responseModel)
 		if err != nil {
+			fmt.Println(err)
 			e.SetMessage(err)
 			return request, response, e
 		}
@@ -138,19 +154,19 @@ func (ins *Insightly) httpRequest(httpMethod string, endpoint string, requestBod
 //
 
 func (ins *Insightly) get(endpoint string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
-	return ins.httpRequest(http.MethodGet, endpoint, requestBody, responseModel, nil)
+	return ins.httpRequest(http.MethodGet, endpoint, requestBody, responseModel)
 }
 
 func (ins *Insightly) post(endpoint string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
-	return ins.httpRequest(http.MethodPost, endpoint, requestBody, responseModel, nil)
+	return ins.httpRequest(http.MethodPost, endpoint, requestBody, responseModel)
 }
 
 func (ins *Insightly) put(endpoint string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
-	return ins.httpRequest(http.MethodPut, endpoint, requestBody, responseModel, nil)
+	return ins.httpRequest(http.MethodPut, endpoint, requestBody, responseModel)
 }
 
 func (ins *Insightly) delete(endpoint string, requestBody interface{}, responseModel interface{}) (*http.Request, *http.Response, *errortools.Error) {
-	return ins.httpRequest(http.MethodDelete, endpoint, requestBody, responseModel, nil)
+	return ins.httpRequest(http.MethodDelete, endpoint, requestBody, responseModel)
 }
 
 func unmarshalError(response *http.Response, errorModel interface{}) *errortools.Error {
@@ -167,6 +183,7 @@ func unmarshalError(response *http.Response, errorModel interface{}) *errortools
 	defer response.Body.Close()
 
 	b, err := ioutil.ReadAll(response.Body)
+	fmt.Println(string(b))
 	if err != nil {
 		return errortools.ErrorMessage(err)
 	}

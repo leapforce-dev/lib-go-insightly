@@ -38,7 +38,7 @@ type Organisation struct {
 	SocialLinkedin         string        `json:"SOCIAL_LINKEDIN"`
 	SocialFacebook         string        `json:"SOCIAL_FACEBOOK"`
 	SocialTwitter          string        `json:"SOCIAL_TWITTER"`
-	CustomFields           []CustomField `json:"CUSTOMFIELDS"`
+	CustomFields           CustomFields  `json:"CUSTOMFIELDS"`
 	Tags                   []Tag         `json:"TAGS"`
 	Dates                  []Date        `json:"DATES"`
 	EmailDomains           []EmailDomain `json:"EMAILDOMAINS"`
@@ -50,28 +50,28 @@ func (o *Organisation) prepareMarshal() interface{} {
 	}
 
 	return &struct {
-		OrganisationID         int           `json:"ORGANISATION_ID"`
-		OrganisationName       string        `json:"ORGANISATION_NAME"`
-		Background             string        `json:"BACKGROUND"`
-		ImageURL               string        `json:"IMAGE_URL"`
-		OwnerUserID            int           `json:"OWNER_USER_ID"`
-		Phone                  string        `json:"PHONE"`
-		PhoneFax               string        `json:"PHONE_FAX"`
-		Website                string        `json:"WEBSITE"`
-		AddressBillingStreet   string        `json:"ADDRESS_BILLING_STREET"`
-		AddressBillingCity     string        `json:"ADDRESS_BILLING_CITY"`
-		AddressBillingState    string        `json:"ADDRESS_BILLING_STATE"`
-		AddressBillingCountry  string        `json:"ADDRESS_BILLING_COUNTRY"`
-		AddressBillingPostcode string        `json:"ADDRESS_BILLING_POSTCODE"`
-		AddressShipStreet      string        `json:"ADDRESS_SHIP_STREET"`
-		AddressShipCity        string        `json:"ADDRESS_SHIP_CITY"`
-		AddressShipState       string        `json:"ADDRESS_SHIP_STATE"`
-		AddressShipCountry     string        `json:"ADDRESS_SHIP_COUNTRY"`
-		AddressShipPostcode    string        `json:"ADDRESS_SHIP_POSTCODE"`
-		SocialLinkedin         string        `json:"SOCIAL_LINKEDIN"`
-		SocialFacebook         string        `json:"SOCIAL_FACEBOOK"`
-		SocialTwitter          string        `json:"SOCIAL_TWITTER"`
-		CustomFields           []CustomField `json:"CUSTOMFIELDS"`
+		OrganisationID         int          `json:"ORGANISATION_ID"`
+		OrganisationName       string       `json:"ORGANISATION_NAME"`
+		Background             string       `json:"BACKGROUND"`
+		ImageURL               string       `json:"IMAGE_URL"`
+		OwnerUserID            int          `json:"OWNER_USER_ID"`
+		Phone                  string       `json:"PHONE"`
+		PhoneFax               string       `json:"PHONE_FAX"`
+		Website                string       `json:"WEBSITE"`
+		AddressBillingStreet   string       `json:"ADDRESS_BILLING_STREET"`
+		AddressBillingCity     string       `json:"ADDRESS_BILLING_CITY"`
+		AddressBillingState    string       `json:"ADDRESS_BILLING_STATE"`
+		AddressBillingCountry  string       `json:"ADDRESS_BILLING_COUNTRY"`
+		AddressBillingPostcode string       `json:"ADDRESS_BILLING_POSTCODE"`
+		AddressShipStreet      string       `json:"ADDRESS_SHIP_STREET"`
+		AddressShipCity        string       `json:"ADDRESS_SHIP_CITY"`
+		AddressShipState       string       `json:"ADDRESS_SHIP_STATE"`
+		AddressShipCountry     string       `json:"ADDRESS_SHIP_COUNTRY"`
+		AddressShipPostcode    string       `json:"ADDRESS_SHIP_POSTCODE"`
+		SocialLinkedin         string       `json:"SOCIAL_LINKEDIN"`
+		SocialFacebook         string       `json:"SOCIAL_FACEBOOK"`
+		SocialTwitter          string       `json:"SOCIAL_TWITTER"`
+		CustomFields           CustomFields `json:"CUSTOMFIELDS"`
 	}{
 		o.OrganisationID,
 		o.OrganisationName,
@@ -129,7 +129,7 @@ func (i *Insightly) GetOrganisations(filter *GetOrganisationsFilter) (*[]Organis
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format("2006-01-02")
+			from := filter.UpdatedAfter.Format(ISO8601Format)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 

@@ -11,179 +11,154 @@ import (
 // types
 //
 type CustomField struct {
-	FieldName        string          `json:"FIELD_NAME"`
-	FieldValue       json.RawMessage `json:"FIELD_VALUE"`
-	CustomFieldID    string          `json:"CUSTOM_FIELD_ID"`
-	FieldValueString *string         `json:"-"`
-	FieldValueInt    *int            `json:"-"`
-	FieldValueFloat  *float64        `json:"-"`
-	FieldValueBool   *bool           `json:"-"`
+	FieldName         string          `json:"FIELD_NAME"`
+	FieldValue        json.RawMessage `json:"FIELD_VALUE"`
+	CustomFieldID     string          `json:"CUSTOM_FIELD_ID"`
+	fieldValueText    *string
+	fieldValueNumeric *float64
+	fieldValueBit     *bool
 }
 
-// methods //
+type CustomFields []CustomField
+
+// get //
 //
-func (i *Insightly) FindCustomField(cfs []CustomField, fieldName string) *CustomField {
-	for _, cf := range cfs {
-		if strings.ToLower(cf.FieldName) == strings.ToLower(fieldName) {
-			cf.UnmarshalValue()
-			return &cf
+func (customFields *CustomFields) get(fieldName string) *CustomField {
+	if customFields == nil {
+		return nil
+	}
+
+	for _, customField := range *customFields {
+		if strings.ToLower(customField.FieldName) == strings.ToLower(fieldName) {
+			customField.unmarshalValue()
+			return &customField
 		}
 	}
 
 	return nil
 }
 
-// FindCustomFieldValue //
-//
-func (i *Insightly) FindCustomFieldValue(cfs []CustomField, fieldName string) string {
-	cf := i.FindCustomField(cfs, fieldName)
-
-	if cf == nil {
-		return ""
-	} else {
-		return cf.GetFieldValues()[0]
+func (customFields *CustomFields) GetText(fieldName string) *string {
+	if customFields == nil {
+		return nil
 	}
-}
 
-// FindCustomFieldValueString //
-//
-func (i *Insightly) FindCustomFieldValueString(cfs []CustomField, fieldName string) *string {
-	cf := i.FindCustomField(cfs, fieldName)
+	cf := customFields.get(fieldName)
 
 	if cf == nil {
 		return nil
 	} else {
-		return cf.FieldValueString
+		return cf.fieldValueText
 	}
 }
 
-// FindCustomFieldValueInt //
-//
-func (i *Insightly) FindCustomFieldValueInt(cfs []CustomField, fieldName string) *int {
-	cf := i.FindCustomField(cfs, fieldName)
+func (customFields *CustomFields) GetNumeric(fieldName string) *float64 {
+	if customFields == nil {
+		return nil
+	}
+
+	cf := customFields.get(fieldName)
 
 	if cf == nil {
 		return nil
 	} else {
-		return cf.FieldValueInt
+		return cf.fieldValueNumeric
 	}
 }
 
-// FindCustomFieldValueFloat //
-//
-func (i *Insightly) FindCustomFieldValueFloat(cfs []CustomField, fieldName string) *float64 {
-	cf := i.FindCustomField(cfs, fieldName)
+func (customFields *CustomFields) GetBit(fieldName string) *bool {
+	if customFields == nil {
+		return nil
+	}
+
+	cf := customFields.get(fieldName)
 
 	if cf == nil {
 		return nil
 	} else {
-		return cf.FieldValueFloat
+		return cf.fieldValueBit
 	}
 }
 
-// FindCustomFieldValueBool //
+// unmarshalValue //
 //
-func (i *Insightly) FindCustomFieldValueBool(cfs []CustomField, fieldName string) *bool {
-	cf := i.FindCustomField(cfs, fieldName)
-
-	if cf == nil {
-		return nil
-	} else {
-		return cf.FieldValueBool
-	}
-}
-
-// GetFieldValues //
-//
-func (cf *CustomField) GetFieldValues() []string {
-	if cf.FieldValueString == nil {
-		return nil
-	} else {
-		return strings.Split(string(*cf.FieldValueString), ";")
-	}
-}
-
-// UnmarshalValue //
-//
-func (cf *CustomField) UnmarshalValue() {
+func (cf *CustomField) unmarshalValue() {
 	j, _ := json.Marshal(&cf.FieldValue)
 	// try unmarshalling to string
-	err := json.Unmarshal(cf.FieldValue, &cf.FieldValueString)
-	// try unmarshalling to int
+	err := json.Unmarshal(cf.FieldValue, &cf.fieldValueText)
+	// try unmarshalling to float64
 	if err != nil {
-		cf.FieldValueString = nil
-		err = json.Unmarshal(cf.FieldValue, &cf.FieldValueInt)
-	} // try unmarshalling to float64
-	if err != nil {
-		cf.FieldValueInt = nil
-		err = json.Unmarshal(cf.FieldValue, &cf.FieldValueFloat)
+		cf.fieldValueNumeric = nil
+		err = json.Unmarshal(cf.FieldValue, &cf.fieldValueNumeric)
 	}
 	// try unmarshalling to bool
 	if err != nil {
-		cf.FieldValueFloat = nil
+		cf.fieldValueNumeric = nil
 		b, err1 := strconv.ParseBool(string(j))
 		if err1 == nil {
-			cf.FieldValueBool = &b
+			cf.fieldValueBit = &b
 		} else {
-			cf.FieldValueBool = nil
+			cf.fieldValueBit = nil
 		}
 	}
 }
 
-// SetCustomField //
+func (customFields *CustomFields) SetText(fieldName string, value string) *errortools.Error {
+	return customFields.set(fieldName, &value, nil, nil)
+}
+
+func (customFields *CustomFields) SetNumeric(fieldName string, value float64) *errortools.Error {
+	return customFields.set(fieldName, nil, &value, nil)
+}
+
+func (customFields *CustomFields) SetBit(fieldName string, value bool) *errortools.Error {
+	return customFields.set(fieldName, nil, nil, &value)
+}
+
+func (customFields *CustomFields) Delete(fieldName string) *errortools.Error {
+	return customFields.set(fieldName, nil, nil, nil)
+}
+
+// set //
 //
-func (i *Insightly) SetCustomField(cfs []CustomField, fieldName string, valueString *string, valueInt *int, valueFloat *float64, valueBool *bool) *errortools.Error {
-	for index, cf := range cfs {
-		if strings.ToLower(cf.FieldName) == strings.ToLower(fieldName) {
-			b := []byte{}
-			cfs[index].FieldValueBool = valueBool
-			if valueInt != nil {
-				cfs[index].FieldValueString = nil
-				cfs[index].FieldValueInt = valueInt
-				cfs[index].FieldValueFloat = nil
-				cfs[index].FieldValueBool = nil
-				_b, err := json.Marshal(valueInt)
-				if err != nil {
-					return errortools.ErrorMessage(err)
-				}
-				b = _b
-			} else if valueFloat != nil {
-				cfs[index].FieldValueString = nil
-				cfs[index].FieldValueInt = nil
-				cfs[index].FieldValueFloat = valueFloat
-				cfs[index].FieldValueBool = nil
-				_b, err := json.Marshal(valueFloat)
-				if err != nil {
-					return errortools.ErrorMessage(err)
-				}
-				b = _b
-			} else if valueBool != nil {
-				cfs[index].FieldValueString = nil
-				cfs[index].FieldValueInt = nil
-				cfs[index].FieldValueFloat = nil
-				cfs[index].FieldValueBool = valueBool
-				_b, err := json.Marshal(valueBool)
-				if err != nil {
-					return errortools.ErrorMessage(err)
-				}
-				b = _b
-			} else {
-				cfs[index].FieldValueString = valueString
-				cfs[index].FieldValueInt = nil
-				cfs[index].FieldValueFloat = nil
-				cfs[index].FieldValueBool = nil
-				_b, err := json.Marshal(valueString)
-				if err != nil {
-					return errortools.ErrorMessage(err)
-				}
-				b = _b
-			}
+func (customFields *CustomFields) set(fieldName string, valueText *string, valueNumeric *float64, valueBit *bool) *errortools.Error {
+	if customFields == nil {
+		return nil
+	}
 
-			cfs[index].FieldValue = b
+	b := []byte{}
+	if valueText != nil {
+		b, _ = json.Marshal(*valueText)
+	} else if valueNumeric != nil {
+		b, _ = json.Marshal(*valueNumeric)
+	} else if valueBit != nil {
+		b, _ = json.Marshal(*valueBit)
+	} else {
+		b = nil
+	}
 
-			//fmt.Println(cfs[index])
+	for i, customField := range *customFields {
+		if strings.ToLower(customField.FieldName) == strings.ToLower(fieldName) {
+			customField.FieldValue = b
+			customField.fieldValueText = valueText
+			customField.fieldValueNumeric = valueNumeric
+			customField.fieldValueBit = valueBit
+
+			(*customFields)[i] = customField
+
+			return nil
 		}
 	}
+
+	customFieldNew := CustomField{
+		FieldName:         fieldName,
+		FieldValue:        b,
+		fieldValueText:    valueText,
+		fieldValueNumeric: valueNumeric,
+		fieldValueBit:     valueBit,
+	}
+
+	*customFields = append(*customFields, customFieldNew)
 
 	return nil
 }

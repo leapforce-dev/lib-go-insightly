@@ -156,7 +156,7 @@ func (i *Insightly) GetProjects(filter *GetProjectsFilter) (*[]Project, *errorto
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format("2006-01-02")
+			from := filter.UpdatedAfter.Format(ISO8601Format)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 

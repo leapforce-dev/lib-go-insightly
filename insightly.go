@@ -16,8 +16,9 @@ import (
 )
 
 const (
-	apiName string = "Insightly"
-	apiURL  string = "https://api.%s.insightly.com/v3.1"
+	apiName       string = "Insightly"
+	apiURL        string = "https://api.%s.insightly.com/v3.1"
+	ISO8601Format string = "2006-01-02T15:04:05Z"
 )
 
 // type

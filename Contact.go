@@ -152,7 +152,7 @@ func (i *Insightly) GetContacts(filter *GetContactsFilter) (*[]Contact, *errorto
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format("2006-01-02")
+			from := filter.UpdatedAfter.Format(ISO8601Format)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
@@ -246,6 +246,14 @@ func (i *Insightly) DeleteContact(contactID int) *errortools.Error {
 	}
 
 	return nil
+}
+
+func (c *Contact) FullName() string {
+	if c == nil {
+		return ""
+	}
+
+	return fmt.Sprintf("%s %s", c.FirstName, c.LastName)
 }
 
 /*

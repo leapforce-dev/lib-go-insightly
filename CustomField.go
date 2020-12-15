@@ -111,6 +111,21 @@ func (customFields *CustomFields) SetNumeric(fieldName string, value float64) *e
 	return customFields.set(fieldName, nil, &value, nil)
 }
 
+func (customFields *CustomFields) SetNumericInt(fieldName string, value int) *errortools.Error {
+	valueFloat := float64(value)
+	return customFields.set(fieldName, nil, &valueFloat, nil)
+}
+
+func (customFields *CustomFields) SetNumericInt32(fieldName string, value int32) *errortools.Error {
+	valueFloat := float64(value)
+	return customFields.set(fieldName, nil, &valueFloat, nil)
+}
+
+func (customFields *CustomFields) SetNumericInt64(fieldName string, value int64) *errortools.Error {
+	valueFloat := float64(value)
+	return customFields.set(fieldName, nil, &valueFloat, nil)
+}
+
 func (customFields *CustomFields) SetBit(fieldName string, value bool) *errortools.Error {
 	return customFields.set(fieldName, nil, nil, &value)
 }

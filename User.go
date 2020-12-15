@@ -204,3 +204,11 @@ func (i *Insightly) DeleteUser(userID int) *errortools.Error {
 
 	return nil
 }
+
+func (u *User) FullName() string {
+	if u == nil {
+		return ""
+	}
+
+	return fmt.Sprintf("%s %s", u.FirstName, u.LastName)
+}

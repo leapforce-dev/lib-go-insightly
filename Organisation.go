@@ -224,3 +224,18 @@ func (i *Insightly) DeleteOrganisation(organisationID int) *errortools.Error {
 
 	return nil
 }
+
+// GetOrganisationLinks returns links for a specific organisation
+//
+func (i *Insightly) GetOrganisationLinks(organisationID int) (*[]Link, *errortools.Error) {
+	endpoint := fmt.Sprintf("Organisations/%v/Links", organisationID)
+
+	links := []Link{}
+
+	_, _, e := i.get(endpoint, nil, &links)
+	if e != nil {
+		return nil, e
+	}
+
+	return &links, nil
+}

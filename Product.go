@@ -12,21 +12,21 @@ import (
 // Product stores Product from Insightly
 //
 type Product struct {
-	ProductID       int           `json:"PRODUCT_ID"`
-	ProductName     string        `json:"PRODUCT_NAME"`
-	ProductCode     string        `json:"PRODUCT_CODE"`
-	ProductSKU      string        `json:"PRODUCT_SKU"`
-	Description     string        `json:"DESCRIPTION"`
-	ProductFamily   string        `json:"PRODUCT_FAMILY"`
-	ProductImageURL string        `json:"PRODUCT_IMAGE_URL"`
-	CurrencyCode    string        `json:"CURRENCY_CODE"`
-	DefaultPrice    int           `json:"DEFAULT_PRICE"`
-	DateCreatedUTC  DateUTC       `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC  DateUTC       `json:"DATE_UPDATED_UTC"`
-	CreatedUserID   int           `json:"CREATED_USER_ID"`
-	OwnerUserID     int           `json:"OWNER_USER_ID"`
-	Active          bool          `json:"ACTIVE"`
-	CustomFields    []CustomField `json:"CUSTOMFIELDS"`
+	ProductID       int          `json:"PRODUCT_ID"`
+	ProductName     string       `json:"PRODUCT_NAME"`
+	ProductCode     string       `json:"PRODUCT_CODE"`
+	ProductSKU      string       `json:"PRODUCT_SKU"`
+	Description     string       `json:"DESCRIPTION"`
+	ProductFamily   string       `json:"PRODUCT_FAMILY"`
+	ProductImageURL string       `json:"PRODUCT_IMAGE_URL"`
+	CurrencyCode    string       `json:"CURRENCY_CODE"`
+	DefaultPrice    int          `json:"DEFAULT_PRICE"`
+	DateCreatedUTC  DateUTC      `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC  DateUTC      `json:"DATE_UPDATED_UTC"`
+	CreatedUserID   int          `json:"CREATED_USER_ID"`
+	OwnerUserID     int          `json:"OWNER_USER_ID"`
+	Active          bool         `json:"ACTIVE"`
+	CustomFields    CustomFields `json:"CUSTOMFIELDS"`
 }
 
 func (p *Product) prepareMarshal() interface{} {

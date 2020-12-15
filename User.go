@@ -10,45 +10,26 @@ import (
 )
 
 type User struct {
-	UserID               int           `json:"CONTACT_ID"`
-	Salutation           string        `json:"SALUTATION"`
-	FirstName            string        `json:"FIRST_NAME"`
-	LastName             string        `json:"LAST_NAME"`
-	ImageURL             string        `json:"IMAGE_URL"`
-	Background           string        `json:"BACKGROUND"`
-	OwnerUserID          int           `json:"OWNER_USER_ID"`
-	DateCreatedUTC       DateUTC       `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC       DateUTC       `json:"DATE_UPDATED_UTC"`
-	SocialLinkedin       string        `json:"SOCIAL_LINKEDIN"`
-	SocialFacebook       string        `json:"SOCIAL_FACEBOOK"`
-	SocialTwitter        string        `json:"SOCIAL_TWITTER"`
-	DateOfBirth          DateUTC       `json:"DATE_OF_BIRTH"`
-	Phone                string        `json:"PHONE"`
-	PhoneHome            string        `json:"PHONE_HOME"`
-	PhoneMobile          string        `json:"PHONE_MOBILE"`
-	PhoneOther           string        `json:"PHONE_OTHER"`
-	PhoneAssistant       string        `json:"PHONE_ASSISTANT"`
-	PhoneFax             string        `json:"PHONE_FAX"`
-	EmailAddress         string        `json:"EMAIL_ADDRESS"`
-	AssistantName        string        `json:"ASSISTANT_NAME"`
-	AddressMailStreet    string        `json:"ADDRESS_MAIL_STREET"`
-	AddressMailCity      string        `json:"ADDRESS_MAIL_CITY"`
-	AddressMailState     string        `json:"ADDRESS_MAIL_STATE"`
-	AddressMailPostcode  string        `json:"ADDRESS_MAIL_POSTCODE"`
-	AddressMailCountry   string        `json:"ADDRESS_MAIL_COUNTRY"`
-	AddressOtherStreet   string        `json:"ADDRESS_OTHER_STREET"`
-	AddressOtherCity     string        `json:"ADDRESS_OTHER_CITY"`
-	AddressOtherState    string        `json:"ADDRESS_OTHER_STATE"`
-	AddressOtherPostcode string        `json:"ADDRESS_OTHER_POSTCODE"`
-	LastActivityDateUTC  DateUTC       `json:"LAST_ACTIVITY_DATE_UTC"`
-	NextActivityDateUTC  DateUTC       `json:"NEXT_ACTIVITY_DATE_UTC"`
-	CreatedUserID        int           `json:"CREATED_USER_ID"`
-	OrganisationID       int           `json:"ORGANISATION_ID"`
-	Title                string        `json:"TITLE"`
-	EmailOptedOut        bool          `json:"EMAIL_OPTED_OUT"`
-	CustomFields         []CustomField `json:"CUSTOMFIELDS"`
-	Tags                 []Tag         `json:"TAGS"`
-	Dates                []Date        `json:"DATES"`
+	UserID                 int     `json:"USER_ID"`
+	ContactID              int     `json:"CONTACT_ID"`
+	FirstName              string  `json:"FIRST_NAME"`
+	LastName               string  `json:"LAST_NAME"`
+	TimezoneID             string  `json:"TIMEZONE_ID"`
+	EmailAddress           string  `json:"EMAIL_ADDRESS"`
+	EmailDropboxIdentifier string  `json:"EMAIL_DROPBOX_IDENTIFIER"`
+	EmailDropboxAddress    string  `json:"EMAIL_DROPBOX_ADDRESS"`
+	Administrator          bool    `json:"ADMINISTRATOR"`
+	AccountOwner           bool    `json:"ACCOUNT_OWNER"`
+	Active                 bool    `json:"ACTIVE"`
+	DateCreatedUTC         DateUTC `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC         DateUTC `json:"DATE_UPDATED_UTC"`
+	UserCurrency           string  `json:"USER_CURRENCY"`
+	ContactDisplay         string  `json:"CONTACT_DISPLAY"`
+	ContactOrder           string  `json:"CONTACT_ORDER"`
+	TaskWeekStart          int     `json:"TASK_WEEK_START"`
+	InstanceID             int     `json:"INSTANCE_ID"`
+	ProfileID              int     `json:"PROFILE_ID"`
+	RoleID                 int     `json:"ROLE_ID"`
 }
 
 func (u *User) prepareMarshal() interface{} {
@@ -57,75 +38,43 @@ func (u *User) prepareMarshal() interface{} {
 	}
 
 	return &struct {
-		UserID               int           `json:"CONTACT_ID"`
-		Salutation           string        `json:"SALUTATION"`
-		FirstName            string        `json:"FIRST_NAME"`
-		LastName             string        `json:"LAST_NAME"`
-		ImageURL             string        `json:"IMAGE_URL"`
-		Background           string        `json:"BACKGROUND"`
-		OwnerUserID          int           `json:"OWNER_USER_ID"`
-		SocialLinkedin       string        `json:"SOCIAL_LINKEDIN"`
-		SocialFacebook       string        `json:"SOCIAL_FACEBOOK"`
-		SocialTwitter        string        `json:"SOCIAL_TWITTER"`
-		DateOfBirth          DateUTC       `json:"DATE_OF_BIRTH"`
-		Phone                string        `json:"PHONE"`
-		PhoneHome            string        `json:"PHONE_HOME"`
-		PhoneMobile          string        `json:"PHONE_MOBILE"`
-		PhoneOther           string        `json:"PHONE_OTHER"`
-		PhoneAssistant       string        `json:"PHONE_ASSISTANT"`
-		PhoneFax             string        `json:"PHONE_FAX"`
-		EmailAddress         string        `json:"EMAIL_ADDRESS"`
-		AssistantName        string        `json:"ASSISTANT_NAME"`
-		AddressMailStreet    string        `json:"ADDRESS_MAIL_STREET"`
-		AddressMailCity      string        `json:"ADDRESS_MAIL_CITY"`
-		AddressMailState     string        `json:"ADDRESS_MAIL_STATE"`
-		AddressMailPostcode  string        `json:"ADDRESS_MAIL_POSTCODE"`
-		AddressMailCountry   string        `json:"ADDRESS_MAIL_COUNTRY"`
-		AddressOtherStreet   string        `json:"ADDRESS_OTHER_STREET"`
-		AddressOtherCity     string        `json:"ADDRESS_OTHER_CITY"`
-		AddressOtherState    string        `json:"ADDRESS_OTHER_STATE"`
-		AddressOtherPostcode string        `json:"ADDRESS_OTHER_POSTCODE"`
-		LastActivityDateUTC  DateUTC       `json:"LAST_ACTIVITY_DATE_UTC"`
-		NextActivityDateUTC  DateUTC       `json:"NEXT_ACTIVITY_DATE_UTC"`
-		OrganisationID       int           `json:"ORGANISATION_ID"`
-		Title                string        `json:"TITLE"`
-		EmailOptedOut        bool          `json:"EMAIL_OPTED_OUT"`
-		CustomFields         []CustomField `json:"CUSTOMFIELDS"`
+		UserID                 int    `json:"USER_ID"`
+		ContactID              int    `json:"CONTACT_ID"`
+		FirstName              string `json:"FIRST_NAME"`
+		LastName               string `json:"LAST_NAME"`
+		TimezoneID             string `json:"TIMEZONE_ID"`
+		EmailAddress           string `json:"EMAIL_ADDRESS"`
+		EmailDropboxIdentifier string `json:"EMAIL_DROPBOX_IDENTIFIER"`
+		EmailDropboxAddress    string `json:"EMAIL_DROPBOX_ADDRESS"`
+		Administrator          bool   `json:"ADMINISTRATOR"`
+		AccountOwner           bool   `json:"ACCOUNT_OWNER"`
+		Active                 bool   `json:"ACTIVE"`
+		UserCurrency           string `json:"USER_CURRENCY"`
+		ContactDisplay         string `json:"CONTACT_DISPLAY"`
+		ContactOrder           string `json:"CONTACT_ORDER"`
+		TaskWeekStart          int    `json:"TASK_WEEK_START"`
+		InstanceID             int    `json:"INSTANCE_ID"`
+		ProfileID              int    `json:"PROFILE_ID"`
+		RoleID                 int    `json:"ROLE_ID"`
 	}{
 		u.UserID,
-		u.Salutation,
+		u.ContactID,
 		u.FirstName,
 		u.LastName,
-		u.ImageURL,
-		u.Background,
-		u.OwnerUserID,
-		u.SocialLinkedin,
-		u.SocialFacebook,
-		u.SocialTwitter,
-		u.DateOfBirth,
-		u.Phone,
-		u.PhoneHome,
-		u.PhoneMobile,
-		u.PhoneOther,
-		u.PhoneAssistant,
-		u.PhoneFax,
+		u.TimezoneID,
 		u.EmailAddress,
-		u.AssistantName,
-		u.AddressMailStreet,
-		u.AddressMailCity,
-		u.AddressMailState,
-		u.AddressMailPostcode,
-		u.AddressMailCountry,
-		u.AddressOtherStreet,
-		u.AddressOtherCity,
-		u.AddressOtherState,
-		u.AddressOtherPostcode,
-		u.LastActivityDateUTC,
-		u.NextActivityDateUTC,
-		u.OrganisationID,
-		u.Title,
-		u.EmailOptedOut,
-		u.CustomFields,
+		u.EmailDropboxIdentifier,
+		u.EmailDropboxAddress,
+		u.Administrator,
+		u.AccountOwner,
+		u.Active,
+		u.UserCurrency,
+		u.ContactDisplay,
+		u.ContactOrder,
+		u.TaskWeekStart,
+		u.InstanceID,
+		u.ProfileID,
+		u.RoleID,
 	}
 }
 

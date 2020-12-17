@@ -43,7 +43,7 @@ type Contact struct {
 	LastActivityDateUTC  DateUTC      `json:"LAST_ACTIVITY_DATE_UTC"`
 	NextActivityDateUTC  DateUTC      `json:"NEXT_ACTIVITY_DATE_UTC"`
 	CreatedUserID        int          `json:"CREATED_USER_ID"`
-	OrganisationID       int          `json:"ORGANISATION_ID"`
+	OrganisationID       *int         `json:"ORGANISATION_ID"`
 	Title                string       `json:"TITLE"`
 	EmailOptedOut        bool         `json:"EMAIL_OPTED_OUT"`
 	CustomFields         CustomFields `json:"CUSTOMFIELDS"`
@@ -85,7 +85,7 @@ func (c *Contact) prepareMarshal() interface{} {
 		AddressOtherCity     string       `json:"ADDRESS_OTHER_CITY"`
 		AddressOtherState    string       `json:"ADDRESS_OTHER_STATE"`
 		AddressOtherPostcode string       `json:"ADDRESS_OTHER_POSTCODE"`
-		OrganisationID       int          `json:"ORGANISATION_ID"`
+		OrganisationID       *int         `json:"ORGANISATION_ID"`
 		Title                string       `json:"TITLE"`
 		EmailOptedOut        bool         `json:"EMAIL_OPTED_OUT"`
 		CustomFields         CustomFields `json:"CUSTOMFIELDS"`

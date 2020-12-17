@@ -35,7 +35,7 @@ type Opportunity struct {
 	PipelineID          int          `json:"PIPELINE_ID"`
 	StageID             int          `json:"STAGE_ID"`
 	CreatedUserID       int          `json:"CREATED_USER_ID"`
-	OrganisationID      int          `json:"ORGANISATION_ID"`
+	OrganisationID      *int         `json:"ORGANISATION_ID"`
 	CustomFields        CustomFields `json:"CUSTOMFIELDS"`
 	Tags                []Tag        `json:"TAGS"`
 }
@@ -64,7 +64,7 @@ func (o *Opportunity) prepareMarshal() interface{} {
 		OwnerUserID        int           `json:"OWNER_USER_ID"`
 		PipelineID         int           `json:"PIPELINE_ID"`
 		StageID            int           `json:"STAGE_ID"`
-		OrganisationID     int           `json:"ORGANISATION_ID"`
+		OrganisationID     *int          `json:"ORGANISATION_ID"`
 		CustomFields       []CustomField `json:"CUSTOMFIELDS"`
 	}{
 		o.OpportunityID,

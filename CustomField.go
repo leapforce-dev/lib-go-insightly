@@ -168,6 +168,7 @@ func (customFields *CustomFields) set(fieldName string, valueText *string, value
 	customFieldNew := CustomField{
 		FieldName:         fieldName,
 		FieldValue:        b,
+		CustomFieldID:     fieldName,
 		fieldValueText:    valueText,
 		fieldValueNumeric: valueNumeric,
 		fieldValueBit:     valueBit,

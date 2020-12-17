@@ -57,36 +57,38 @@ func (c *Contact) prepareMarshal() interface{} {
 	}
 
 	return &struct {
-		ContactID            int     `json:"CONTACT_ID"`
-		Salutation           string  `json:"SALUTATION"`
-		FirstName            string  `json:"FIRST_NAME"`
-		LastName             string  `json:"LAST_NAME"`
-		ImageURL             string  `json:"IMAGE_URL"`
-		Background           string  `json:"BACKGROUND"`
-		OwnerUserID          int     `json:"OWNER_USER_ID"`
-		SocialLinkedin       string  `json:"SOCIAL_LINKEDIN"`
-		SocialFacebook       string  `json:"SOCIAL_FACEBOOK"`
-		SocialTwitter        string  `json:"SOCIAL_TWITTER"`
-		DateOfBirth          DateUTC `json:"DATE_OF_BIRTH"`
-		Phone                string  `json:"PHONE"`
-		PhoneHome            string  `json:"PHONE_HOME"`
-		PhoneMobile          string  `json:"PHONE_MOBILE"`
-		PhoneOther           string  `json:"PHONE_OTHER"`
-		PhoneAssistant       string  `json:"PHONE_ASSISTANT"`
-		PhoneFax             string  `json:"PHONE_FAX"`
-		EmailAddress         string  `json:"EMAIL_ADDRESS"`
-		AssistantName        string  `json:"ASSISTANT_NAME"`
-		AddressMailStreet    string  `json:"ADDRESS_MAIL_STREET"`
-		AddressMailCity      string  `json:"ADDRESS_MAIL_CITY"`
-		AddressMailState     string  `json:"ADDRESS_MAIL_STATE"`
-		AddressMailPostcode  string  `json:"ADDRESS_MAIL_POSTCODE"`
-		AddressMailCountry   string  `json:"ADDRESS_MAIL_COUNTRY"`
-		AddressOtherStreet   string  `json:"ADDRESS_OTHER_STREET"`
-		AddressOtherCity     string  `json:"ADDRESS_OTHER_CITY"`
-		AddressOtherState    string  `json:"ADDRESS_OTHER_STATE"`
-		AddressOtherPostcode string  `json:"ADDRESS_OTHER_POSTCODE"`
-		OrganisationID       int     `json:"ORGANISATION_ID"`
-		Title                string  `json:"TITLE"`
+		ContactID            int          `json:"CONTACT_ID"`
+		Salutation           string       `json:"SALUTATION"`
+		FirstName            string       `json:"FIRST_NAME"`
+		LastName             string       `json:"LAST_NAME"`
+		ImageURL             string       `json:"IMAGE_URL"`
+		Background           string       `json:"BACKGROUND"`
+		OwnerUserID          int          `json:"OWNER_USER_ID"`
+		SocialLinkedin       string       `json:"SOCIAL_LINKEDIN"`
+		SocialFacebook       string       `json:"SOCIAL_FACEBOOK"`
+		SocialTwitter        string       `json:"SOCIAL_TWITTER"`
+		DateOfBirth          DateUTC      `json:"DATE_OF_BIRTH"`
+		Phone                string       `json:"PHONE"`
+		PhoneHome            string       `json:"PHONE_HOME"`
+		PhoneMobile          string       `json:"PHONE_MOBILE"`
+		PhoneOther           string       `json:"PHONE_OTHER"`
+		PhoneAssistant       string       `json:"PHONE_ASSISTANT"`
+		PhoneFax             string       `json:"PHONE_FAX"`
+		EmailAddress         string       `json:"EMAIL_ADDRESS"`
+		AssistantName        string       `json:"ASSISTANT_NAME"`
+		AddressMailStreet    string       `json:"ADDRESS_MAIL_STREET"`
+		AddressMailCity      string       `json:"ADDRESS_MAIL_CITY"`
+		AddressMailState     string       `json:"ADDRESS_MAIL_STATE"`
+		AddressMailPostcode  string       `json:"ADDRESS_MAIL_POSTCODE"`
+		AddressMailCountry   string       `json:"ADDRESS_MAIL_COUNTRY"`
+		AddressOtherStreet   string       `json:"ADDRESS_OTHER_STREET"`
+		AddressOtherCity     string       `json:"ADDRESS_OTHER_CITY"`
+		AddressOtherState    string       `json:"ADDRESS_OTHER_STATE"`
+		AddressOtherPostcode string       `json:"ADDRESS_OTHER_POSTCODE"`
+		OrganisationID       int          `json:"ORGANISATION_ID"`
+		Title                string       `json:"TITLE"`
+		EmailOptedOut        bool         `json:"EMAIL_OPTED_OUT"`
+		CustomFields         CustomFields `json:"CUSTOMFIELDS"`
 	}{
 		c.ContactID,
 		c.Salutation,
@@ -118,6 +120,8 @@ func (c *Contact) prepareMarshal() interface{} {
 		c.AddressOtherPostcode,
 		c.OrganisationID,
 		c.Title,
+		c.EmailOptedOut,
+		c.CustomFields,
 	}
 }
 

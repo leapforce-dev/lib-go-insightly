@@ -143,7 +143,7 @@ func (i *Insightly) GetOpportunities(filter *GetOpportunitiesFilter) (*[]Opportu
 
 	for rowCount >= top {
 		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		fmt.Println(endpoint)
+		//fmt.Println(endpoint)
 
 		cs := []Opportunity{}
 
@@ -215,4 +215,19 @@ func (i *Insightly) DeleteOpportunity(opportunityID int) *errortools.Error {
 	}
 
 	return nil
+}
+
+// GetOpportunityLinks returns links for a specific opportunity
+//
+func (i *Insightly) GetOpportunityLinks(opportunityID int) (*[]Link, *errortools.Error) {
+	endpoint := fmt.Sprintf("Opportunity/%v/Links", opportunityID)
+
+	links := []Link{}
+
+	_, _, e := i.get(endpoint, nil, &links)
+	if e != nil {
+		return nil, e
+	}
+
+	return &links, nil
 }

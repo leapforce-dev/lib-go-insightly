@@ -16,8 +16,8 @@ type Opportunity struct {
 	OpportunityName     string       `json:"OPPORTUNITY_NAME"`
 	OpportunityDetails  string       `json:"OPPORTUNITY_DETAILS"`
 	OpportunityState    string       `json:"OPPORTUNITY_STATE"`
-	ResponsibleUserID   int          `json:"RESPONSIBLE_USER_ID"`
-	CategoryID          int          `json:"CATEGORY_ID"`
+	ResponsibleUserID   *int         `json:"RESPONSIBLE_USER_ID"`
+	CategoryID          *int         `json:"CATEGORY_ID"`
 	ImageURL            string       `json:"IMAGE_URL"`
 	BidCurrency         string       `json:"BID_CURRENCY"`
 	BidAmount           float32      `json:"BID_AMOUNT"`
@@ -29,12 +29,12 @@ type Opportunity struct {
 	OpportunityValue    float32      `json:"OPPORTUNITY_VALUE"`
 	Probability         int          `json:"PROBABILITY"`
 	ForecastCloseDate   DateUTC      `json:"FORECAST_CLOSE_DATE"`
-	OwnerUserID         int          `json:"OWNER_USER_ID"`
+	OwnerUserID         *int         `json:"OWNER_USER_ID"`
 	LastActivityDateUTC DateUTC      `json:"LAST_ACTIVITY_DATE_UTC"`
 	NextActivityDateUTC DateUTC      `json:"NEXT_ACTIVITY_DATE_UTC"`
-	PipelineID          int          `json:"PIPELINE_ID"`
-	StageID             int          `json:"STAGE_ID"`
-	CreatedUserID       int          `json:"CREATED_USER_ID"`
+	PipelineID          *int         `json:"PIPELINE_ID"`
+	StageID             *int         `json:"STAGE_ID"`
+	CreatedUserID       *int         `json:"CREATED_USER_ID"`
 	OrganisationID      *int         `json:"ORGANISATION_ID"`
 	CustomFields        CustomFields `json:"CUSTOMFIELDS"`
 	Tags                []Tag        `json:"TAGS"`
@@ -50,8 +50,8 @@ func (o *Opportunity) prepareMarshal() interface{} {
 		OpportunityName    string        `json:"OPPORTUNITY_NAME"`
 		OpportunityDetails string        `json:"OPPORTUNITY_DETAILS"`
 		OpportunityState   string        `json:"OPPORTUNITY_STATE"`
-		ResponsibleUserID  int           `json:"RESPONSIBLE_USER_ID"`
-		CategoryID         int           `json:"CATEGORY_ID"`
+		ResponsibleUserID  *int          `json:"RESPONSIBLE_USER_ID"`
+		CategoryID         *int          `json:"CATEGORY_ID"`
 		ImageURL           string        `json:"IMAGE_URL"`
 		BidCurrency        string        `json:"BID_CURRENCY"`
 		BidAmount          float32       `json:"BID_AMOUNT"`
@@ -61,9 +61,9 @@ func (o *Opportunity) prepareMarshal() interface{} {
 		OpportunityValue   float32       `json:"OPPORTUNITY_VALUE"`
 		Probability        int           `json:"PROBABILITY"`
 		ForecastCloseDate  DateUTC       `json:"FORECAST_CLOSE_DATE"`
-		OwnerUserID        int           `json:"OWNER_USER_ID"`
-		PipelineID         int           `json:"PIPELINE_ID"`
-		StageID            int           `json:"STAGE_ID"`
+		OwnerUserID        *int          `json:"OWNER_USER_ID"`
+		PipelineID         *int          `json:"PIPELINE_ID"`
+		StageID            *int          `json:"STAGE_ID"`
 		OrganisationID     *int          `json:"ORGANISATION_ID"`
 		CustomFields       []CustomField `json:"CUSTOMFIELDS"`
 	}{

@@ -15,7 +15,7 @@ type Pipeline struct {
 	PipelineName     string `json:"PIPELINE_NAME"`
 	ForOpportunities bool   `json:"FOR_OPPORTUNITIES"`
 	ForProjects      bool   `json:"FOR_PROJECTS"`
-	OwnerUserID      int    `json:"OWNER_USER_ID"`
+	OwnerUserID      *int   `json:"OWNER_USER_ID"`
 }
 
 type GetPipelinesFilter struct {

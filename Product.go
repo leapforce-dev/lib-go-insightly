@@ -23,8 +23,8 @@ type Product struct {
 	DefaultPrice    int          `json:"DEFAULT_PRICE"`
 	DateCreatedUTC  DateUTC      `json:"DATE_CREATED_UTC"`
 	DateUpdatedUTC  DateUTC      `json:"DATE_UPDATED_UTC"`
-	CreatedUserID   int          `json:"CREATED_USER_ID"`
-	OwnerUserID     int          `json:"OWNER_USER_ID"`
+	CreatedUserID   *int         `json:"CREATED_USER_ID"`
+	OwnerUserID     *int         `json:"OWNER_USER_ID"`
 	Active          bool         `json:"ACTIVE"`
 	CustomFields    CustomFields `json:"CUSTOMFIELDS"`
 }
@@ -44,7 +44,7 @@ func (p *Product) prepareMarshal() interface{} {
 		ProductImageURL string        `json:"PRODUCT_IMAGE_URL"`
 		CurrencyCode    string        `json:"CURRENCY_CODE"`
 		DefaultPrice    int           `json:"DEFAULT_PRICE"`
-		OwnerUserID     int           `json:"OWNER_USER_ID"`
+		OwnerUserID     *int          `json:"OWNER_USER_ID"`
 		Active          bool          `json:"ACTIVE"`
 		CustomFields    []CustomField `json:"CUSTOMFIELDS"`
 	}{

@@ -16,7 +16,7 @@ type Project struct {
 	LastName             string       `json:"LAST_NAME"`
 	ImageURL             string       `json:"IMAGE_URL"`
 	Background           string       `json:"BACKGROUND"`
-	OwnerUserID          int          `json:"OWNER_USER_ID"`
+	OwnerUserID          *int         `json:"OWNER_USER_ID"`
 	DateCreatedUTC       DateUTC      `json:"DATE_CREATED_UTC"`
 	DateUpdatedUTC       DateUTC      `json:"DATE_UPDATED_UTC"`
 	SocialLinkedin       string       `json:"SOCIAL_LINKEDIN"`
@@ -42,8 +42,8 @@ type Project struct {
 	AddressOtherPostcode string       `json:"ADDRESS_OTHER_POSTCODE"`
 	LastActivityDateUTC  DateUTC      `json:"LAST_ACTIVITY_DATE_UTC"`
 	NextActivityDateUTC  DateUTC      `json:"NEXT_ACTIVITY_DATE_UTC"`
-	CreatedUserID        int          `json:"CREATED_USER_ID"`
-	OrganisationID       int          `json:"ORGANISATION_ID"`
+	CreatedUserID        *int         `json:"CREATED_USER_ID"`
+	OrganisationID       *int         `json:"ORGANISATION_ID"`
 	Title                string       `json:"TITLE"`
 	EmailOptedOut        bool         `json:"EMAIL_OPTED_OUT"`
 	CustomFields         CustomFields `json:"CUSTOMFIELDS"`
@@ -63,7 +63,7 @@ func (p *Project) prepareMarshal() interface{} {
 		LastName             string        `json:"LAST_NAME"`
 		ImageURL             string        `json:"IMAGE_URL"`
 		Background           string        `json:"BACKGROUND"`
-		OwnerUserID          int           `json:"OWNER_USER_ID"`
+		OwnerUserID          *int          `json:"OWNER_USER_ID"`
 		SocialLinkedin       string        `json:"SOCIAL_LINKEDIN"`
 		SocialFacebook       string        `json:"SOCIAL_FACEBOOK"`
 		SocialTwitter        string        `json:"SOCIAL_TWITTER"`
@@ -85,7 +85,7 @@ func (p *Project) prepareMarshal() interface{} {
 		AddressOtherCity     string        `json:"ADDRESS_OTHER_CITY"`
 		AddressOtherState    string        `json:"ADDRESS_OTHER_STATE"`
 		AddressOtherPostcode string        `json:"ADDRESS_OTHER_POSTCODE"`
-		OrganisationID       int           `json:"ORGANISATION_ID"`
+		OrganisationID       *int          `json:"ORGANISATION_ID"`
 		Title                string        `json:"TITLE"`
 		EmailOptedOut        bool          `json:"EMAIL_OPTED_OUT"`
 		CustomFields         []CustomField `json:"CUSTOMFIELDS"`

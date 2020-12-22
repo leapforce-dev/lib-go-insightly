@@ -16,14 +16,14 @@ type Lead struct {
 	Salutation              string       `json:"SALUTATION"`
 	FirstName               string       `json:"FIRST_NAME"`
 	LastName                string       `json:"LAST_NAME"`
-	LeadSourceID            int          `json:"LEAD_SOURCE_ID"`
-	LeadStatusID            int          `json:"LEAD_STATUS_ID"`
+	LeadSourceID            *int         `json:"LEAD_SOURCE_ID"`
+	LeadStatusID            *int         `json:"LEAD_STATUS_ID"`
 	Title                   string       `json:"TITLE"`
 	Converted               bool         `json:"CONVERTED"`
-	ConvertedContactID      int          `json:"CONVERTED_CONTACT_ID"`
+	ConvertedContactID      *int         `json:"CONVERTED_CONTACT_ID"`
 	ConvertedDateUTC        DateUTC      `json:"CONVERTED_DATE_UTC"`
-	ConvertedOpportunityID  int          `json:"CONVERTED_OPPORTUNITY_ID"`
-	ConvertedOrganisationID int          `json:"CONVERTED_ORGANISATION_ID"`
+	ConvertedOpportunityID  *int         `json:"CONVERTED_OPPORTUNITY_ID"`
+	ConvertedOrganisationID *int         `json:"CONVERTED_ORGANISATION_ID"`
 	DateCreateUTC           DateUTC      `json:"DATE_CREATED_UTC"`
 	DateUpdatedUTC          DateUTC      `json:"DATE_UPDATED_UTC"`
 	Email                   string       `json:"EMAIL"`
@@ -33,9 +33,9 @@ type Lead struct {
 	LeadDescription         string       `json:"LEAD_DESCRIPTION"`
 	LeadRating              int          `json:"LEAD_RATING"`
 	Mobile                  string       `json:"MOBILE"`
-	OwnerUserID             int          `json:"OWNER_USER_ID"`
+	OwnerUserID             *int         `json:"OWNER_USER_ID"`
 	Phone                   string       `json:"PHONE"`
-	ResponsibleUserID       int          `json:"RESPONSIBLE_USER_ID"`
+	ResponsibleUserID       *int         `json:"RESPONSIBLE_USER_ID"`
 	Website                 string       `json:"WEBSITE"`
 	AddressStreet           string       `json:"ADDRESS_STREET"`
 	AddressCity             string       `json:"ADDRESS_CITY"`
@@ -45,7 +45,7 @@ type Lead struct {
 	LastActivityDateUTC     DateUTC      `json:"LAST_ACTIVITY_DATE_UTC"`
 	NextActivityDateUTC     DateUTC      `json:"NEXT_ACTIVITY_DATE_UTC"`
 	OrganisationName        string       `json:"ORGANISATION_NAME"`
-	CreatedUserID           int          `json:"CREATED_USER_ID"`
+	CreatedUserID           *int         `json:"CREATED_USER_ID"`
 	ImageURL                string       `json:"IMAGE_URL"`
 	EmailOptedOut           bool         `json:"EMAIL_OPTED_OUT"`
 	CustomFields            CustomFields `json:"CUSTOMFIELDS"`
@@ -62,14 +62,14 @@ func (l *Lead) prepareMarshal() interface{} {
 		Salutation              string        `json:"SALUTATION"`
 		FirstName               string        `json:"FIRST_NAME"`
 		LastName                string        `json:"LAST_NAME"`
-		LeadSourceID            int           `json:"LEAD_SOURCE_ID"`
-		LeadStatusID            int           `json:"LEAD_STATUS_ID"`
+		LeadSourceID            *int          `json:"LEAD_SOURCE_ID"`
+		LeadStatusID            *int          `json:"LEAD_STATUS_ID"`
 		Title                   string        `json:"TITLE"`
 		Converted               bool          `json:"CONVERTED"`
-		ConvertedContactID      int           `json:"CONVERTED_CONTACT_ID"`
+		ConvertedContactID      *int          `json:"CONVERTED_CONTACT_ID"`
 		ConvertedDateUTC        DateUTC       `json:"CONVERTED_DATE_UTC"`
-		ConvertedOpportunityID  int           `json:"CONVERTED_OPPORTUNITY_ID"`
-		ConvertedOrganisationID int           `json:"CONVERTED_ORGANISATION_ID"`
+		ConvertedOpportunityID  *int          `json:"CONVERTED_OPPORTUNITY_ID"`
+		ConvertedOrganisationID *int          `json:"CONVERTED_ORGANISATION_ID"`
 		Email                   string        `json:"EMAIL"`
 		EmployeeCount           int           `json:"EMPLOYEE_COUNT"`
 		Fax                     string        `json:"FAX"`
@@ -77,9 +77,9 @@ func (l *Lead) prepareMarshal() interface{} {
 		LeadDescription         string        `json:"LEAD_DESCRIPTION"`
 		LeadRating              int           `json:"LEAD_RATING"`
 		Mobile                  string        `json:"MOBILE"`
-		OwnerUserID             int           `json:"OWNER_USER_ID"`
+		OwnerUserID             *int          `json:"OWNER_USER_ID"`
 		Phone                   string        `json:"PHONE"`
-		ResponsibleUserID       int           `json:"RESPONSIBLE_USER_ID"`
+		ResponsibleUserID       *int          `json:"RESPONSIBLE_USER_ID"`
 		Website                 string        `json:"WEBSITE"`
 		AddressStreet           string        `json:"ADDRESS_STREET"`
 		AddressCity             string        `json:"ADDRESS_CITY"`

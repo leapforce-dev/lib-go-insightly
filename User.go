@@ -11,7 +11,7 @@ import (
 
 type User struct {
 	UserID                 int     `json:"USER_ID"`
-	ContactID              int     `json:"CONTACT_ID"`
+	ContactID              *int    `json:"CONTACT_ID"`
 	FirstName              string  `json:"FIRST_NAME"`
 	LastName               string  `json:"LAST_NAME"`
 	TimezoneID             string  `json:"TIMEZONE_ID"`
@@ -27,9 +27,9 @@ type User struct {
 	ContactDisplay         string  `json:"CONTACT_DISPLAY"`
 	ContactOrder           string  `json:"CONTACT_ORDER"`
 	TaskWeekStart          int     `json:"TASK_WEEK_START"`
-	InstanceID             int     `json:"INSTANCE_ID"`
-	ProfileID              int     `json:"PROFILE_ID"`
-	RoleID                 int     `json:"ROLE_ID"`
+	InstanceID             *int    `json:"INSTANCE_ID"`
+	ProfileID              *int    `json:"PROFILE_ID"`
+	RoleID                 *int    `json:"ROLE_ID"`
 }
 
 func (u *User) prepareMarshal() interface{} {
@@ -39,7 +39,7 @@ func (u *User) prepareMarshal() interface{} {
 
 	return &struct {
 		UserID                 int    `json:"USER_ID"`
-		ContactID              int    `json:"CONTACT_ID"`
+		ContactID              *int   `json:"CONTACT_ID"`
 		FirstName              string `json:"FIRST_NAME"`
 		LastName               string `json:"LAST_NAME"`
 		TimezoneID             string `json:"TIMEZONE_ID"`
@@ -53,9 +53,9 @@ func (u *User) prepareMarshal() interface{} {
 		ContactDisplay         string `json:"CONTACT_DISPLAY"`
 		ContactOrder           string `json:"CONTACT_ORDER"`
 		TaskWeekStart          int    `json:"TASK_WEEK_START"`
-		InstanceID             int    `json:"INSTANCE_ID"`
-		ProfileID              int    `json:"PROFILE_ID"`
-		RoleID                 int    `json:"ROLE_ID"`
+		InstanceID             *int   `json:"INSTANCE_ID"`
+		ProfileID              *int   `json:"PROFILE_ID"`
+		RoleID                 *int   `json:"ROLE_ID"`
 	}{
 		u.UserID,
 		u.ContactID,

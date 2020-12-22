@@ -13,12 +13,12 @@ import (
 type CustomObjectRecord struct {
 	RecordID       int          `json:"RECORD_ID"`
 	RecordName     string       `json:"RECORD_NAME"`
-	OwnerUserID    int          `json:"OWNER_USER_ID"`
+	OwnerUserID    *int         `json:"OWNER_USER_ID"`
 	DateCreatedUTC DateUTC      `json:"DATE_CREATED_UTC"`
 	DateUpdatedUTC DateUTC      `json:"DATE_UPDATED_UTC"`
-	CreatedUserID  int          `json:"CREATED_USER_ID"`
+	CreatedUserID  *int         `json:"CREATED_USER_ID"`
 	VisibleTo      string       `json:"VISIBLE_TO"`
-	VisibleTeamID  int          `json:"VISIBLE_TEAM_ID"`
+	VisibleTeamID  *int         `json:"VISIBLE_TEAM_ID"`
 	CustomFields   CustomFields `json:"CUSTOMFIELDS"`
 }
 
@@ -30,9 +30,9 @@ func (c *CustomObjectRecord) prepareMarshal() interface{} {
 	return &struct {
 		RecordID      int           `json:"RECORD_ID"`
 		RecordName    string        `json:"RECORD_NAME"`
-		OwnerUserID   int           `json:"OWNER_USER_ID"`
+		OwnerUserID   *int          `json:"OWNER_USER_ID"`
 		VisibleTo     string        `json:"VISIBLE_TO"`
-		VisibleTeamID int           `json:"VISIBLE_TEAM_ID"`
+		VisibleTeamID *int          `json:"VISIBLE_TEAM_ID"`
 		CustomFields  []CustomField `json:"CUSTOMFIELDS"`
 	}{
 		c.RecordID,

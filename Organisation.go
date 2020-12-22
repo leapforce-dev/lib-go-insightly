@@ -16,12 +16,12 @@ type Organisation struct {
 	OrganisationName       string        `json:"ORGANISATION_NAME"`
 	Background             string        `json:"BACKGROUND"`
 	ImageURL               string        `json:"IMAGE_URL"`
-	OwnerUserID            int           `json:"OWNER_USER_ID"`
+	OwnerUserID            *int          `json:"OWNER_USER_ID"`
 	DateCreatedUTC         DateUTC       `json:"DATE_CREATED_UTC"`
 	DateUpdatedUTC         DateUTC       `json:"DATE_UPDATED_UTC"`
 	LastActivityDateUTC    DateUTC       `json:"LAST_ACTIVITY_DATE_UTC"`
 	NextActivityDateUTC    DateUTC       `json:"NEXT_ACTIVITY_DATE_UTC"`
-	CreatedUserID          int           `json:"CREATED_USER_ID"`
+	CreatedUserID          *int          `json:"CREATED_USER_ID"`
 	Phone                  string        `json:"PHONE"`
 	PhoneFax               string        `json:"PHONE_FAX"`
 	Website                string        `json:"WEBSITE"`
@@ -54,7 +54,7 @@ func (o *Organisation) prepareMarshal() interface{} {
 		OrganisationName       string       `json:"ORGANISATION_NAME"`
 		Background             string       `json:"BACKGROUND"`
 		ImageURL               string       `json:"IMAGE_URL"`
-		OwnerUserID            int          `json:"OWNER_USER_ID"`
+		OwnerUserID            *int         `json:"OWNER_USER_ID"`
 		Phone                  string       `json:"PHONE"`
 		PhoneFax               string       `json:"PHONE_FAX"`
 		Website                string       `json:"WEBSITE"`

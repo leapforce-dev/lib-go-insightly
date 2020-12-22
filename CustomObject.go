@@ -16,7 +16,7 @@ type CustomObject struct {
 	RecordNameDisplayFormat string  `json:"RECORD_NAME_DISPLAY_FORMAT"`
 	EnableNavbar            bool    `json:"ENABLE_NAVBAR"`
 	EnableWorkflows         bool    `json:"ENABLE_WORKFLOWS"`
-	CreatedUserID           int     `json:"CREATED_USER_ID"`
+	CreatedUserID           *int    `json:"CREATED_USER_ID"`
 	DateCreatedUTC          DateUTC `json:"DATE_CREATED_UTC"`
 	DateUpdatedUTC          DateUTC `json:"DATE_UPDATED_UTC"`
 }

@@ -15,8 +15,8 @@ type PipelineStage struct {
 	PipelineID    int    `json:"PIPELINE_ID"`
 	StageName     string `json:"STAGE_NAME"`
 	StageOrder    int    `json:"STAGE_ORDER"`
-	ActivitySetID int    `json:"ACTIVITYSET_ID,omitempty"`
-	OwnerUserID   int    `json:"OWNER_USER_ID"`
+	ActivitySetID *int   `json:"ACTIVITYSET_ID"`
+	OwnerUserID   *int   `json:"OWNER_USER_ID"`
 }
 
 type GetPipelineStagesFilter struct {

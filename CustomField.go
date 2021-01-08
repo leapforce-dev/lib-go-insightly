@@ -17,72 +17,20 @@ type CustomField struct {
 	fieldValueText    *string
 	fieldValueNumeric *float64
 	fieldValueBit     *bool
-}
-
-type CustomFields []CustomField
-
-// get //
-//
-func (customFields *CustomFields) get(fieldName string) *CustomField {
-	if customFields == nil {
-		return nil
-	}
-
-	for _, customField := range *customFields {
-		if strings.ToLower(customField.FieldName) == strings.ToLower(fieldName) {
-			customField.unmarshalValue()
-			return &customField
-		}
-	}
-
-	return nil
-}
-
-func (customFields *CustomFields) GetText(fieldName string) *string {
-	if customFields == nil {
-		return nil
-	}
-
-	cf := customFields.get(fieldName)
-
-	if cf == nil {
-		return nil
-	} else {
-		return cf.fieldValueText
-	}
-}
-
-func (customFields *CustomFields) GetNumeric(fieldName string) *float64 {
-	if customFields == nil {
-		return nil
-	}
-
-	cf := customFields.get(fieldName)
-
-	if cf == nil {
-		return nil
-	} else {
-		return cf.fieldValueNumeric
-	}
-}
-
-func (customFields *CustomFields) GetBit(fieldName string) *bool {
-	if customFields == nil {
-		return nil
-	}
-
-	cf := customFields.get(fieldName)
-
-	if cf == nil {
-		return nil
-	} else {
-		return cf.fieldValueBit
-	}
+	unmarshalled      bool
 }
 
 // unmarshalValue //
 //
 func (cf *CustomField) unmarshalValue() {
+	if cf == nil {
+		return
+	}
+
+	if cf.unmarshalled {
+		return
+	}
+
 	j, _ := json.Marshal(&cf.FieldValue)
 	// try unmarshalling to string
 	err := json.Unmarshal(cf.FieldValue, &cf.fieldValueText)
@@ -100,6 +48,96 @@ func (cf *CustomField) unmarshalValue() {
 		} else {
 			cf.fieldValueBit = nil
 		}
+	}
+
+	cf.unmarshalled = true
+}
+
+func (customField *CustomField) GetText() *string {
+	if customField == nil {
+		return nil
+	}
+
+	customField.unmarshalValue()
+	return customField.fieldValueText
+}
+
+func (customField *CustomField) GetNumeric() *float64 {
+	if customField == nil {
+		return nil
+	}
+
+	customField.unmarshalValue()
+	return customField.fieldValueNumeric
+}
+
+func (customField *CustomField) GetBit() *bool {
+	if customField == nil {
+		return nil
+	}
+
+	customField.unmarshalValue()
+	return customField.fieldValueBit
+}
+
+type CustomFields []CustomField
+
+// get //
+//
+func (customFields *CustomFields) get(fieldName string) *CustomField {
+	if customFields == nil {
+		return nil
+	}
+
+	for _, customField := range *customFields {
+		if strings.ToLower(customField.FieldName) == strings.ToLower(fieldName) {
+			//customField.unmarshalValue()
+			return &customField
+		}
+	}
+
+	return nil
+}
+
+func (customFields *CustomFields) GetText(fieldName string) *string {
+	if customFields == nil {
+		return nil
+	}
+
+	cf := customFields.get(fieldName)
+
+	if cf == nil {
+		return nil
+	} else {
+		return cf.GetText()
+	}
+}
+
+func (customFields *CustomFields) GetNumeric(fieldName string) *float64 {
+	if customFields == nil {
+		return nil
+	}
+
+	cf := customFields.get(fieldName)
+
+	if cf == nil {
+		return nil
+	} else {
+		return cf.GetNumeric()
+	}
+}
+
+func (customFields *CustomFields) GetBit(fieldName string) *bool {
+	if customFields == nil {
+		return nil
+	}
+
+	cf := customFields.get(fieldName)
+
+	if cf == nil {
+		return nil
+	} else {
+		return cf.GetBit()
 	}
 }
 

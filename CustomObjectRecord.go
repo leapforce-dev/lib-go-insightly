@@ -3,7 +3,6 @@ package insightly
 import (
 	"fmt"
 	"strconv"
-	"strings"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
@@ -59,22 +58,9 @@ func (i *Insightly) GetCustomObjectRecord(customObjectName string, customObjectR
 	return &customObjectRecord, nil
 }
 
-type GetCustomObjectRecordsFilter struct {
-}
-
 // GetCustomObjectRecords returns all customObjectRecords
 //
-func (i *Insightly) GetCustomObjectRecords(customObjectName string, filter *GetCustomObjectRecordsFilter) (*[]CustomObjectRecord, *errortools.Error) {
-	searchString := "?"
-	searchFilter := []string{}
-
-	if filter != nil {
-	}
-
-	if len(searchFilter) > 0 {
-		searchString = "/Search?" + strings.Join(searchFilter, "&")
-	}
-
+func (i *Insightly) GetCustomObjectRecords(customObjectName string, filter *FieldFilter) (*[]CustomObjectRecord, *errortools.Error) {
 	endpointStr := "%s%sskip=%s&top=%s"
 	skip := 0
 	top := 100
@@ -83,8 +69,8 @@ func (i *Insightly) GetCustomObjectRecords(customObjectName string, filter *GetC
 	customObjectRecords := []CustomObjectRecord{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, customObjectName, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		endpoint := fmt.Sprintf(endpointStr, customObjectName, filter.Search(), strconv.Itoa(skip), strconv.Itoa(top))
+		fmt.Println(endpoint)
 
 		cs := []CustomObjectRecord{}
 

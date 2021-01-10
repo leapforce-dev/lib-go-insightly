@@ -7,7 +7,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// CustomObjectRecord stores CustomObjectRecord from Insightly
+// CustomObjectRecord stores CustomObjectRecord from Service
 //
 type CustomObjectRecord struct {
 	RecordID       int          `json:"RECORD_ID"`
@@ -45,7 +45,7 @@ func (c *CustomObjectRecord) prepareMarshal() interface{} {
 
 // GetCustomObjectRecord returns a specific customObjectRecord
 //
-func (i *Insightly) GetCustomObjectRecord(customObjectName string, customObjectRecordID int) (*CustomObjectRecord, *errortools.Error) {
+func (i *Service) GetCustomObjectRecord(customObjectName string, customObjectRecordID int) (*CustomObjectRecord, *errortools.Error) {
 	endpoint := fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)
 
 	customObjectRecord := CustomObjectRecord{}
@@ -60,7 +60,7 @@ func (i *Insightly) GetCustomObjectRecord(customObjectName string, customObjectR
 
 // GetCustomObjectRecords returns all customObjectRecords
 //
-func (i *Insightly) GetCustomObjectRecords(customObjectName string, filter *FieldFilter) (*[]CustomObjectRecord, *errortools.Error) {
+func (i *Service) GetCustomObjectRecords(customObjectName string, filter *FieldFilter) (*[]CustomObjectRecord, *errortools.Error) {
 	endpointStr := "%s%sskip=%s&top=%s"
 	skip := 0
 	top := 100
@@ -70,7 +70,7 @@ func (i *Insightly) GetCustomObjectRecords(customObjectName string, filter *Fiel
 
 	for rowCount >= top {
 		endpoint := fmt.Sprintf(endpointStr, customObjectName, filter.Search(), strconv.Itoa(skip), strconv.Itoa(top))
-		fmt.Println(endpoint)
+		//fmt.Println(endpoint)
 
 		cs := []CustomObjectRecord{}
 
@@ -95,7 +95,7 @@ func (i *Insightly) GetCustomObjectRecords(customObjectName string, filter *Fiel
 
 // CreateCustomObjectRecord creates a new contract
 //
-func (i *Insightly) CreateCustomObjectRecord(customObjectName string, customObjectRecord *CustomObjectRecord) (*CustomObjectRecord, *errortools.Error) {
+func (i *Service) CreateCustomObjectRecord(customObjectName string, customObjectRecord *CustomObjectRecord) (*CustomObjectRecord, *errortools.Error) {
 	if customObjectRecord == nil {
 		return nil, nil
 	}
@@ -114,7 +114,7 @@ func (i *Insightly) CreateCustomObjectRecord(customObjectName string, customObje
 
 // UpdateCustomObjectRecord updates an existing contract
 //
-func (i *Insightly) UpdateCustomObjectRecord(customObjectName string, customObjectRecord *CustomObjectRecord) (*CustomObjectRecord, *errortools.Error) {
+func (i *Service) UpdateCustomObjectRecord(customObjectName string, customObjectRecord *CustomObjectRecord) (*CustomObjectRecord, *errortools.Error) {
 	if customObjectRecord == nil {
 		return nil, nil
 	}
@@ -133,7 +133,7 @@ func (i *Insightly) UpdateCustomObjectRecord(customObjectName string, customObje
 
 // DeleteCustomObjectRecord deletes a specific customObjectRecord
 //
-func (i *Insightly) DeleteCustomObjectRecord(customObjectName string, customObjectRecordID int) *errortools.Error {
+func (i *Service) DeleteCustomObjectRecord(customObjectName string, customObjectRecordID int) *errortools.Error {
 	endpoint := fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)
 
 	_, _, e := i.delete(endpoint, nil, nil)

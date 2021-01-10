@@ -9,7 +9,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// Product stores Product from Insightly
+// Product stores Product from Service
 //
 type Product struct {
 	ProductID       int          `json:"PRODUCT_ID"`
@@ -65,12 +65,12 @@ func (p *Product) prepareMarshal() interface{} {
 
 // GetProduct returns a specific product
 //
-func (i *Insightly) GetProduct(productID int) (*Product, *errortools.Error) {
+func (service *Service) GetProduct(productID int) (*Product, *errortools.Error) {
 	endpoint := fmt.Sprintf("Products/%v", productID)
 
 	product := Product{}
 
-	_, _, e := i.get(endpoint, nil, &product)
+	_, _, e := service.get(endpoint, nil, &product)
 	if e != nil {
 		return nil, e
 	}
@@ -88,7 +88,7 @@ type GetProductsFilter struct {
 
 // GetProducts returns all products
 //
-func (i *Insightly) GetProducts(filter *GetProductsFilter) (*[]Product, *errortools.Error) {
+func (service *Service) GetProducts(filter *GetProductsFilter) (*[]Product, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -120,7 +120,7 @@ func (i *Insightly) GetProducts(filter *GetProductsFilter) (*[]Product, *errorto
 
 		cs := []Product{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}
@@ -141,7 +141,7 @@ func (i *Insightly) GetProducts(filter *GetProductsFilter) (*[]Product, *errorto
 
 // CreateProduct creates a new contract
 //
-func (i *Insightly) CreateProduct(product *Product) (*Product, *errortools.Error) {
+func (service *Service) CreateProduct(product *Product) (*Product, *errortools.Error) {
 	if product == nil {
 		return nil, nil
 	}
@@ -150,7 +150,7 @@ func (i *Insightly) CreateProduct(product *Product) (*Product, *errortools.Error
 
 	productNew := Product{}
 
-	_, _, e := i.post(endpoint, product.prepareMarshal(), &productNew)
+	_, _, e := service.post(endpoint, product.prepareMarshal(), &productNew)
 	if e != nil {
 		return nil, e
 	}
@@ -160,7 +160,7 @@ func (i *Insightly) CreateProduct(product *Product) (*Product, *errortools.Error
 
 // UpdateProduct updates an existing contract
 //
-func (i *Insightly) UpdateProduct(product *Product) (*Product, *errortools.Error) {
+func (service *Service) UpdateProduct(product *Product) (*Product, *errortools.Error) {
 	if product == nil {
 		return nil, nil
 	}
@@ -169,7 +169,7 @@ func (i *Insightly) UpdateProduct(product *Product) (*Product, *errortools.Error
 
 	productUpdated := Product{}
 
-	_, _, e := i.put(endpoint, product.prepareMarshal(), &productUpdated)
+	_, _, e := service.put(endpoint, product.prepareMarshal(), &productUpdated)
 	if e != nil {
 		return nil, e
 	}
@@ -179,10 +179,10 @@ func (i *Insightly) UpdateProduct(product *Product) (*Product, *errortools.Error
 
 // DeleteProduct deletes a specific product
 //
-func (i *Insightly) DeleteProduct(productID int) *errortools.Error {
+func (service *Service) DeleteProduct(productID int) *errortools.Error {
 	endpoint := fmt.Sprintf("Products/%v", productID)
 
-	_, _, e := i.delete(endpoint, nil, nil)
+	_, _, e := service.delete(endpoint, nil, nil)
 	if e != nil {
 		return e
 	}

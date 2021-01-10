@@ -8,7 +8,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// OpportunityCategory stores OpportunityCategory from Insightly
+// OpportunityCategory stores OpportunityCategory from Service
 //
 type OpportunityCategory struct {
 	CategoryID      int    `json:"CATEGORY_ID"`
@@ -22,7 +22,7 @@ type GetOpportunityCategoriesFilter struct {
 
 // GetOpportunityCategories returns all opportunityCategorys
 //
-func (i *Insightly) GetOpportunityCategories(filter *GetOpportunityCategoriesFilter) (*[]OpportunityCategory, *errortools.Error) {
+func (service *Service) GetOpportunityCategories(filter *GetOpportunityCategoriesFilter) (*[]OpportunityCategory, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -46,7 +46,7 @@ func (i *Insightly) GetOpportunityCategories(filter *GetOpportunityCategoriesFil
 
 		cs := []OpportunityCategory{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}

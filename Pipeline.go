@@ -8,7 +8,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// Pipeline stores Pipeline from Insightly
+// Pipeline stores Pipeline from Service
 //
 type Pipeline struct {
 	PipelineID       int    `json:"PIPELINE_ID"`
@@ -23,7 +23,7 @@ type GetPipelinesFilter struct {
 
 // GetPipelines returns all pipelines
 //
-func (i *Insightly) GetPipelines(filter *GetPipelinesFilter) (*[]Pipeline, *errortools.Error) {
+func (service *Service) GetPipelines(filter *GetPipelinesFilter) (*[]Pipeline, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -47,7 +47,7 @@ func (i *Insightly) GetPipelines(filter *GetPipelinesFilter) (*[]Pipeline, *erro
 
 		cs := []Pipeline{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}

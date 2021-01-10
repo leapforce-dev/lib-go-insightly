@@ -80,12 +80,12 @@ func (u *User) prepareMarshal() interface{} {
 
 // GetUser returns a specific user
 //
-func (i *Insightly) GetUser(userID int) (*User, *errortools.Error) {
+func (service *Service) GetUser(userID int) (*User, *errortools.Error) {
 	endpoint := fmt.Sprintf("Users/%v", userID)
 
 	user := User{}
 
-	_, _, e := i.get(endpoint, nil, &user)
+	_, _, e := service.get(endpoint, nil, &user)
 	if e != nil {
 		return nil, e
 	}
@@ -103,7 +103,7 @@ type GetUsersFilter struct {
 
 // GetUsers returns all users
 //
-func (i *Insightly) GetUsers(filter *GetUsersFilter) (*[]User, *errortools.Error) {
+func (service *Service) GetUsers(filter *GetUsersFilter) (*[]User, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -135,7 +135,7 @@ func (i *Insightly) GetUsers(filter *GetUsersFilter) (*[]User, *errortools.Error
 
 		cs := []User{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}
@@ -156,7 +156,7 @@ func (i *Insightly) GetUsers(filter *GetUsersFilter) (*[]User, *errortools.Error
 
 // CreateUser creates a new contract
 //
-func (i *Insightly) CreateUser(user *User) (*User, *errortools.Error) {
+func (service *Service) CreateUser(user *User) (*User, *errortools.Error) {
 	if user == nil {
 		return nil, nil
 	}
@@ -165,7 +165,7 @@ func (i *Insightly) CreateUser(user *User) (*User, *errortools.Error) {
 
 	userNew := User{}
 
-	_, _, e := i.post(endpoint, user.prepareMarshal(), &userNew)
+	_, _, e := service.post(endpoint, user.prepareMarshal(), &userNew)
 	if e != nil {
 		return nil, e
 	}
@@ -175,7 +175,7 @@ func (i *Insightly) CreateUser(user *User) (*User, *errortools.Error) {
 
 // UpdateUser updates an existing contract
 //
-func (i *Insightly) UpdateUser(user *User) (*User, *errortools.Error) {
+func (service *Service) UpdateUser(user *User) (*User, *errortools.Error) {
 	if user == nil {
 		return nil, nil
 	}
@@ -184,7 +184,7 @@ func (i *Insightly) UpdateUser(user *User) (*User, *errortools.Error) {
 
 	userUpdated := User{}
 
-	_, _, e := i.put(endpoint, user.prepareMarshal(), &userUpdated)
+	_, _, e := service.put(endpoint, user.prepareMarshal(), &userUpdated)
 	if e != nil {
 		return nil, e
 	}
@@ -194,10 +194,10 @@ func (i *Insightly) UpdateUser(user *User) (*User, *errortools.Error) {
 
 // DeleteUser deletes a specific user
 //
-func (i *Insightly) DeleteUser(userID int) *errortools.Error {
+func (service *Service) DeleteUser(userID int) *errortools.Error {
 	endpoint := fmt.Sprintf("Users/%v", userID)
 
-	_, _, e := i.delete(endpoint, nil, nil)
+	_, _, e := service.delete(endpoint, nil, nil)
 	if e != nil {
 		return e
 	}

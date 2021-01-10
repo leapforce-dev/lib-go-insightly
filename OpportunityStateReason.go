@@ -8,7 +8,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// OpportunityStateReason stores OpportunityStateReason from Insightly
+// OpportunityStateReason stores OpportunityStateReason from Service
 //
 type OpportunityStateReason struct {
 	StateReasonID       int    `json:"STATE_REASON_ID"`
@@ -21,7 +21,7 @@ type GetOpportunityStateReasonsFilter struct {
 
 // GetOpportunityStateReasons returns all opportunityStateReasons
 //
-func (i *Insightly) GetOpportunityStateReasons(filter *GetOpportunityStateReasonsFilter) (*[]OpportunityStateReason, *errortools.Error) {
+func (service *Service) GetOpportunityStateReasons(filter *GetOpportunityStateReasonsFilter) (*[]OpportunityStateReason, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -45,7 +45,7 @@ func (i *Insightly) GetOpportunityStateReasons(filter *GetOpportunityStateReason
 
 		cs := []OpportunityStateReason{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}

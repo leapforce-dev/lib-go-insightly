@@ -9,7 +9,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// Team stores Team from Insightly
+// Team stores Team from Service
 //
 type Team struct {
 	TeamID         int          `json:"TEAM_ID"`
@@ -40,12 +40,12 @@ func (t *Team) prepareMarshal() interface{} {
 
 // GetTeam returns a specific team
 //
-func (i *Insightly) GetTeam(teamID int) (*Team, *errortools.Error) {
+func (service *Service) GetTeam(teamID int) (*Team, *errortools.Error) {
 	endpoint := fmt.Sprintf("Teams/%v", teamID)
 
 	team := Team{}
 
-	_, _, e := i.get(endpoint, nil, &team)
+	_, _, e := service.get(endpoint, nil, &team)
 	if e != nil {
 		return nil, e
 	}
@@ -63,7 +63,7 @@ type GetTeamsFilter struct {
 
 // GetTeams returns all teams
 //
-func (i *Insightly) GetTeams(filter *GetTeamsFilter) (*[]Team, *errortools.Error) {
+func (service *Service) GetTeams(filter *GetTeamsFilter) (*[]Team, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -95,7 +95,7 @@ func (i *Insightly) GetTeams(filter *GetTeamsFilter) (*[]Team, *errortools.Error
 
 		cs := []Team{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}
@@ -116,7 +116,7 @@ func (i *Insightly) GetTeams(filter *GetTeamsFilter) (*[]Team, *errortools.Error
 
 // CreateTeam creates a new contract
 //
-func (i *Insightly) CreateTeam(team *Team) (*Team, *errortools.Error) {
+func (service *Service) CreateTeam(team *Team) (*Team, *errortools.Error) {
 	if team == nil {
 		return nil, nil
 	}
@@ -125,7 +125,7 @@ func (i *Insightly) CreateTeam(team *Team) (*Team, *errortools.Error) {
 
 	teamNew := Team{}
 
-	_, _, e := i.post(endpoint, team.prepareMarshal(), &teamNew)
+	_, _, e := service.post(endpoint, team.prepareMarshal(), &teamNew)
 	if e != nil {
 		return nil, e
 	}
@@ -135,7 +135,7 @@ func (i *Insightly) CreateTeam(team *Team) (*Team, *errortools.Error) {
 
 // UpdateTeam updates an existing contract
 //
-func (i *Insightly) UpdateTeam(team *Team) (*Team, *errortools.Error) {
+func (service *Service) UpdateTeam(team *Team) (*Team, *errortools.Error) {
 	if team == nil {
 		return nil, nil
 	}
@@ -144,7 +144,7 @@ func (i *Insightly) UpdateTeam(team *Team) (*Team, *errortools.Error) {
 
 	teamUpdated := Team{}
 
-	_, _, e := i.put(endpoint, team.prepareMarshal(), &teamUpdated)
+	_, _, e := service.put(endpoint, team.prepareMarshal(), &teamUpdated)
 	if e != nil {
 		return nil, e
 	}
@@ -154,10 +154,10 @@ func (i *Insightly) UpdateTeam(team *Team) (*Team, *errortools.Error) {
 
 // DeleteTeam deletes a specific team
 //
-func (i *Insightly) DeleteTeam(teamID int) *errortools.Error {
+func (service *Service) DeleteTeam(teamID int) *errortools.Error {
 	endpoint := fmt.Sprintf("Teams/%v", teamID)
 
-	_, _, e := i.delete(endpoint, nil, nil)
+	_, _, e := service.delete(endpoint, nil, nil)
 	if e != nil {
 		return e
 	}

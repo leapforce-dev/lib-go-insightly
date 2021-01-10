@@ -9,7 +9,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// Opportunity stores Opportunity from Insightly
+// Opportunity stores Opportunity from Service
 //
 type Opportunity struct {
 	OpportunityID       int          `json:"OPPORTUNITY_ID"`
@@ -92,12 +92,12 @@ func (o *Opportunity) prepareMarshal() interface{} {
 
 // GetOpportunity returns a specific opportunity
 //
-func (i *Insightly) GetOpportunity(opportunityID int) (*Opportunity, *errortools.Error) {
+func (service *Service) GetOpportunity(opportunityID int) (*Opportunity, *errortools.Error) {
 	endpoint := fmt.Sprintf("Opportunities/%v", opportunityID)
 
 	opportunity := Opportunity{}
 
-	_, _, e := i.get(endpoint, nil, &opportunity)
+	_, _, e := service.get(endpoint, nil, &opportunity)
 	if e != nil {
 		return nil, e
 	}
@@ -115,7 +115,7 @@ type GetOpportunitiesFilter struct {
 
 // GetOpportunities returns all opportunities
 //
-func (i *Insightly) GetOpportunities(filter *GetOpportunitiesFilter) (*[]Opportunity, *errortools.Error) {
+func (service *Service) GetOpportunities(filter *GetOpportunitiesFilter) (*[]Opportunity, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -147,7 +147,7 @@ func (i *Insightly) GetOpportunities(filter *GetOpportunitiesFilter) (*[]Opportu
 
 		cs := []Opportunity{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}
@@ -168,7 +168,7 @@ func (i *Insightly) GetOpportunities(filter *GetOpportunitiesFilter) (*[]Opportu
 
 // CreateOpportunity creates a new contract
 //
-func (i *Insightly) CreateOpportunity(opportunity *Opportunity) (*Opportunity, *errortools.Error) {
+func (service *Service) CreateOpportunity(opportunity *Opportunity) (*Opportunity, *errortools.Error) {
 	if opportunity == nil {
 		return nil, nil
 	}
@@ -177,7 +177,7 @@ func (i *Insightly) CreateOpportunity(opportunity *Opportunity) (*Opportunity, *
 
 	opportunityNew := Opportunity{}
 
-	_, _, e := i.post(endpoint, opportunity.prepareMarshal(), &opportunityNew)
+	_, _, e := service.post(endpoint, opportunity.prepareMarshal(), &opportunityNew)
 	if e != nil {
 		return nil, e
 	}
@@ -187,7 +187,7 @@ func (i *Insightly) CreateOpportunity(opportunity *Opportunity) (*Opportunity, *
 
 // UpdateOpportunity updates an existing contract
 //
-func (i *Insightly) UpdateOpportunity(opportunity *Opportunity) (*Opportunity, *errortools.Error) {
+func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunity, *errortools.Error) {
 	if opportunity == nil {
 		return nil, nil
 	}
@@ -196,7 +196,7 @@ func (i *Insightly) UpdateOpportunity(opportunity *Opportunity) (*Opportunity, *
 
 	opportunityUpdated := Opportunity{}
 
-	_, _, e := i.put(endpoint, opportunity.prepareMarshal(), &opportunityUpdated)
+	_, _, e := service.put(endpoint, opportunity.prepareMarshal(), &opportunityUpdated)
 	if e != nil {
 		return nil, e
 	}
@@ -206,10 +206,10 @@ func (i *Insightly) UpdateOpportunity(opportunity *Opportunity) (*Opportunity, *
 
 // DeleteOpportunity deletes a specific opportunity
 //
-func (i *Insightly) DeleteOpportunity(opportunityID int) *errortools.Error {
+func (service *Service) DeleteOpportunity(opportunityID int) *errortools.Error {
 	endpoint := fmt.Sprintf("Opportunities/%v", opportunityID)
 
-	_, _, e := i.delete(endpoint, nil, nil)
+	_, _, e := service.delete(endpoint, nil, nil)
 	if e != nil {
 		return e
 	}
@@ -219,12 +219,12 @@ func (i *Insightly) DeleteOpportunity(opportunityID int) *errortools.Error {
 
 // GetOpportunityLinks returns links for a specific opportunity
 //
-func (i *Insightly) GetOpportunityLinks(opportunityID int) (*[]Link, *errortools.Error) {
+func (service *Service) GetOpportunityLinks(opportunityID int) (*[]Link, *errortools.Error) {
 	endpoint := fmt.Sprintf("Opportunity/%v/Links", opportunityID)
 
 	links := []Link{}
 
-	_, _, e := i.get(endpoint, nil, &links)
+	_, _, e := service.get(endpoint, nil, &links)
 	if e != nil {
 		return nil, e
 	}

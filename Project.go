@@ -127,12 +127,12 @@ func (p *Project) prepareMarshal() interface{} {
 
 // GetProject returns a specific project
 //
-func (i *Insightly) GetProject(projectID int) (*Project, *errortools.Error) {
+func (service *Service) GetProject(projectID int) (*Project, *errortools.Error) {
 	endpoint := fmt.Sprintf("Projects/%v", projectID)
 
 	project := Project{}
 
-	_, _, e := i.get(endpoint, nil, &project)
+	_, _, e := service.get(endpoint, nil, &project)
 	if e != nil {
 		return nil, e
 	}
@@ -150,7 +150,7 @@ type GetProjectsFilter struct {
 
 // GetProjects returns all projects
 //
-func (i *Insightly) GetProjects(filter *GetProjectsFilter) (*[]Project, *errortools.Error) {
+func (service *Service) GetProjects(filter *GetProjectsFilter) (*[]Project, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -182,7 +182,7 @@ func (i *Insightly) GetProjects(filter *GetProjectsFilter) (*[]Project, *errorto
 
 		cs := []Project{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}
@@ -203,7 +203,7 @@ func (i *Insightly) GetProjects(filter *GetProjectsFilter) (*[]Project, *errorto
 
 // CreateProject creates a new contract
 //
-func (i *Insightly) CreateProject(project *Project) (*Project, *errortools.Error) {
+func (service *Service) CreateProject(project *Project) (*Project, *errortools.Error) {
 	if project == nil {
 		return nil, nil
 	}
@@ -212,7 +212,7 @@ func (i *Insightly) CreateProject(project *Project) (*Project, *errortools.Error
 
 	projectNew := Project{}
 
-	_, _, e := i.post(endpoint, project.prepareMarshal(), &projectNew)
+	_, _, e := service.post(endpoint, project.prepareMarshal(), &projectNew)
 	if e != nil {
 		return nil, e
 	}
@@ -222,7 +222,7 @@ func (i *Insightly) CreateProject(project *Project) (*Project, *errortools.Error
 
 // UpdateProject updates an existing contract
 //
-func (i *Insightly) UpdateProject(project *Project) (*Project, *errortools.Error) {
+func (service *Service) UpdateProject(project *Project) (*Project, *errortools.Error) {
 	if project == nil {
 		return nil, nil
 	}
@@ -231,7 +231,7 @@ func (i *Insightly) UpdateProject(project *Project) (*Project, *errortools.Error
 
 	projectUpdated := Project{}
 
-	_, _, e := i.put(endpoint, project.prepareMarshal(), &projectUpdated)
+	_, _, e := service.put(endpoint, project.prepareMarshal(), &projectUpdated)
 	if e != nil {
 		return nil, e
 	}
@@ -241,10 +241,10 @@ func (i *Insightly) UpdateProject(project *Project) (*Project, *errortools.Error
 
 // DeleteProject deletes a specific project
 //
-func (i *Insightly) DeleteProject(projectID int) *errortools.Error {
+func (service *Service) DeleteProject(projectID int) *errortools.Error {
 	endpoint := fmt.Sprintf("Projects/%v", projectID)
 
-	_, _, e := i.delete(endpoint, nil, nil)
+	_, _, e := service.delete(endpoint, nil, nil)
 	if e != nil {
 		return e
 	}

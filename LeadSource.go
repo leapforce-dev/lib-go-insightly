@@ -8,7 +8,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// LeadSource stores LeadSource from Insightly
+// LeadSource stores LeadSource from Service
 //
 type LeadSource struct {
 	LeadSourceID int    `json:"LEAD_SOURCE_ID"`
@@ -22,7 +22,7 @@ type GetLeadSourcesFilter struct {
 
 // GetLeadSources returns all leadSources
 //
-func (i *Insightly) GetLeadSources(filter *GetLeadSourcesFilter) (*[]LeadSource, *errortools.Error) {
+func (service *Service) GetLeadSources(filter *GetLeadSourcesFilter) (*[]LeadSource, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -46,7 +46,7 @@ func (i *Insightly) GetLeadSources(filter *GetLeadSourcesFilter) (*[]LeadSource,
 
 		cs := []LeadSource{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}

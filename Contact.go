@@ -127,12 +127,12 @@ func (c *Contact) prepareMarshal() interface{} {
 
 // GetContact returns a specific contact
 //
-func (i *Insightly) GetContact(contactID int) (*Contact, *errortools.Error) {
+func (service *Service) GetContact(contactID int) (*Contact, *errortools.Error) {
 	endpoint := fmt.Sprintf("Contacts/%v", contactID)
 
 	contact := Contact{}
 
-	_, _, e := i.get(endpoint, nil, &contact)
+	_, _, e := service.get(endpoint, nil, &contact)
 	if e != nil {
 		return nil, e
 	}
@@ -150,7 +150,7 @@ type GetContactsFilter struct {
 
 // GetContacts returns all contacts
 //
-func (i *Insightly) GetContacts(filter *GetContactsFilter) (*[]Contact, *errortools.Error) {
+func (service *Service) GetContacts(filter *GetContactsFilter) (*[]Contact, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -182,7 +182,7 @@ func (i *Insightly) GetContacts(filter *GetContactsFilter) (*[]Contact, *errorto
 
 		cs := []Contact{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}
@@ -203,7 +203,7 @@ func (i *Insightly) GetContacts(filter *GetContactsFilter) (*[]Contact, *errorto
 
 // CreateContact creates a new contract
 //
-func (i *Insightly) CreateContact(contact *Contact) (*Contact, *errortools.Error) {
+func (service *Service) CreateContact(contact *Contact) (*Contact, *errortools.Error) {
 	if contact == nil {
 		return nil, nil
 	}
@@ -212,7 +212,7 @@ func (i *Insightly) CreateContact(contact *Contact) (*Contact, *errortools.Error
 
 	contactNew := Contact{}
 
-	_, _, e := i.post(endpoint, contact.prepareMarshal(), &contactNew)
+	_, _, e := service.post(endpoint, contact.prepareMarshal(), &contactNew)
 	if e != nil {
 		return nil, e
 	}
@@ -222,7 +222,7 @@ func (i *Insightly) CreateContact(contact *Contact) (*Contact, *errortools.Error
 
 // UpdateContact updates an existing contract
 //
-func (i *Insightly) UpdateContact(contact *Contact) (*Contact, *errortools.Error) {
+func (service *Service) UpdateContact(contact *Contact) (*Contact, *errortools.Error) {
 	if contact == nil {
 		return nil, nil
 	}
@@ -231,7 +231,7 @@ func (i *Insightly) UpdateContact(contact *Contact) (*Contact, *errortools.Error
 
 	contactUpdated := Contact{}
 
-	_, _, e := i.put(endpoint, contact.prepareMarshal(), &contactUpdated)
+	_, _, e := service.put(endpoint, contact.prepareMarshal(), &contactUpdated)
 	if e != nil {
 		return nil, e
 	}
@@ -241,10 +241,10 @@ func (i *Insightly) UpdateContact(contact *Contact) (*Contact, *errortools.Error
 
 // DeleteContact deletes a specific contact
 //
-func (i *Insightly) DeleteContact(contactID int) *errortools.Error {
+func (service *Service) DeleteContact(contactID int) *errortools.Error {
 	endpoint := fmt.Sprintf("Contacts/%v", contactID)
 
-	_, _, e := i.delete(endpoint, nil, nil)
+	_, _, e := service.delete(endpoint, nil, nil)
 	if e != nil {
 		return e
 	}

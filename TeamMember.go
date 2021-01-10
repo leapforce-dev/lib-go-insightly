@@ -8,7 +8,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// TeamMember stores TeamMember from Insightly
+// TeamMember stores TeamMember from Service
 //
 type TeamMember struct {
 	PermissionID int `json:"PERMISSION_ID"`
@@ -21,7 +21,7 @@ type GetTeamMembersFilter struct {
 
 // GetTeamMembers returns all teamMembers
 //
-func (i *Insightly) GetTeamMembers(filter *GetTeamMembersFilter) (*[]TeamMember, *errortools.Error) {
+func (service *Service) GetTeamMembers(filter *GetTeamMembersFilter) (*[]TeamMember, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -45,7 +45,7 @@ func (i *Insightly) GetTeamMembers(filter *GetTeamMembersFilter) (*[]TeamMember,
 
 		cs := []TeamMember{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}

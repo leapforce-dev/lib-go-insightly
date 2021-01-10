@@ -9,7 +9,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// Lead stores Lead from Insightly
+// Lead stores Lead from Service
 //
 type Lead struct {
 	LeadID                  int          `json:"LEAD_ID"`
@@ -126,12 +126,12 @@ func (l *Lead) prepareMarshal() interface{} {
 
 // GetLead returns a specific lead
 //
-func (i *Insightly) GetLead(leadID int) (*Lead, *errortools.Error) {
+func (service *Service) GetLead(leadID int) (*Lead, *errortools.Error) {
 	endpoint := fmt.Sprintf("Leads/%v", leadID)
 
 	lead := Lead{}
 
-	_, _, e := i.get(endpoint, nil, &lead)
+	_, _, e := service.get(endpoint, nil, &lead)
 	if e != nil {
 		return nil, e
 	}
@@ -149,7 +149,7 @@ type GetLeadsFilter struct {
 
 // GetLeads returns all leads
 //
-func (i *Insightly) GetLeads(filter *GetLeadsFilter) (*[]Lead, *errortools.Error) {
+func (service *Service) GetLeads(filter *GetLeadsFilter) (*[]Lead, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -181,7 +181,7 @@ func (i *Insightly) GetLeads(filter *GetLeadsFilter) (*[]Lead, *errortools.Error
 
 		cs := []Lead{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}
@@ -202,7 +202,7 @@ func (i *Insightly) GetLeads(filter *GetLeadsFilter) (*[]Lead, *errortools.Error
 
 // CreateLead creates a new contract
 //
-func (i *Insightly) CreateLead(lead *Lead) (*Lead, *errortools.Error) {
+func (service *Service) CreateLead(lead *Lead) (*Lead, *errortools.Error) {
 	if lead == nil {
 		return nil, nil
 	}
@@ -211,7 +211,7 @@ func (i *Insightly) CreateLead(lead *Lead) (*Lead, *errortools.Error) {
 
 	leadNew := Lead{}
 
-	_, _, e := i.post(endpoint, lead.prepareMarshal(), &leadNew)
+	_, _, e := service.post(endpoint, lead.prepareMarshal(), &leadNew)
 	if e != nil {
 		return nil, e
 	}
@@ -221,7 +221,7 @@ func (i *Insightly) CreateLead(lead *Lead) (*Lead, *errortools.Error) {
 
 // UpdateLead updates an existing contract
 //
-func (i *Insightly) UpdateLead(lead *Lead) (*Lead, *errortools.Error) {
+func (service *Service) UpdateLead(lead *Lead) (*Lead, *errortools.Error) {
 	if lead == nil {
 		return nil, nil
 	}
@@ -230,7 +230,7 @@ func (i *Insightly) UpdateLead(lead *Lead) (*Lead, *errortools.Error) {
 
 	leadUpdated := Lead{}
 
-	_, _, e := i.put(endpoint, lead.prepareMarshal(), &leadUpdated)
+	_, _, e := service.put(endpoint, lead.prepareMarshal(), &leadUpdated)
 	if e != nil {
 		return nil, e
 	}
@@ -240,10 +240,10 @@ func (i *Insightly) UpdateLead(lead *Lead) (*Lead, *errortools.Error) {
 
 // DeleteLead deletes a specific lead
 //
-func (i *Insightly) DeleteLead(leadID int) *errortools.Error {
+func (service *Service) DeleteLead(leadID int) *errortools.Error {
 	endpoint := fmt.Sprintf("Leads/%v", leadID)
 
-	_, _, e := i.delete(endpoint, nil, nil)
+	_, _, e := service.delete(endpoint, nil, nil)
 	if e != nil {
 		return e
 	}

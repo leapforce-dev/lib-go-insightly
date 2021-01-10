@@ -4,7 +4,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// CustomObject stores CustomObject from Insightly
+// CustomObject stores CustomObject from Service
 //
 type CustomObject struct {
 	ObjectName              string  `json:"OBJECT_NAME"`
@@ -23,14 +23,14 @@ type CustomObject struct {
 
 // GetCustomObjects returns all customobjects
 //
-func (i *Insightly) GetCustomObjects() ([]CustomObject, *errortools.Error) {
+func (service *Service) GetCustomObjects() ([]CustomObject, *errortools.Error) {
 	customobjects := []CustomObject{}
 
 	endpoint := "CustomObjects"
 
 	os := []CustomObject{}
 
-	_, _, err := i.get(endpoint, nil, &os)
+	_, _, err := service.get(endpoint, nil, &os)
 	if err != nil {
 		return nil, err
 	}

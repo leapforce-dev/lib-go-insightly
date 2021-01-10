@@ -9,7 +9,7 @@ import (
 	errortools "github.com/leapforce-libraries/go_errortools"
 )
 
-// Organisation stores Organisation from Insightly
+// Organisation stores Organisation from Service
 //
 type Organisation struct {
 	OrganisationID         int           `json:"ORGANISATION_ID"`
@@ -100,12 +100,12 @@ func (o *Organisation) prepareMarshal() interface{} {
 
 // GetOrganisation returns a specific organisation
 //
-func (i *Insightly) GetOrganisation(organisationID int) (*Organisation, *errortools.Error) {
+func (service *Service) GetOrganisation(organisationID int) (*Organisation, *errortools.Error) {
 	endpoint := fmt.Sprintf("Organisations/%v", organisationID)
 
 	organisation := Organisation{}
 
-	_, _, e := i.get(endpoint, nil, &organisation)
+	_, _, e := service.get(endpoint, nil, &organisation)
 	if e != nil {
 		return nil, e
 	}
@@ -123,7 +123,7 @@ type GetOrganisationsFilter struct {
 
 // GetOrganisations returns all organisations
 //
-func (i *Insightly) GetOrganisations(filter *GetOrganisationsFilter) (*[]Organisation, *errortools.Error) {
+func (service *Service) GetOrganisations(filter *GetOrganisationsFilter) (*[]Organisation, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -155,7 +155,7 @@ func (i *Insightly) GetOrganisations(filter *GetOrganisationsFilter) (*[]Organis
 
 		cs := []Organisation{}
 
-		_, _, e := i.get(endpoint, nil, &cs)
+		_, _, e := service.get(endpoint, nil, &cs)
 		if e != nil {
 			return nil, e
 		}
@@ -176,7 +176,7 @@ func (i *Insightly) GetOrganisations(filter *GetOrganisationsFilter) (*[]Organis
 
 // CreateOrganisation creates a new contract
 //
-func (i *Insightly) CreateOrganisation(organisation *Organisation) (*Organisation, *errortools.Error) {
+func (service *Service) CreateOrganisation(organisation *Organisation) (*Organisation, *errortools.Error) {
 	if organisation == nil {
 		return nil, nil
 	}
@@ -185,7 +185,7 @@ func (i *Insightly) CreateOrganisation(organisation *Organisation) (*Organisatio
 
 	organisationNew := Organisation{}
 
-	_, _, e := i.post(endpoint, organisation.prepareMarshal(), &organisationNew)
+	_, _, e := service.post(endpoint, organisation.prepareMarshal(), &organisationNew)
 	if e != nil {
 		return nil, e
 	}
@@ -195,7 +195,7 @@ func (i *Insightly) CreateOrganisation(organisation *Organisation) (*Organisatio
 
 // UpdateOrganisation updates an existing contract
 //
-func (i *Insightly) UpdateOrganisation(organisation *Organisation) (*Organisation, *errortools.Error) {
+func (service *Service) UpdateOrganisation(organisation *Organisation) (*Organisation, *errortools.Error) {
 	if organisation == nil {
 		return nil, nil
 	}
@@ -204,7 +204,7 @@ func (i *Insightly) UpdateOrganisation(organisation *Organisation) (*Organisatio
 
 	organisationUpdated := Organisation{}
 
-	_, _, e := i.put(endpoint, organisation.prepareMarshal(), &organisationUpdated)
+	_, _, e := service.put(endpoint, organisation.prepareMarshal(), &organisationUpdated)
 	if e != nil {
 		return nil, e
 	}
@@ -214,10 +214,10 @@ func (i *Insightly) UpdateOrganisation(organisation *Organisation) (*Organisatio
 
 // DeleteOrganisation deletes a specific organisation
 //
-func (i *Insightly) DeleteOrganisation(organisationID int) *errortools.Error {
+func (service *Service) DeleteOrganisation(organisationID int) *errortools.Error {
 	endpoint := fmt.Sprintf("Organisations/%v", organisationID)
 
-	_, _, e := i.delete(endpoint, nil, nil)
+	_, _, e := service.delete(endpoint, nil, nil)
 	if e != nil {
 		return e
 	}
@@ -227,12 +227,12 @@ func (i *Insightly) DeleteOrganisation(organisationID int) *errortools.Error {
 
 // GetOrganisationLinks returns links for a specific organisation
 //
-func (i *Insightly) GetOrganisationLinks(organisationID int) (*[]Link, *errortools.Error) {
+func (service *Service) GetOrganisationLinks(organisationID int) (*[]Link, *errortools.Error) {
 	endpoint := fmt.Sprintf("Organisations/%v/Links", organisationID)
 
 	links := []Link{}
 
-	_, _, e := i.get(endpoint, nil, &links)
+	_, _, e := service.get(endpoint, nil, &links)
 	if e != nil {
 		return nil, e
 	}

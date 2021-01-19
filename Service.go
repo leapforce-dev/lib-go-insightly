@@ -77,7 +77,7 @@ func (service *Service) httpRequest(httpMethod string, requestConfig *go_http.Re
 	// add authentication header
 	header := http.Header{}
 	header.Set("Authorization", fmt.Sprintf("Basic %s", service.token))
-	requestConfig.NonDefaultHeaders = &header
+	(*requestConfig).NonDefaultHeaders = &header
 
 	request, response, e := service.httpService.HTTPRequest(httpMethod, requestConfig)
 

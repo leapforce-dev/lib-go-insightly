@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	APIURL     string = "https://api.%s.insightly.com/v3.1"
-	DateFormat string = "2006-01-02 15:04:05"
+	APIURL                string = "https://api.%s.insightly.com/v3.1"
+	DateFormat            string = "2006-01-02T15:04:05Z"
+	DateFormatCustomField string = "2006-01-02 15:04:05"
 )
 
 // type

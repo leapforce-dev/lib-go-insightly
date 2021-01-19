@@ -159,7 +159,7 @@ func (service *Service) GetContacts(filter *GetContactsFilter) (*[]Contact, *err
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(time.RFC3339)
+			from := filter.UpdatedAfter.Format(DateFormat)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 

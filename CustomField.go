@@ -89,7 +89,7 @@ func (customField *CustomField) GetTime() *time.Time {
 		return nil
 	}
 
-	time, err := time.Parse(DateFormat, *text)
+	time, err := time.Parse(DateFormatCustomField, *text)
 	if err != nil {
 		return nil
 	}

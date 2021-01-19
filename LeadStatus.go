@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // LeadStatus stores LeadStatus from Service
@@ -42,19 +43,20 @@ func (service *Service) GetLeadStatuses(filter *GetLeadStatusesFilter) (*[]LeadS
 	leadStatuses := []LeadStatus{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_leadStatuses := []LeadStatus{}
 
-		cs := []LeadStatus{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_leadStatuses,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		leadStatuses = append(leadStatuses, cs...)
+		leadStatuses = append(leadStatuses, _leadStatuses...)
 
-		rowCount = len(cs)
+		rowCount = len(_leadStatuses)
 		//rowCount = 0
 		skip += top
 	}

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // Lead stores Lead from Service
@@ -127,11 +128,13 @@ func (l *Lead) prepareMarshal() interface{} {
 // GetLead returns a specific lead
 //
 func (service *Service) GetLead(leadID int) (*Lead, *errortools.Error) {
-	endpoint := fmt.Sprintf("Leads/%v", leadID)
-
 	lead := Lead{}
 
-	_, _, e := service.get(endpoint, nil, &lead)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(fmt.Sprintf("Leads/%v", leadID)),
+		ResponseModel: &lead,
+	}
+	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -155,7 +158,7 @@ func (service *Service) GetLeads(filter *GetLeadsFilter) (*[]Lead, *errortools.E
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(ISO8601Format)
+			from := filter.UpdatedAfter.Format(time.RFC3339)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
@@ -176,19 +179,20 @@ func (service *Service) GetLeads(filter *GetLeadsFilter) (*[]Lead, *errortools.E
 	leads := []Lead{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_leads := []Lead{}
 
-		cs := []Lead{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_leads,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		leads = append(leads, cs...)
+		leads = append(leads, _leads...)
 
-		rowCount = len(cs)
+		rowCount = len(_leads)
 		//rowCount = 0
 		skip += top
 	}
@@ -207,11 +211,14 @@ func (service *Service) CreateLead(lead *Lead) (*Lead, *errortools.Error) {
 		return nil, nil
 	}
 
-	endpoint := "Leads"
-
 	leadNew := Lead{}
 
-	_, _, e := service.post(endpoint, lead.prepareMarshal(), &leadNew)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Leads"),
+		BodyModel:     lead.prepareMarshal(),
+		ResponseModel: &leadNew,
+	}
+	_, _, e := service.post(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -226,11 +233,14 @@ func (service *Service) UpdateLead(lead *Lead) (*Lead, *errortools.Error) {
 		return nil, nil
 	}
 
-	endpoint := "Leads"
-
 	leadUpdated := Lead{}
 
-	_, _, e := service.put(endpoint, lead.prepareMarshal(), &leadUpdated)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Leads"),
+		BodyModel:     lead.prepareMarshal(),
+		ResponseModel: &leadUpdated,
+	}
+	_, _, e := service.put(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -241,9 +251,10 @@ func (service *Service) UpdateLead(lead *Lead) (*Lead, *errortools.Error) {
 // DeleteLead deletes a specific lead
 //
 func (service *Service) DeleteLead(leadID int) *errortools.Error {
-	endpoint := fmt.Sprintf("Leads/%v", leadID)
-
-	_, _, e := service.delete(endpoint, nil, nil)
+	requestConfig := go_http.RequestConfig{
+		URL: service.url(fmt.Sprintf("Leads/%v", leadID)),
+	}
+	_, _, e := service.delete(&requestConfig)
 	if e != nil {
 		return e
 	}

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 type User struct {
@@ -81,11 +82,13 @@ func (u *User) prepareMarshal() interface{} {
 // GetUser returns a specific user
 //
 func (service *Service) GetUser(userID int) (*User, *errortools.Error) {
-	endpoint := fmt.Sprintf("Users/%v", userID)
-
 	user := User{}
 
-	_, _, e := service.get(endpoint, nil, &user)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(fmt.Sprintf("Users/%v", userID)),
+		ResponseModel: &user,
+	}
+	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -109,7 +112,7 @@ func (service *Service) GetUsers(filter *GetUsersFilter) (*[]User, *errortools.E
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(ISO8601Format)
+			from := filter.UpdatedAfter.Format(time.RFC3339)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
@@ -130,19 +133,20 @@ func (service *Service) GetUsers(filter *GetUsersFilter) (*[]User, *errortools.E
 	users := []User{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_users := []User{}
 
-		cs := []User{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_users,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		users = append(users, cs...)
+		users = append(users, _users...)
 
-		rowCount = len(cs)
+		rowCount = len(_users)
 		//rowCount = 0
 		skip += top
 	}
@@ -161,11 +165,14 @@ func (service *Service) CreateUser(user *User) (*User, *errortools.Error) {
 		return nil, nil
 	}
 
-	endpoint := "Users"
-
 	userNew := User{}
 
-	_, _, e := service.post(endpoint, user.prepareMarshal(), &userNew)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Users"),
+		BodyModel:     user.prepareMarshal(),
+		ResponseModel: &userNew,
+	}
+	_, _, e := service.post(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -180,11 +187,14 @@ func (service *Service) UpdateUser(user *User) (*User, *errortools.Error) {
 		return nil, nil
 	}
 
-	endpoint := "Users"
-
 	userUpdated := User{}
 
-	_, _, e := service.put(endpoint, user.prepareMarshal(), &userUpdated)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Users"),
+		BodyModel:     user.prepareMarshal(),
+		ResponseModel: &userUpdated,
+	}
+	_, _, e := service.put(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -195,9 +205,10 @@ func (service *Service) UpdateUser(user *User) (*User, *errortools.Error) {
 // DeleteUser deletes a specific user
 //
 func (service *Service) DeleteUser(userID int) *errortools.Error {
-	endpoint := fmt.Sprintf("Users/%v", userID)
-
-	_, _, e := service.delete(endpoint, nil, nil)
+	requestConfig := go_http.RequestConfig{
+		URL: service.url(fmt.Sprintf("Users/%v", userID)),
+	}
+	_, _, e := service.delete(&requestConfig)
 	if e != nil {
 		return e
 	}

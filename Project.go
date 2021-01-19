@@ -7,6 +7,7 @@ import (
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 type Project struct {
@@ -128,11 +129,13 @@ func (p *Project) prepareMarshal() interface{} {
 // GetProject returns a specific project
 //
 func (service *Service) GetProject(projectID int) (*Project, *errortools.Error) {
-	endpoint := fmt.Sprintf("Projects/%v", projectID)
-
 	project := Project{}
 
-	_, _, e := service.get(endpoint, nil, &project)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(fmt.Sprintf("Projects/%v", projectID)),
+		ResponseModel: &project,
+	}
+	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -156,7 +159,7 @@ func (service *Service) GetProjects(filter *GetProjectsFilter) (*[]Project, *err
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(ISO8601Format)
+			from := filter.UpdatedAfter.Format(time.RFC3339)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
@@ -177,19 +180,20 @@ func (service *Service) GetProjects(filter *GetProjectsFilter) (*[]Project, *err
 	projects := []Project{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_projects := []Project{}
 
-		cs := []Project{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_projects,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		projects = append(projects, cs...)
+		projects = append(projects, _projects...)
 
-		rowCount = len(cs)
+		rowCount = len(_projects)
 		//rowCount = 0
 		skip += top
 	}
@@ -208,11 +212,14 @@ func (service *Service) CreateProject(project *Project) (*Project, *errortools.E
 		return nil, nil
 	}
 
-	endpoint := "Projects"
-
 	projectNew := Project{}
 
-	_, _, e := service.post(endpoint, project.prepareMarshal(), &projectNew)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Projects"),
+		BodyModel:     project.prepareMarshal(),
+		ResponseModel: &projectNew,
+	}
+	_, _, e := service.post(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -227,11 +234,14 @@ func (service *Service) UpdateProject(project *Project) (*Project, *errortools.E
 		return nil, nil
 	}
 
-	endpoint := "Projects"
-
 	projectUpdated := Project{}
 
-	_, _, e := service.put(endpoint, project.prepareMarshal(), &projectUpdated)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Projects"),
+		BodyModel:     project.prepareMarshal(),
+		ResponseModel: &projectUpdated,
+	}
+	_, _, e := service.put(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -242,9 +252,10 @@ func (service *Service) UpdateProject(project *Project) (*Project, *errortools.E
 // DeleteProject deletes a specific project
 //
 func (service *Service) DeleteProject(projectID int) *errortools.Error {
-	endpoint := fmt.Sprintf("Projects/%v", projectID)
-
-	_, _, e := service.delete(endpoint, nil, nil)
+	requestConfig := go_http.RequestConfig{
+		URL: service.url(fmt.Sprintf("Projects/%v", projectID)),
+	}
+	_, _, e := service.delete(&requestConfig)
 	if e != nil {
 		return e
 	}

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // OpportunityStateReason stores OpportunityStateReason from Service
@@ -40,19 +41,20 @@ func (service *Service) GetOpportunityStateReasons(filter *GetOpportunityStateRe
 	opportunityStateReasons := []OpportunityStateReason{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_opportunityStateReasons := []OpportunityStateReason{}
 
-		cs := []OpportunityStateReason{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_opportunityStateReasons,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		opportunityStateReasons = append(opportunityStateReasons, cs...)
+		opportunityStateReasons = append(opportunityStateReasons, _opportunityStateReasons...)
 
-		rowCount = len(cs)
+		rowCount = len(_opportunityStateReasons)
 		//rowCount = 0
 		skip += top
 	}

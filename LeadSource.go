@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // LeadSource stores LeadSource from Service
@@ -41,19 +42,20 @@ func (service *Service) GetLeadSources(filter *GetLeadSourcesFilter) (*[]LeadSou
 	leadSources := []LeadSource{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_leadSources := []LeadSource{}
 
-		cs := []LeadSource{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_leadSources,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		leadSources = append(leadSources, cs...)
+		leadSources = append(leadSources, _leadSources...)
 
-		rowCount = len(cs)
+		rowCount = len(_leadSources)
 		//rowCount = 0
 		skip += top
 	}

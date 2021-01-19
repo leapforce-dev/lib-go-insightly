@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // OpportunityCategory stores OpportunityCategory from Service
@@ -20,7 +21,7 @@ type OpportunityCategory struct {
 type GetOpportunityCategoriesFilter struct {
 }
 
-// GetOpportunityCategories returns all opportunityCategorys
+// GetOpportunityCategories returns all opportunityCategories
 //
 func (service *Service) GetOpportunityCategories(filter *GetOpportunityCategoriesFilter) (*[]OpportunityCategory, *errortools.Error) {
 	searchString := "?"
@@ -38,29 +39,30 @@ func (service *Service) GetOpportunityCategories(filter *GetOpportunityCategorie
 	top := 100
 	rowCount := top
 
-	opportunityCategorys := []OpportunityCategory{}
+	opportunityCategories := []OpportunityCategory{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_opportunityCategories := []OpportunityCategory{}
 
-		cs := []OpportunityCategory{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_opportunityCategories,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		opportunityCategorys = append(opportunityCategorys, cs...)
+		opportunityCategories = append(opportunityCategories, _opportunityCategories...)
 
-		rowCount = len(cs)
+		rowCount = len(_opportunityCategories)
 		//rowCount = 0
 		skip += top
 	}
 
-	if len(opportunityCategorys) == 0 {
-		opportunityCategorys = nil
+	if len(opportunityCategories) == 0 {
+		opportunityCategories = nil
 	}
 
-	return &opportunityCategorys, nil
+	return &opportunityCategories, nil
 }

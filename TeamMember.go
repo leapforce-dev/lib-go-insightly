@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // TeamMember stores TeamMember from Service
@@ -40,19 +41,20 @@ func (service *Service) GetTeamMembers(filter *GetTeamMembersFilter) (*[]TeamMem
 	teamMembers := []TeamMember{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_teamMembers := []TeamMember{}
 
-		cs := []TeamMember{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_teamMembers,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		teamMembers = append(teamMembers, cs...)
+		teamMembers = append(teamMembers, _teamMembers...)
 
-		rowCount = len(cs)
+		rowCount = len(_teamMembers)
 		//rowCount = 0
 		skip += top
 	}

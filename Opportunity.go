@@ -7,37 +7,38 @@ import (
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // Opportunity stores Opportunity from Service
 //
 type Opportunity struct {
-	OpportunityID       int          `json:"OPPORTUNITY_ID"`
-	OpportunityName     string       `json:"OPPORTUNITY_NAME"`
-	OpportunityDetails  string       `json:"OPPORTUNITY_DETAILS"`
-	OpportunityState    string       `json:"OPPORTUNITY_STATE"`
-	ResponsibleUserID   *int         `json:"RESPONSIBLE_USER_ID"`
-	CategoryID          *int         `json:"CATEGORY_ID"`
-	ImageURL            string       `json:"IMAGE_URL"`
-	BidCurrency         string       `json:"BID_CURRENCY"`
-	BidAmount           float32      `json:"BID_AMOUNT"`
-	BidType             string       `json:"BID_TYPE"`
-	BidDuration         int          `json:"BID_DURATION"`
-	ActualCloseDate     DateUTC      `json:"ACTUAL_CLOSE_DATE"`
-	DateCreatedUTC      DateUTC      `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC      DateUTC      `json:"DATE_UPDATED_UTC"`
-	OpportunityValue    float32      `json:"OPPORTUNITY_VALUE"`
-	Probability         int          `json:"PROBABILITY"`
-	ForecastCloseDate   DateUTC      `json:"FORECAST_CLOSE_DATE"`
-	OwnerUserID         *int         `json:"OWNER_USER_ID"`
-	LastActivityDateUTC DateUTC      `json:"LAST_ACTIVITY_DATE_UTC"`
-	NextActivityDateUTC DateUTC      `json:"NEXT_ACTIVITY_DATE_UTC"`
-	PipelineID          *int         `json:"PIPELINE_ID"`
-	StageID             *int         `json:"STAGE_ID"`
-	CreatedUserID       *int         `json:"CREATED_USER_ID"`
-	OrganisationID      *int         `json:"ORGANISATION_ID"`
-	CustomFields        CustomFields `json:"CUSTOMFIELDS"`
-	Tags                []Tag        `json:"TAGS"`
+	OpportunityID       int           `json:"OPPORTUNITY_ID"`
+	OpportunityName     *string       `json:"OPPORTUNITY_NAME"`
+	OpportunityDetails  *string       `json:"OPPORTUNITY_DETAILS"`
+	OpportunityState    *string       `json:"OPPORTUNITY_STATE"`
+	ResponsibleUserID   *int          `json:"RESPONSIBLE_USER_ID"`
+	CategoryID          *int          `json:"CATEGORY_ID"`
+	ImageURL            *string       `json:"IMAGE_URL"`
+	BidCurrency         *string       `json:"BID_CURRENCY"`
+	BidAmount           *float32      `json:"BID_AMOUNT"`
+	BidType             *string       `json:"BID_TYPE"`
+	BidDuration         *int          `json:"BID_DURATION"`
+	ActualCloseDate     *DateUTC      `json:"ACTUAL_CLOSE_DATE"`
+	DateCreatedUTC      *DateUTC      `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC      *DateUTC      `json:"DATE_UPDATED_UTC"`
+	OpportunityValue    *float32      `json:"OPPORTUNITY_VALUE"`
+	Probability         *int          `json:"PROBABILITY"`
+	ForecastCloseDate   *DateUTC      `json:"FORECAST_CLOSE_DATE"`
+	OwnerUserID         *int          `json:"OWNER_USER_ID"`
+	LastActivityDateUTC *DateUTC      `json:"LAST_ACTIVITY_DATE_UTC"`
+	NextActivityDateUTC *DateUTC      `json:"NEXT_ACTIVITY_DATE_UTC"`
+	PipelineID          *int          `json:"PIPELINE_ID"`
+	StageID             *int          `json:"STAGE_ID"`
+	CreatedUserID       *int          `json:"CREATED_USER_ID"`
+	OrganisationID      *int          `json:"ORGANISATION_ID"`
+	CustomFields        *CustomFields `json:"CUSTOMFIELDS"`
+	Tags                *[]Tag        `json:"TAGS"`
 }
 
 func (o *Opportunity) prepareMarshal() interface{} {
@@ -47,25 +48,25 @@ func (o *Opportunity) prepareMarshal() interface{} {
 
 	return &struct {
 		OpportunityID      int           `json:"OPPORTUNITY_ID"`
-		OpportunityName    string        `json:"OPPORTUNITY_NAME"`
-		OpportunityDetails string        `json:"OPPORTUNITY_DETAILS"`
-		OpportunityState   string        `json:"OPPORTUNITY_STATE"`
-		ResponsibleUserID  *int          `json:"RESPONSIBLE_USER_ID"`
-		CategoryID         *int          `json:"CATEGORY_ID"`
-		ImageURL           string        `json:"IMAGE_URL"`
-		BidCurrency        string        `json:"BID_CURRENCY"`
-		BidAmount          float32       `json:"BID_AMOUNT"`
-		BidType            string        `json:"BID_TYPE"`
-		BidDuration        int           `json:"BID_DURATION"`
-		ActualCloseDate    DateUTC       `json:"ACTUAL_CLOSE_DATE"`
-		OpportunityValue   float32       `json:"OPPORTUNITY_VALUE"`
-		Probability        int           `json:"PROBABILITY"`
-		ForecastCloseDate  DateUTC       `json:"FORECAST_CLOSE_DATE"`
-		OwnerUserID        *int          `json:"OWNER_USER_ID"`
-		PipelineID         *int          `json:"PIPELINE_ID"`
-		StageID            *int          `json:"STAGE_ID"`
-		OrganisationID     *int          `json:"ORGANISATION_ID"`
-		CustomFields       []CustomField `json:"CUSTOMFIELDS"`
+		OpportunityName    *string       `json:"OPPORTUNITY_NAME,omitempty"`
+		OpportunityDetails *string       `json:"OPPORTUNITY_DETAILS,omitempty"`
+		OpportunityState   *string       `json:"OPPORTUNITY_STATE,omitempty"`
+		ResponsibleUserID  *int          `json:"RESPONSIBLE_USER_ID,omitempty"`
+		CategoryID         *int          `json:"CATEGORY_ID,omitempty"`
+		ImageURL           *string       `json:"IMAGE_URL,omitempty"`
+		BidCurrency        *string       `json:"BID_CURRENCY,omitempty"`
+		BidAmount          *float32      `json:"BID_AMOUNT,omitempty"`
+		BidType            *string       `json:"BID_TYPE,omitempty"`
+		BidDuration        *int          `json:"BID_DURATION,omitempty"`
+		ActualCloseDate    *DateUTC      `json:"ACTUAL_CLOSE_DATE,omitempty"`
+		OpportunityValue   *float32      `json:"OPPORTUNITY_VALUE,omitempty"`
+		Probability        *int          `json:"PROBABILITY,omitempty"`
+		ForecastCloseDate  *DateUTC      `json:"FORECAST_CLOSE_DATE,omitempty"`
+		OwnerUserID        *int          `json:"OWNER_USER_ID,omitempty"`
+		PipelineID         *int          `json:"PIPELINE_ID,omitempty"`
+		StageID            *int          `json:"STAGE_ID,omitempty"`
+		OrganisationID     *int          `json:"ORGANISATION_ID,omitempty"`
+		CustomFields       *CustomFields `json:"CUSTOMFIELDS,omitempty"`
 	}{
 		o.OpportunityID,
 		o.OpportunityName,
@@ -93,11 +94,13 @@ func (o *Opportunity) prepareMarshal() interface{} {
 // GetOpportunity returns a specific opportunity
 //
 func (service *Service) GetOpportunity(opportunityID int) (*Opportunity, *errortools.Error) {
-	endpoint := fmt.Sprintf("Opportunities/%v", opportunityID)
-
 	opportunity := Opportunity{}
 
-	_, _, e := service.get(endpoint, nil, &opportunity)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(fmt.Sprintf("Opportunities/%v", opportunityID)),
+		ResponseModel: &opportunity,
+	}
+	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -121,7 +124,7 @@ func (service *Service) GetOpportunities(filter *GetOpportunitiesFilter) (*[]Opp
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(ISO8601Format)
+			from := filter.UpdatedAfter.Format(time.RFC3339)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
@@ -142,19 +145,20 @@ func (service *Service) GetOpportunities(filter *GetOpportunitiesFilter) (*[]Opp
 	opportunities := []Opportunity{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_opportunities := []Opportunity{}
 
-		cs := []Opportunity{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_opportunities,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		opportunities = append(opportunities, cs...)
+		opportunities = append(opportunities, _opportunities...)
 
-		rowCount = len(cs)
+		rowCount = len(_opportunities)
 		//rowCount = 0
 		skip += top
 	}
@@ -173,11 +177,14 @@ func (service *Service) CreateOpportunity(opportunity *Opportunity) (*Opportunit
 		return nil, nil
 	}
 
-	endpoint := "Opportunities"
-
 	opportunityNew := Opportunity{}
 
-	_, _, e := service.post(endpoint, opportunity.prepareMarshal(), &opportunityNew)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Opportunities"),
+		BodyModel:     opportunity.prepareMarshal(),
+		ResponseModel: &opportunityNew,
+	}
+	_, _, e := service.post(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -192,11 +199,14 @@ func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunit
 		return nil, nil
 	}
 
-	endpoint := "Opportunities"
-
 	opportunityUpdated := Opportunity{}
 
-	_, _, e := service.put(endpoint, opportunity.prepareMarshal(), &opportunityUpdated)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Opportunities"),
+		BodyModel:     opportunity.prepareMarshal(),
+		ResponseModel: &opportunityUpdated,
+	}
+	_, _, e := service.put(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -207,9 +217,10 @@ func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunit
 // DeleteOpportunity deletes a specific opportunity
 //
 func (service *Service) DeleteOpportunity(opportunityID int) *errortools.Error {
-	endpoint := fmt.Sprintf("Opportunities/%v", opportunityID)
-
-	_, _, e := service.delete(endpoint, nil, nil)
+	requestConfig := go_http.RequestConfig{
+		URL: service.url(fmt.Sprintf("Opportunities/%v", opportunityID)),
+	}
+	_, _, e := service.delete(&requestConfig)
 	if e != nil {
 		return e
 	}
@@ -220,11 +231,13 @@ func (service *Service) DeleteOpportunity(opportunityID int) *errortools.Error {
 // GetOpportunityLinks returns links for a specific opportunity
 //
 func (service *Service) GetOpportunityLinks(opportunityID int) (*[]Link, *errortools.Error) {
-	endpoint := fmt.Sprintf("Opportunity/%v/Links", opportunityID)
-
 	links := []Link{}
 
-	_, _, e := service.get(endpoint, nil, &links)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(fmt.Sprintf("Opportunity/%v/Links", opportunityID)),
+		ResponseModel: &links,
+	}
+	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}

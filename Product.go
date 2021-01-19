@@ -7,6 +7,7 @@ import (
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // Product stores Product from Service
@@ -66,11 +67,13 @@ func (p *Product) prepareMarshal() interface{} {
 // GetProduct returns a specific product
 //
 func (service *Service) GetProduct(productID int) (*Product, *errortools.Error) {
-	endpoint := fmt.Sprintf("Products/%v", productID)
-
 	product := Product{}
 
-	_, _, e := service.get(endpoint, nil, &product)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(fmt.Sprintf("Products/%v", productID)),
+		ResponseModel: &product,
+	}
+	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -94,7 +97,7 @@ func (service *Service) GetProducts(filter *GetProductsFilter) (*[]Product, *err
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(ISO8601Format)
+			from := filter.UpdatedAfter.Format(time.RFC3339)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
@@ -115,19 +118,20 @@ func (service *Service) GetProducts(filter *GetProductsFilter) (*[]Product, *err
 	products := []Product{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_products := []Product{}
 
-		cs := []Product{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_products,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		products = append(products, cs...)
+		products = append(products, _products...)
 
-		rowCount = len(cs)
+		rowCount = len(_products)
 		//rowCount = 0
 		skip += top
 	}
@@ -146,11 +150,14 @@ func (service *Service) CreateProduct(product *Product) (*Product, *errortools.E
 		return nil, nil
 	}
 
-	endpoint := "Products"
-
 	productNew := Product{}
 
-	_, _, e := service.post(endpoint, product.prepareMarshal(), &productNew)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Products"),
+		BodyModel:     product.prepareMarshal(),
+		ResponseModel: &productNew,
+	}
+	_, _, e := service.post(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -165,11 +172,14 @@ func (service *Service) UpdateProduct(product *Product) (*Product, *errortools.E
 		return nil, nil
 	}
 
-	endpoint := "Products"
-
 	productUpdated := Product{}
 
-	_, _, e := service.put(endpoint, product.prepareMarshal(), &productUpdated)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Products"),
+		BodyModel:     product.prepareMarshal(),
+		ResponseModel: &productUpdated,
+	}
+	_, _, e := service.put(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -180,9 +190,10 @@ func (service *Service) UpdateProduct(product *Product) (*Product, *errortools.E
 // DeleteProduct deletes a specific product
 //
 func (service *Service) DeleteProduct(productID int) *errortools.Error {
-	endpoint := fmt.Sprintf("Products/%v", productID)
-
-	_, _, e := service.delete(endpoint, nil, nil)
+	requestConfig := go_http.RequestConfig{
+		URL: service.url(fmt.Sprintf("Products/%v", productID)),
+	}
+	_, _, e := service.delete(&requestConfig)
 	if e != nil {
 		return e
 	}

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 type Contact struct {
@@ -128,11 +129,13 @@ func (c *Contact) prepareMarshal() interface{} {
 // GetContact returns a specific contact
 //
 func (service *Service) GetContact(contactID int) (*Contact, *errortools.Error) {
-	endpoint := fmt.Sprintf("Contacts/%v", contactID)
-
 	contact := Contact{}
 
-	_, _, e := service.get(endpoint, nil, &contact)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(fmt.Sprintf("Contacts/%v", contactID)),
+		ResponseModel: &contact,
+	}
+	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -156,7 +159,7 @@ func (service *Service) GetContacts(filter *GetContactsFilter) (*[]Contact, *err
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(ISO8601Format)
+			from := filter.UpdatedAfter.Format(time.RFC3339)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
@@ -177,19 +180,20 @@ func (service *Service) GetContacts(filter *GetContactsFilter) (*[]Contact, *err
 	contacts := []Contact{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_contacts := []Contact{}
 
-		cs := []Contact{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_contacts,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		contacts = append(contacts, cs...)
+		contacts = append(contacts, _contacts...)
 
-		rowCount = len(cs)
+		rowCount = len(_contacts)
 		//rowCount = 0
 		skip += top
 	}
@@ -208,11 +212,14 @@ func (service *Service) CreateContact(contact *Contact) (*Contact, *errortools.E
 		return nil, nil
 	}
 
-	endpoint := "Contacts"
-
 	contactNew := Contact{}
 
-	_, _, e := service.post(endpoint, contact.prepareMarshal(), &contactNew)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Contacts"),
+		BodyModel:     contact.prepareMarshal(),
+		ResponseModel: &contactNew,
+	}
+	_, _, e := service.post(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -227,11 +234,14 @@ func (service *Service) UpdateContact(contact *Contact) (*Contact, *errortools.E
 		return nil, nil
 	}
 
-	endpoint := "Contacts"
-
 	contactUpdated := Contact{}
 
-	_, _, e := service.put(endpoint, contact.prepareMarshal(), &contactUpdated)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Contacts"),
+		BodyModel:     contact.prepareMarshal(),
+		ResponseModel: &contactUpdated,
+	}
+	_, _, e := service.put(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -242,9 +252,10 @@ func (service *Service) UpdateContact(contact *Contact) (*Contact, *errortools.E
 // DeleteContact deletes a specific contact
 //
 func (service *Service) DeleteContact(contactID int) *errortools.Error {
-	endpoint := fmt.Sprintf("Contacts/%v", contactID)
-
-	_, _, e := service.delete(endpoint, nil, nil)
+	requestConfig := go_http.RequestConfig{
+		URL: service.url(fmt.Sprintf("Contacts/%v", contactID)),
+	}
+	_, _, e := service.delete(&requestConfig)
 	if e != nil {
 		return e
 	}

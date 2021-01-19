@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // CustomObjectRecord stores CustomObjectRecord from Service
@@ -45,12 +46,14 @@ func (c *CustomObjectRecord) prepareMarshal() interface{} {
 
 // GetCustomObjectRecord returns a specific customObjectRecord
 //
-func (i *Service) GetCustomObjectRecord(customObjectName string, customObjectRecordID int) (*CustomObjectRecord, *errortools.Error) {
-	endpoint := fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)
-
+func (service *Service) GetCustomObjectRecord(customObjectName string, customObjectRecordID int) (*CustomObjectRecord, *errortools.Error) {
 	customObjectRecord := CustomObjectRecord{}
 
-	_, _, e := i.get(endpoint, nil, &customObjectRecord)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)),
+		ResponseModel: &customObjectRecord,
+	}
+	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -60,7 +63,7 @@ func (i *Service) GetCustomObjectRecord(customObjectName string, customObjectRec
 
 // GetCustomObjectRecords returns all customObjectRecords
 //
-func (i *Service) GetCustomObjectRecords(customObjectName string, filter *FieldFilter) (*[]CustomObjectRecord, *errortools.Error) {
+func (service *Service) GetCustomObjectRecords(customObjectName string, filter *FieldFilter) (*[]CustomObjectRecord, *errortools.Error) {
 	endpointStr := "%s%sskip=%s&top=%s"
 	skip := 0
 	top := 100
@@ -69,19 +72,20 @@ func (i *Service) GetCustomObjectRecords(customObjectName string, filter *FieldF
 	customObjectRecords := []CustomObjectRecord{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, customObjectName, filter.Search(), strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_customObjectRecords := []CustomObjectRecord{}
 
-		cs := []CustomObjectRecord{}
-
-		_, _, e := i.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, customObjectName, filter.Search(), strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_customObjectRecords,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		customObjectRecords = append(customObjectRecords, cs...)
+		customObjectRecords = append(customObjectRecords, _customObjectRecords...)
 
-		rowCount = len(cs)
+		rowCount = len(_customObjectRecords)
 		//rowCount = 0
 		skip += top
 	}
@@ -95,16 +99,19 @@ func (i *Service) GetCustomObjectRecords(customObjectName string, filter *FieldF
 
 // CreateCustomObjectRecord creates a new contract
 //
-func (i *Service) CreateCustomObjectRecord(customObjectName string, customObjectRecord *CustomObjectRecord) (*CustomObjectRecord, *errortools.Error) {
+func (service *Service) CreateCustomObjectRecord(customObjectName string, customObjectRecord *CustomObjectRecord) (*CustomObjectRecord, *errortools.Error) {
 	if customObjectRecord == nil {
 		return nil, nil
 	}
 
-	endpoint := customObjectName
-
 	customObjectRecordNew := CustomObjectRecord{}
 
-	_, _, e := i.post(endpoint, customObjectRecord.prepareMarshal(), &customObjectRecordNew)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(customObjectName),
+		BodyModel:     customObjectRecord.prepareMarshal(),
+		ResponseModel: &customObjectRecordNew,
+	}
+	_, _, e := service.post(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -114,16 +121,19 @@ func (i *Service) CreateCustomObjectRecord(customObjectName string, customObject
 
 // UpdateCustomObjectRecord updates an existing contract
 //
-func (i *Service) UpdateCustomObjectRecord(customObjectName string, customObjectRecord *CustomObjectRecord) (*CustomObjectRecord, *errortools.Error) {
+func (service *Service) UpdateCustomObjectRecord(customObjectName string, customObjectRecord *CustomObjectRecord) (*CustomObjectRecord, *errortools.Error) {
 	if customObjectRecord == nil {
 		return nil, nil
 	}
 
-	endpoint := customObjectName
-
 	customObjectRecordUpdated := CustomObjectRecord{}
 
-	_, _, e := i.put(endpoint, customObjectRecord.prepareMarshal(), &customObjectRecordUpdated)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(customObjectName),
+		BodyModel:     customObjectRecord.prepareMarshal(),
+		ResponseModel: &customObjectRecordUpdated,
+	}
+	_, _, e := service.put(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -133,10 +143,11 @@ func (i *Service) UpdateCustomObjectRecord(customObjectName string, customObject
 
 // DeleteCustomObjectRecord deletes a specific customObjectRecord
 //
-func (i *Service) DeleteCustomObjectRecord(customObjectName string, customObjectRecordID int) *errortools.Error {
-	endpoint := fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)
-
-	_, _, e := i.delete(endpoint, nil, nil)
+func (service *Service) DeleteCustomObjectRecord(customObjectName string, customObjectRecordID int) *errortools.Error {
+	requestConfig := go_http.RequestConfig{
+		URL: service.url(fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)),
+	}
+	_, _, e := service.delete(&requestConfig)
 	if e != nil {
 		return e
 	}

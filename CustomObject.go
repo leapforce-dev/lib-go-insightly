@@ -2,6 +2,7 @@ package insightly
 
 import (
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // CustomObject stores CustomObject from Service
@@ -24,24 +25,26 @@ type CustomObject struct {
 // GetCustomObjects returns all customobjects
 //
 func (service *Service) GetCustomObjects() ([]CustomObject, *errortools.Error) {
-	customobjects := []CustomObject{}
+	customObjects := []CustomObject{}
 
-	endpoint := "CustomObjects"
+	_customObjects := []CustomObject{}
 
-	os := []CustomObject{}
-
-	_, _, err := service.get(endpoint, nil, &os)
-	if err != nil {
-		return nil, err
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("CustomObjects"),
+		ResponseModel: &_customObjects,
+	}
+	_, _, e := service.get(&requestConfig)
+	if e != nil {
+		return nil, e
 	}
 
-	for _, o := range os {
-		customobjects = append(customobjects, o)
+	for _, customObject := range _customObjects {
+		customObjects = append(customObjects, customObject)
 	}
 
-	if len(customobjects) == 0 {
-		customobjects = nil
+	if len(customObjects) == 0 {
+		customObjects = nil
 	}
 
-	return customobjects, nil
+	return customObjects, nil
 }

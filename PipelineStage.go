@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // PipelineStage stores PipelineStage from Service
@@ -43,19 +44,20 @@ func (service *Service) GetPipelineStages(filter *GetPipelineStagesFilter) (*[]P
 	pipelineStages := []PipelineStage{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_pipelineStages := []PipelineStage{}
 
-		cs := []PipelineStage{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_pipelineStages,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		pipelineStages = append(pipelineStages, cs...)
+		pipelineStages = append(pipelineStages, _pipelineStages...)
 
-		rowCount = len(cs)
+		rowCount = len(_pipelineStages)
 		//rowCount = 0
 		skip += top
 	}

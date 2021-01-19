@@ -7,6 +7,7 @@ import (
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // Organisation stores Organisation from Service
@@ -101,11 +102,13 @@ func (o *Organisation) prepareMarshal() interface{} {
 // GetOrganisation returns a specific organisation
 //
 func (service *Service) GetOrganisation(organisationID int) (*Organisation, *errortools.Error) {
-	endpoint := fmt.Sprintf("Organisations/%v", organisationID)
-
 	organisation := Organisation{}
 
-	_, _, e := service.get(endpoint, nil, &organisation)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(fmt.Sprintf("Organisations/%v", organisationID)),
+		ResponseModel: &organisation,
+	}
+	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -129,7 +132,7 @@ func (service *Service) GetOrganisations(filter *GetOrganisationsFilter) (*[]Org
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(ISO8601Format)
+			from := filter.UpdatedAfter.Format(time.RFC3339)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
@@ -150,19 +153,20 @@ func (service *Service) GetOrganisations(filter *GetOrganisationsFilter) (*[]Org
 	organisations := []Organisation{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_organisations := []Organisation{}
 
-		cs := []Organisation{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_organisations,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		organisations = append(organisations, cs...)
+		organisations = append(organisations, _organisations...)
 
-		rowCount = len(cs)
+		rowCount = len(_organisations)
 		//rowCount = 0
 		skip += top
 	}
@@ -181,11 +185,14 @@ func (service *Service) CreateOrganisation(organisation *Organisation) (*Organis
 		return nil, nil
 	}
 
-	endpoint := "Organisations"
-
 	organisationNew := Organisation{}
 
-	_, _, e := service.post(endpoint, organisation.prepareMarshal(), &organisationNew)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Organisations"),
+		BodyModel:     organisation.prepareMarshal(),
+		ResponseModel: &organisationNew,
+	}
+	_, _, e := service.post(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -200,11 +207,14 @@ func (service *Service) UpdateOrganisation(organisation *Organisation) (*Organis
 		return nil, nil
 	}
 
-	endpoint := "Organisations"
-
 	organisationUpdated := Organisation{}
 
-	_, _, e := service.put(endpoint, organisation.prepareMarshal(), &organisationUpdated)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Organisations"),
+		BodyModel:     organisation.prepareMarshal(),
+		ResponseModel: &organisationUpdated,
+	}
+	_, _, e := service.put(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -215,9 +225,10 @@ func (service *Service) UpdateOrganisation(organisation *Organisation) (*Organis
 // DeleteOrganisation deletes a specific organisation
 //
 func (service *Service) DeleteOrganisation(organisationID int) *errortools.Error {
-	endpoint := fmt.Sprintf("Organisations/%v", organisationID)
-
-	_, _, e := service.delete(endpoint, nil, nil)
+	requestConfig := go_http.RequestConfig{
+		URL: service.url(fmt.Sprintf("Organisations/%v", organisationID)),
+	}
+	_, _, e := service.delete(&requestConfig)
 	if e != nil {
 		return e
 	}
@@ -228,11 +239,13 @@ func (service *Service) DeleteOrganisation(organisationID int) *errortools.Error
 // GetOrganisationLinks returns links for a specific organisation
 //
 func (service *Service) GetOrganisationLinks(organisationID int) (*[]Link, *errortools.Error) {
-	endpoint := fmt.Sprintf("Organisations/%v/Links", organisationID)
-
 	links := []Link{}
 
-	_, _, e := service.get(endpoint, nil, &links)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(fmt.Sprintf("Organisations/%v/Links", organisationID)),
+		ResponseModel: &links,
+	}
+	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
+	go_http "github.com/leapforce-libraries/go_http"
 )
 
 // Team stores Team from Service
@@ -41,11 +42,13 @@ func (t *Team) prepareMarshal() interface{} {
 // GetTeam returns a specific team
 //
 func (service *Service) GetTeam(teamID int) (*Team, *errortools.Error) {
-	endpoint := fmt.Sprintf("Teams/%v", teamID)
-
 	team := Team{}
 
-	_, _, e := service.get(endpoint, nil, &team)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url(fmt.Sprintf("Teams/%v", teamID)),
+		ResponseModel: &team,
+	}
+	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -69,7 +72,7 @@ func (service *Service) GetTeams(filter *GetTeamsFilter) (*[]Team, *errortools.E
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(ISO8601Format)
+			from := filter.UpdatedAfter.Format(time.RFC3339)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
@@ -90,19 +93,20 @@ func (service *Service) GetTeams(filter *GetTeamsFilter) (*[]Team, *errortools.E
 	teams := []Team{}
 
 	for rowCount >= top {
-		endpoint := fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))
-		//fmt.Println(endpoint)
+		_teams := []Team{}
 
-		cs := []Team{}
-
-		_, _, e := service.get(endpoint, nil, &cs)
+		requestConfig := go_http.RequestConfig{
+			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
+			ResponseModel: &_teams,
+		}
+		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		teams = append(teams, cs...)
+		teams = append(teams, _teams...)
 
-		rowCount = len(cs)
+		rowCount = len(_teams)
 		//rowCount = 0
 		skip += top
 	}
@@ -121,11 +125,14 @@ func (service *Service) CreateTeam(team *Team) (*Team, *errortools.Error) {
 		return nil, nil
 	}
 
-	endpoint := "Teams"
-
 	teamNew := Team{}
 
-	_, _, e := service.post(endpoint, team.prepareMarshal(), &teamNew)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Teams"),
+		BodyModel:     team.prepareMarshal(),
+		ResponseModel: &teamNew,
+	}
+	_, _, e := service.post(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -140,11 +147,14 @@ func (service *Service) UpdateTeam(team *Team) (*Team, *errortools.Error) {
 		return nil, nil
 	}
 
-	endpoint := "Teams"
-
 	teamUpdated := Team{}
 
-	_, _, e := service.put(endpoint, team.prepareMarshal(), &teamUpdated)
+	requestConfig := go_http.RequestConfig{
+		URL:           service.url("Teams"),
+		BodyModel:     team.prepareMarshal(),
+		ResponseModel: &teamUpdated,
+	}
+	_, _, e := service.put(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -155,9 +165,10 @@ func (service *Service) UpdateTeam(team *Team) (*Team, *errortools.Error) {
 // DeleteTeam deletes a specific team
 //
 func (service *Service) DeleteTeam(teamID int) *errortools.Error {
-	endpoint := fmt.Sprintf("Teams/%v", teamID)
-
-	_, _, e := service.delete(endpoint, nil, nil)
+	requestConfig := go_http.RequestConfig{
+		URL: service.url(fmt.Sprintf("Teams/%v", teamID)),
+	}
+	_, _, e := service.delete(&requestConfig)
 	if e != nil {
 		return e
 	}

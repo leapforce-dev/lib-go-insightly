@@ -23,7 +23,6 @@ type Service struct {
 	pod                string
 	token              string
 	httpService        *go_http.Service
-	client             http.Client
 	rateLimitRemaining *int64
 	retryAt            *time.Time
 }
@@ -53,7 +52,6 @@ func NewService(config ServiceConfig) (*Service, *errortools.Error) {
 		pod:         config.Pod,
 		token:       base64.URLEncoding.EncodeToString([]byte(config.APIKey)),
 		httpService: go_http.NewService(httpServiceConfig),
-		client:      http.Client{},
 	}, nil
 }
 
@@ -79,7 +77,14 @@ func (service *Service) httpRequest(httpMethod string, requestConfig *go_http.Re
 	header.Set("Authorization", fmt.Sprintf("Basic %s", service.token))
 	(*requestConfig).NonDefaultHeaders = &header
 
+	// add error model
+	errorResponse := ErrorResponse{}
+	(*requestConfig).ErrorModel = &errorResponse
+
 	request, response, e := service.httpService.HTTPRequest(httpMethod, requestConfig)
+	if errorResponse.Message != "" {
+		e.SetMessage(errorResponse.Message)
+	}
 
 	if response != nil {
 		// Read RateLimit headers

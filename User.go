@@ -112,7 +112,7 @@ func (service *Service) GetUsers(filter *GetUsersFilter) (*[]User, *errortools.E
 
 	if filter != nil {
 		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(DateFormat)
+			from := filter.UpdatedAfter.Format(DateTimeFormat)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 

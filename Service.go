@@ -29,10 +29,8 @@ type Service struct {
 }
 
 type ServiceConfig struct {
-	Pod                   string
-	APIKey                string
-	MaxRetries            *uint
-	SecondsBetweenRetries *uint32
+	Pod    string
+	APIKey string
 }
 
 func NewService(config ServiceConfig) (*Service, *errortools.Error) {
@@ -44,10 +42,7 @@ func NewService(config ServiceConfig) (*Service, *errortools.Error) {
 		return nil, errortools.ErrorMessage("Service API Key not provided")
 	}
 
-	httpServiceConfig := go_http.ServiceConfig{
-		MaxRetries:            config.MaxRetries,
-		SecondsBetweenRetries: config.SecondsBetweenRetries,
-	}
+	httpServiceConfig := go_http.ServiceConfig{}
 
 	return &Service{
 		pod:         config.Pod,

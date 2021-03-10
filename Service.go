@@ -42,12 +42,15 @@ func NewService(config ServiceConfig) (*Service, *errortools.Error) {
 		return nil, errortools.ErrorMessage("Service API Key not provided")
 	}
 
-	httpServiceConfig := go_http.ServiceConfig{}
+	httpService, e := go_http.NewService(&go_http.ServiceConfig{})
+	if e != nil {
+		return nil, e
+	}
 
 	return &Service{
 		pod:         config.Pod,
 		token:       base64.URLEncoding.EncodeToString([]byte(config.APIKey)),
-		httpService: go_http.NewService(httpServiceConfig),
+		httpService: httpService,
 	}, nil
 }
 

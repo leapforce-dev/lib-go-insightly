@@ -37,7 +37,7 @@ type Lead struct {
 	Mobile                  *string                 `json:"MOBILE"`
 	OwnerUserID             int64                   `json:"OWNER_USER_ID"`
 	Phone                   *string                 `json:"PHONE"`
-	ResponsibleUserID       int64                   `json:"RESPONSIBLE_USER_ID"`
+	ResponsibleUserID       *int64                  `json:"RESPONSIBLE_USER_ID"`
 	Website                 *string                 `json:"WEBSITE"`
 	AddressStreet           *string                 `json:"ADDRESS_STREET"`
 	AddressCity             *string                 `json:"ADDRESS_CITY"`
@@ -113,7 +113,7 @@ func (l *Lead) prepareMarshal() interface{} {
 		l.Mobile,
 		&l.OwnerUserID,
 		l.Phone,
-		&l.ResponsibleUserID,
+		l.ResponsibleUserID,
 		l.Website,
 		l.AddressStreet,
 		l.AddressCity,

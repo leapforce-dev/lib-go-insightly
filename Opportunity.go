@@ -18,8 +18,8 @@ type Opportunity struct {
 	OpportunityName     string                  `json:"OPPORTUNITY_NAME"`
 	OpportunityDetails  *string                 `json:"OPPORTUNITY_DETAILS"`
 	OpportunityState    string                  `json:"OPPORTUNITY_STATE"`
-	ResponsibleUserID   int64                   `json:"RESPONSIBLE_USER_ID"`
-	CategoryID          int64                   `json:"CATEGORY_ID"`
+	ResponsibleUserID   *int64                  `json:"RESPONSIBLE_USER_ID"`
+	CategoryID          *int64                  `json:"CATEGORY_ID"`
 	ImageURL            *string                 `json:"IMAGE_URL"`
 	BidCurrency         string                  `json:"BID_CURRENCY"`
 	BidAmount           float64                 `json:"BID_AMOUNT"`
@@ -30,7 +30,7 @@ type Opportunity struct {
 	DateUpdatedUTC      i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
 	OpportunityValue    float64                 `json:"OPPORTUNITY_VALUE"`
 	Probability         int64                   `json:"PROBABILITY"`
-	ForecastCloseDate   i_types.DateTimeString  `json:"FORECAST_CLOSE_DATE"`
+	ForecastCloseDate   *i_types.DateTimeString `json:"FORECAST_CLOSE_DATE"`
 	OwnerUserID         int64                   `json:"OWNER_USER_ID"`
 	LastActivityDateUTC *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC"`
 	NextActivityDateUTC *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC"`
@@ -73,8 +73,8 @@ func (o *Opportunity) prepareMarshal() interface{} {
 		&o.OpportunityName,
 		o.OpportunityDetails,
 		&o.OpportunityState,
-		&o.ResponsibleUserID,
-		&o.CategoryID,
+		o.ResponsibleUserID,
+		o.CategoryID,
 		o.ImageURL,
 		&o.BidCurrency,
 		&o.BidAmount,
@@ -83,7 +83,7 @@ func (o *Opportunity) prepareMarshal() interface{} {
 		o.ActualCloseDate,
 		&o.OpportunityValue,
 		&o.Probability,
-		&o.ForecastCloseDate,
+		o.ForecastCloseDate,
 		&o.OwnerUserID,
 		&o.PipelineID,
 		&o.StageID,

@@ -8,29 +8,30 @@ import (
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
+	i_types "github.com/leapforce-libraries/go_insightly/types"
 )
 
 type User struct {
-	UserID                 int     `json:"USER_ID"`
-	ContactID              *int    `json:"CONTACT_ID"`
-	FirstName              string  `json:"FIRST_NAME"`
-	LastName               string  `json:"LAST_NAME"`
-	TimezoneID             string  `json:"TIMEZONE_ID"`
-	EmailAddress           string  `json:"EMAIL_ADDRESS"`
-	EmailDropboxIdentifier string  `json:"EMAIL_DROPBOX_IDENTIFIER"`
-	EmailDropboxAddress    string  `json:"EMAIL_DROPBOX_ADDRESS"`
-	Administrator          bool    `json:"ADMINISTRATOR"`
-	AccountOwner           bool    `json:"ACCOUNT_OWNER"`
-	Active                 bool    `json:"ACTIVE"`
-	DateCreatedUTC         DateUTC `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC         DateUTC `json:"DATE_UPDATED_UTC"`
-	UserCurrency           string  `json:"USER_CURRENCY"`
-	ContactDisplay         string  `json:"CONTACT_DISPLAY"`
-	ContactOrder           string  `json:"CONTACT_ORDER"`
-	TaskWeekStart          int     `json:"TASK_WEEK_START"`
-	InstanceID             *int    `json:"INSTANCE_ID"`
-	ProfileID              *int    `json:"PROFILE_ID"`
-	RoleID                 *int    `json:"ROLE_ID"`
+	UserID                 int64                  `json:"USER_ID"`
+	ContactID              int64                  `json:"CONTACT_ID"`
+	FirstName              string                 `json:"FIRST_NAME"`
+	LastName               string                 `json:"LAST_NAME"`
+	TimezoneID             string                 `json:"TIMEZONE_ID"`
+	EmailAddress           string                 `json:"EMAIL_ADDRESS"`
+	EmailDropboxIdentifier string                 `json:"EMAIL_DROPBOX_IDENTIFIER"`
+	EmailDropboxAddress    string                 `json:"EMAIL_DROPBOX_ADDRESS"`
+	Administrator          bool                   `json:"ADMINISTRATOR"`
+	AccountOwner           bool                   `json:"ACCOUNT_OWNER"`
+	Active                 bool                   `json:"ACTIVE"`
+	DateCreatedUTC         i_types.DateTimeString `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC         i_types.DateTimeString `json:"DATE_UPDATED_UTC"`
+	UserCurrency           string                 `json:"USER_CURRENCY"`
+	ContactDisplay         string                 `json:"CONTACT_DISPLAY"`
+	ContactOrder           string                 `json:"CONTACT_ORDER"`
+	TaskWeekStart          int64                  `json:"TASK_WEEK_START"`
+	InstanceID             int64                  `json:"INSTANCE_ID"`
+	ProfileID              *int64                 `json:"PROFILE_ID"`
+	RoleID                 *int64                 `json:"ROLE_ID"`
 }
 
 func (u *User) prepareMarshal() interface{} {
@@ -39,41 +40,41 @@ func (u *User) prepareMarshal() interface{} {
 	}
 
 	return &struct {
-		UserID                 int    `json:"USER_ID"`
-		ContactID              *int   `json:"CONTACT_ID"`
-		FirstName              string `json:"FIRST_NAME"`
-		LastName               string `json:"LAST_NAME"`
-		TimezoneID             string `json:"TIMEZONE_ID"`
-		EmailAddress           string `json:"EMAIL_ADDRESS"`
-		EmailDropboxIdentifier string `json:"EMAIL_DROPBOX_IDENTIFIER"`
-		EmailDropboxAddress    string `json:"EMAIL_DROPBOX_ADDRESS"`
-		Administrator          bool   `json:"ADMINISTRATOR"`
-		AccountOwner           bool   `json:"ACCOUNT_OWNER"`
-		Active                 bool   `json:"ACTIVE"`
-		UserCurrency           string `json:"USER_CURRENCY"`
-		ContactDisplay         string `json:"CONTACT_DISPLAY"`
-		ContactOrder           string `json:"CONTACT_ORDER"`
-		TaskWeekStart          int    `json:"TASK_WEEK_START"`
-		InstanceID             *int   `json:"INSTANCE_ID"`
-		ProfileID              *int   `json:"PROFILE_ID"`
-		RoleID                 *int   `json:"ROLE_ID"`
+		UserID                 *int64  `json:"USER_ID"`
+		ContactID              *int64  `json:"CONTACT_ID"`
+		FirstName              *string `json:"FIRST_NAME"`
+		LastName               *string `json:"LAST_NAME"`
+		TimezoneID             *string `json:"TIMEZONE_ID"`
+		EmailAddress           *string `json:"EMAIL_ADDRESS"`
+		EmailDropboxIdentifier *string `json:"EMAIL_DROPBOX_IDENTIFIER"`
+		EmailDropboxAddress    *string `json:"EMAIL_DROPBOX_ADDRESS"`
+		Administrator          *bool   `json:"ADMINISTRATOR"`
+		AccountOwner           *bool   `json:"ACCOUNT_OWNER"`
+		Active                 *bool   `json:"ACTIVE"`
+		UserCurrency           *string `json:"USER_CURRENCY"`
+		ContactDisplay         *string `json:"CONTACT_DISPLAY"`
+		ContactOrder           *string `json:"CONTACT_ORDER"`
+		TaskWeekStart          *int64  `json:"TASK_WEEK_START"`
+		InstanceID             *int64  `json:"INSTANCE_ID"`
+		ProfileID              *int64  `json:"PROFILE_ID"`
+		RoleID                 *int64  `json:"ROLE_ID"`
 	}{
-		u.UserID,
-		u.ContactID,
-		u.FirstName,
-		u.LastName,
-		u.TimezoneID,
-		u.EmailAddress,
-		u.EmailDropboxIdentifier,
-		u.EmailDropboxAddress,
-		u.Administrator,
-		u.AccountOwner,
-		u.Active,
-		u.UserCurrency,
-		u.ContactDisplay,
-		u.ContactOrder,
-		u.TaskWeekStart,
-		u.InstanceID,
+		&u.UserID,
+		&u.ContactID,
+		&u.FirstName,
+		&u.LastName,
+		&u.TimezoneID,
+		&u.EmailAddress,
+		&u.EmailDropboxIdentifier,
+		&u.EmailDropboxAddress,
+		&u.Administrator,
+		&u.AccountOwner,
+		&u.Active,
+		&u.UserCurrency,
+		&u.ContactDisplay,
+		&u.ContactOrder,
+		&u.TaskWeekStart,
+		&u.InstanceID,
 		u.ProfileID,
 		u.RoleID,
 	}

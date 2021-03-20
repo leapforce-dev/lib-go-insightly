@@ -12,21 +12,21 @@ import (
 // OpportunityStateReason stores OpportunityStateReason from Service
 //
 type OpportunityStateReason struct {
-	StateReasonID       int    `json:"STATE_REASON_ID"`
+	StateReasonID       int64  `json:"STATE_REASON_ID"`
 	StateReason         string `json:"STATE_REASON"`
 	ForOpportunityState string `json:"FOR_OPPORTUNITY_STATE"`
 }
 
-type GetOpportunityStateReasonsFilter struct {
+type GetOpportunityStateReasonsConfig struct {
 }
 
 // GetOpportunityStateReasons returns all opportunityStateReasons
 //
-func (service *Service) GetOpportunityStateReasons(filter *GetOpportunityStateReasonsFilter) (*[]OpportunityStateReason, *errortools.Error) {
+func (service *Service) GetOpportunityStateReasons(config *GetOpportunityStateReasonsConfig) (*[]OpportunityStateReason, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
-	if filter != nil {
+	if config != nil {
 	}
 
 	if len(searchFilter) > 0 {

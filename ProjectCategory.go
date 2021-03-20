@@ -9,21 +9,21 @@ import (
 	go_http "github.com/leapforce-libraries/go_http"
 )
 
-// OpportunityCategory stores OpportunityCategory from Service
+// ProjectCategory stores ProjectCategory from Service
 //
-type OpportunityCategory struct {
+type ProjectCategory struct {
 	CategoryID      int64  `json:"CATEGORY_ID"`
 	CategoryName    string `json:"CATEGORY_NAME"`
 	Active          bool   `json:"ACTIVE"`
 	BackgroundColor string `json:"BACKGROUND_COLOR"`
 }
 
-type GetOpportunityCategoriesConfig struct {
+type GetProjectCategoriesConfig struct {
 }
 
-// GetOpportunityCategories returns all opportunityCategories
+// GetProjectCategories returns all projectCategories
 //
-func (service *Service) GetOpportunityCategories(config *GetOpportunityCategoriesConfig) (*[]OpportunityCategory, *errortools.Error) {
+func (service *Service) GetProjectCategories(config *GetProjectCategoriesConfig) (*[]ProjectCategory, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
@@ -34,35 +34,35 @@ func (service *Service) GetOpportunityCategories(config *GetOpportunityCategorie
 		searchString = "/Search?" + strings.Join(searchFilter, "&")
 	}
 
-	endpointStr := "OpportunityCategories%sskip=%s&top=%s"
+	endpointStr := "ProjectCategories%sskip=%s&top=%s"
 	skip := 0
 	top := 100
 	rowCount := top
 
-	opportunityCategories := []OpportunityCategory{}
+	projectCategories := []ProjectCategory{}
 
 	for rowCount >= top {
-		_opportunityCategories := []OpportunityCategory{}
+		_projectCategories := []ProjectCategory{}
 
 		requestConfig := go_http.RequestConfig{
 			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
-			ResponseModel: &_opportunityCategories,
+			ResponseModel: &_projectCategories,
 		}
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		opportunityCategories = append(opportunityCategories, _opportunityCategories...)
+		projectCategories = append(projectCategories, _projectCategories...)
 
-		rowCount = len(_opportunityCategories)
+		rowCount = len(_projectCategories)
 		//rowCount = 0
 		skip += top
 	}
 
-	if len(opportunityCategories) == 0 {
-		opportunityCategories = nil
+	if len(projectCategories) == 0 {
+		projectCategories = nil
 	}
 
-	return &opportunityCategories, nil
+	return &projectCategories, nil
 }

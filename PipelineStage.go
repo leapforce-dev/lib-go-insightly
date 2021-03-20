@@ -12,24 +12,24 @@ import (
 // PipelineStage stores PipelineStage from Service
 //
 type PipelineStage struct {
-	StageID       int    `json:"STAGE_ID"`
-	PipelineID    int    `json:"PIPELINE_ID"`
+	StageID       int64  `json:"STAGE_ID"`
+	PipelineID    int64  `json:"PIPELINE_ID"`
 	StageName     string `json:"STAGE_NAME"`
-	StageOrder    int    `json:"STAGE_ORDER"`
-	ActivitySetID *int   `json:"ACTIVITYSET_ID"`
-	OwnerUserID   *int   `json:"OWNER_USER_ID"`
+	StageOrder    int64  `json:"STAGE_ORDER"`
+	ActivitySetID *int64 `json:"ACTIVITYSET_ID"`
+	OwnerUserID   int64  `json:"OWNER_USER_ID"`
 }
 
-type GetPipelineStagesFilter struct {
+type GetPipelineStagesConfig struct {
 }
 
 // GetPipelineStages returns all pipelineStages
 //
-func (service *Service) GetPipelineStages(filter *GetPipelineStagesFilter) (*[]PipelineStage, *errortools.Error) {
+func (service *Service) GetPipelineStages(config *GetPipelineStagesConfig) (*[]PipelineStage, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
-	if filter != nil {
+	if config != nil {
 	}
 
 	if len(searchFilter) > 0 {

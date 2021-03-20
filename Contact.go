@@ -8,48 +8,49 @@ import (
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
+	i_types "github.com/leapforce-libraries/go_insightly/types"
 )
 
 type Contact struct {
-	ContactID            int          `json:"CONTACT_ID"`
-	Salutation           string       `json:"SALUTATION"`
-	FirstName            string       `json:"FIRST_NAME"`
-	LastName             string       `json:"LAST_NAME"`
-	ImageURL             string       `json:"IMAGE_URL"`
-	Background           string       `json:"BACKGROUND"`
-	OwnerUserID          *int         `json:"OWNER_USER_ID"`
-	DateCreatedUTC       DateUTC      `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC       DateUTC      `json:"DATE_UPDATED_UTC"`
-	SocialLinkedin       string       `json:"SOCIAL_LINKEDIN"`
-	SocialFacebook       string       `json:"SOCIAL_FACEBOOK"`
-	SocialTwitter        string       `json:"SOCIAL_TWITTER"`
-	DateOfBirth          DateUTC      `json:"DATE_OF_BIRTH"`
-	Phone                string       `json:"PHONE"`
-	PhoneHome            string       `json:"PHONE_HOME"`
-	PhoneMobile          string       `json:"PHONE_MOBILE"`
-	PhoneOther           string       `json:"PHONE_OTHER"`
-	PhoneAssistant       string       `json:"PHONE_ASSISTANT"`
-	PhoneFax             string       `json:"PHONE_FAX"`
-	EmailAddress         string       `json:"EMAIL_ADDRESS"`
-	AssistantName        string       `json:"ASSISTANT_NAME"`
-	AddressMailStreet    string       `json:"ADDRESS_MAIL_STREET"`
-	AddressMailCity      string       `json:"ADDRESS_MAIL_CITY"`
-	AddressMailState     string       `json:"ADDRESS_MAIL_STATE"`
-	AddressMailPostcode  string       `json:"ADDRESS_MAIL_POSTCODE"`
-	AddressMailCountry   string       `json:"ADDRESS_MAIL_COUNTRY"`
-	AddressOtherStreet   string       `json:"ADDRESS_OTHER_STREET"`
-	AddressOtherCity     string       `json:"ADDRESS_OTHER_CITY"`
-	AddressOtherState    string       `json:"ADDRESS_OTHER_STATE"`
-	AddressOtherPostcode string       `json:"ADDRESS_OTHER_POSTCODE"`
-	LastActivityDateUTC  DateUTC      `json:"LAST_ACTIVITY_DATE_UTC"`
-	NextActivityDateUTC  DateUTC      `json:"NEXT_ACTIVITY_DATE_UTC"`
-	CreatedUserID        *int         `json:"CREATED_USER_ID"`
-	OrganisationID       *int         `json:"ORGANISATION_ID"`
-	Title                string       `json:"TITLE"`
-	EmailOptedOut        bool         `json:"EMAIL_OPTED_OUT"`
-	CustomFields         CustomFields `json:"CUSTOMFIELDS"`
-	Tags                 []Tag        `json:"TAGS"`
-	Dates                []Date       `json:"DATES"`
+	ContactID            int64                   `json:"CONTACT_ID"`
+	Salutation           *string                 `json:"SALUTATION"`
+	FirstName            *string                 `json:"FIRST_NAME"`
+	LastName             *string                 `json:"LAST_NAME"`
+	ImageURL             *string                 `json:"IMAGE_URL"`
+	Background           *string                 `json:"BACKGROUND"`
+	OwnerUserID          int64                   `json:"OWNER_USER_ID"`
+	DateCreatedUTC       i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC       i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
+	SocialLinkedin       *string                 `json:"SOCIAL_LINKEDIN"`
+	SocialFacebook       *string                 `json:"SOCIAL_FACEBOOK"`
+	SocialTwitter        *string                 `json:"SOCIAL_TWITTER"`
+	DateOfBirth          *i_types.DateTimeString `json:"DATE_OF_BIRTH"`
+	Phone                *string                 `json:"PHONE"`
+	PhoneHome            *string                 `json:"PHONE_HOME"`
+	PhoneMobile          *string                 `json:"PHONE_MOBILE"`
+	PhoneOther           *string                 `json:"PHONE_OTHER"`
+	PhoneAssistant       *string                 `json:"PHONE_ASSISTANT"`
+	PhoneFax             *string                 `json:"PHONE_FAX"`
+	EmailAddress         *string                 `json:"EMAIL_ADDRESS"`
+	AssistantName        *string                 `json:"ASSISTANT_NAME"`
+	AddressMailStreet    *string                 `json:"ADDRESS_MAIL_STREET"`
+	AddressMailCity      *string                 `json:"ADDRESS_MAIL_CITY"`
+	AddressMailState     *string                 `json:"ADDRESS_MAIL_STATE"`
+	AddressMailPostcode  *string                 `json:"ADDRESS_MAIL_POSTCODE"`
+	AddressMailCountry   *string                 `json:"ADDRESS_MAIL_COUNTRY"`
+	AddressOtherStreet   *string                 `json:"ADDRESS_OTHER_STREET"`
+	AddressOtherCity     *string                 `json:"ADDRESS_OTHER_CITY"`
+	AddressOtherState    *string                 `json:"ADDRESS_OTHER_STATE"`
+	AddressOtherPostcode *string                 `json:"ADDRESS_OTHER_POSTCODE"`
+	LastActivityDateUTC  *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC"`
+	NextActivityDateUTC  *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC"`
+	CreatedUserID        int64                   `json:"CREATED_USER_ID"`
+	OrganisationID       *int64                  `json:"ORGANISATION_ID"`
+	Title                *string                 `json:"TITLE"`
+	EmailOptedOut        bool                    `json:"EMAIL_OPTED_OUT"`
+	CustomFields         *CustomFields           `json:"CUSTOMFIELDS"`
+	Tags                 *[]Tag                  `json:"TAGS"`
+	Dates                *[]Date                 `json:"DATES"`
 }
 
 func (c *Contact) prepareMarshal() interface{} {
@@ -58,46 +59,46 @@ func (c *Contact) prepareMarshal() interface{} {
 	}
 
 	return &struct {
-		ContactID            int          `json:"CONTACT_ID"`
-		Salutation           string       `json:"SALUTATION"`
-		FirstName            string       `json:"FIRST_NAME"`
-		LastName             string       `json:"LAST_NAME"`
-		ImageURL             string       `json:"IMAGE_URL"`
-		Background           string       `json:"BACKGROUND"`
-		OwnerUserID          *int         `json:"OWNER_USER_ID"`
-		SocialLinkedin       string       `json:"SOCIAL_LINKEDIN"`
-		SocialFacebook       string       `json:"SOCIAL_FACEBOOK"`
-		SocialTwitter        string       `json:"SOCIAL_TWITTER"`
-		DateOfBirth          DateUTC      `json:"DATE_OF_BIRTH"`
-		Phone                string       `json:"PHONE"`
-		PhoneHome            string       `json:"PHONE_HOME"`
-		PhoneMobile          string       `json:"PHONE_MOBILE"`
-		PhoneOther           string       `json:"PHONE_OTHER"`
-		PhoneAssistant       string       `json:"PHONE_ASSISTANT"`
-		PhoneFax             string       `json:"PHONE_FAX"`
-		EmailAddress         string       `json:"EMAIL_ADDRESS"`
-		AssistantName        string       `json:"ASSISTANT_NAME"`
-		AddressMailStreet    string       `json:"ADDRESS_MAIL_STREET"`
-		AddressMailCity      string       `json:"ADDRESS_MAIL_CITY"`
-		AddressMailState     string       `json:"ADDRESS_MAIL_STATE"`
-		AddressMailPostcode  string       `json:"ADDRESS_MAIL_POSTCODE"`
-		AddressMailCountry   string       `json:"ADDRESS_MAIL_COUNTRY"`
-		AddressOtherStreet   string       `json:"ADDRESS_OTHER_STREET"`
-		AddressOtherCity     string       `json:"ADDRESS_OTHER_CITY"`
-		AddressOtherState    string       `json:"ADDRESS_OTHER_STATE"`
-		AddressOtherPostcode string       `json:"ADDRESS_OTHER_POSTCODE"`
-		OrganisationID       *int         `json:"ORGANISATION_ID"`
-		Title                string       `json:"TITLE"`
-		EmailOptedOut        bool         `json:"EMAIL_OPTED_OUT"`
-		CustomFields         CustomFields `json:"CUSTOMFIELDS"`
+		ContactID            *int64                  `json:"CONTACT_ID,omitempty"`
+		Salutation           *string                 `json:"SALUTATION,omitempty"`
+		FirstName            *string                 `json:"FIRST_NAME,omitempty"`
+		LastName             *string                 `json:"LAST_NAME,omitempty"`
+		ImageURL             *string                 `json:"IMAGE_URL,omitempty"`
+		Background           *string                 `json:"BACKGROUND,omitempty"`
+		OwnerUserID          *int64                  `json:"OWNER_USER_ID,omitempty"`
+		SocialLinkedin       *string                 `json:"SOCIAL_LINKEDIN,omitempty"`
+		SocialFacebook       *string                 `json:"SOCIAL_FACEBOOK,omitempty"`
+		SocialTwitter        *string                 `json:"SOCIAL_TWITTER,omitempty"`
+		DateOfBirth          *i_types.DateTimeString `json:"DATE_OF_BIRTH,omitempty"`
+		Phone                *string                 `json:"PHONE,omitempty"`
+		PhoneHome            *string                 `json:"PHONE_HOME,omitempty"`
+		PhoneMobile          *string                 `json:"PHONE_MOBILE,omitempty"`
+		PhoneOther           *string                 `json:"PHONE_OTHER,omitempty"`
+		PhoneAssistant       *string                 `json:"PHONE_ASSISTANT,omitempty"`
+		PhoneFax             *string                 `json:"PHONE_FAX,omitempty"`
+		EmailAddress         *string                 `json:"EMAIL_ADDRESS,omitempty"`
+		AssistantName        *string                 `json:"ASSISTANT_NAME,omitempty"`
+		AddressMailStreet    *string                 `json:"ADDRESS_MAIL_STREET,omitempty"`
+		AddressMailCity      *string                 `json:"ADDRESS_MAIL_CITY,omitempty"`
+		AddressMailState     *string                 `json:"ADDRESS_MAIL_STATE,omitempty"`
+		AddressMailPostcode  *string                 `json:"ADDRESS_MAIL_POSTCODE,omitempty"`
+		AddressMailCountry   *string                 `json:"ADDRESS_MAIL_COUNTRY,omitempty"`
+		AddressOtherStreet   *string                 `json:"ADDRESS_OTHER_STREET,omitempty"`
+		AddressOtherCity     *string                 `json:"ADDRESS_OTHER_CITY,omitempty"`
+		AddressOtherState    *string                 `json:"ADDRESS_OTHER_STATE,omitempty"`
+		AddressOtherPostcode *string                 `json:"ADDRESS_OTHER_POSTCODE,omitempty"`
+		OrganisationID       *int64                  `json:"ORGANISATION_ID,omitempty"`
+		Title                *string                 `json:"TITLE,omitempty"`
+		EmailOptedOut        *bool                   `json:"EMAIL_OPTED_OUT,omitempty"`
+		CustomFields         *CustomFields           `json:"CUSTOMFIELDS,omitempty"`
 	}{
-		c.ContactID,
+		&c.ContactID,
 		c.Salutation,
 		c.FirstName,
 		c.LastName,
 		c.ImageURL,
 		c.Background,
-		c.OwnerUserID,
+		&c.OwnerUserID,
 		c.SocialLinkedin,
 		c.SocialFacebook,
 		c.SocialTwitter,
@@ -121,7 +122,7 @@ func (c *Contact) prepareMarshal() interface{} {
 		c.AddressOtherPostcode,
 		c.OrganisationID,
 		c.Title,
-		c.EmailOptedOut,
+		&c.EmailOptedOut,
 		c.CustomFields,
 	}
 }
@@ -143,7 +144,7 @@ func (service *Service) GetContact(contactID int) (*Contact, *errortools.Error) 
 	return &contact, nil
 }
 
-type GetContactsFilter struct {
+type GetContactsConfig struct {
 	UpdatedAfter *time.Time
 	Field        *struct {
 		FieldName  string
@@ -153,18 +154,18 @@ type GetContactsFilter struct {
 
 // GetContacts returns all contacts
 //
-func (service *Service) GetContacts(filter *GetContactsFilter) (*[]Contact, *errortools.Error) {
+func (service *Service) GetContacts(config *GetContactsConfig) (*[]Contact, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
-	if filter != nil {
-		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(DateTimeFormat)
+	if config != nil {
+		if config.UpdatedAfter != nil {
+			from := config.UpdatedAfter.Format(DateTimeFormat)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
-		if filter.Field != nil {
-			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", filter.Field.FieldName, filter.Field.FieldValue))
+		if config.Field != nil {
+			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.Field.FieldName, config.Field.FieldValue))
 		}
 	}
 
@@ -268,18 +269,13 @@ func (c *Contact) FullName() string {
 		return ""
 	}
 
-	return fmt.Sprintf("%s %s", c.FirstName, c.LastName)
-}
-
-/*
-func (c *Contact) ValidateEmail() *errortools.Error {
-	// validate email
-	if c.EmailAddress != "" {
-		err := utilities.ValidateFormat(c.EmailAddress)
-		if err != nil {
-			return errortools.ErrorMessage(fmt.Sprintf("Invalid emailadress (between []): [%s] for contact: %s %s (%v)", c.EmailAddress, c.FirstName, c.LastName, c.ContactID))
-		}
+	name := ""
+	if c.LastName != nil {
+		name = *c.LastName
+	}
+	if c.FirstName != nil {
+		name = fmt.Sprintf("%s %s", *c.FirstName, name)
 	}
 
-	return nil
-}*/
+	return strings.Trim(name, " ")
+}

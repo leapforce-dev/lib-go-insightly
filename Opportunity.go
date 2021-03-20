@@ -8,37 +8,38 @@ import (
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
+	i_types "github.com/leapforce-libraries/go_insightly/types"
 )
 
 // Opportunity stores Opportunity from Service
 //
 type Opportunity struct {
-	OpportunityID       int           `json:"OPPORTUNITY_ID"`
-	OpportunityName     *string       `json:"OPPORTUNITY_NAME"`
-	OpportunityDetails  *string       `json:"OPPORTUNITY_DETAILS"`
-	OpportunityState    *string       `json:"OPPORTUNITY_STATE"`
-	ResponsibleUserID   *int          `json:"RESPONSIBLE_USER_ID"`
-	CategoryID          *int          `json:"CATEGORY_ID"`
-	ImageURL            *string       `json:"IMAGE_URL"`
-	BidCurrency         *string       `json:"BID_CURRENCY"`
-	BidAmount           *float32      `json:"BID_AMOUNT"`
-	BidType             *string       `json:"BID_TYPE"`
-	BidDuration         *int          `json:"BID_DURATION"`
-	ActualCloseDate     *DateUTC      `json:"ACTUAL_CLOSE_DATE"`
-	DateCreatedUTC      *DateUTC      `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC      *DateUTC      `json:"DATE_UPDATED_UTC"`
-	OpportunityValue    *float32      `json:"OPPORTUNITY_VALUE"`
-	Probability         *int          `json:"PROBABILITY"`
-	ForecastCloseDate   *DateUTC      `json:"FORECAST_CLOSE_DATE"`
-	OwnerUserID         *int          `json:"OWNER_USER_ID"`
-	LastActivityDateUTC *DateUTC      `json:"LAST_ACTIVITY_DATE_UTC"`
-	NextActivityDateUTC *DateUTC      `json:"NEXT_ACTIVITY_DATE_UTC"`
-	PipelineID          *int          `json:"PIPELINE_ID"`
-	StageID             *int          `json:"STAGE_ID"`
-	CreatedUserID       *int          `json:"CREATED_USER_ID"`
-	OrganisationID      *int          `json:"ORGANISATION_ID"`
-	CustomFields        *CustomFields `json:"CUSTOMFIELDS"`
-	Tags                *[]Tag        `json:"TAGS"`
+	OpportunityID       int64                   `json:"OPPORTUNITY_ID"`
+	OpportunityName     string                  `json:"OPPORTUNITY_NAME"`
+	OpportunityDetails  *string                 `json:"OPPORTUNITY_DETAILS"`
+	OpportunityState    string                  `json:"OPPORTUNITY_STATE"`
+	ResponsibleUserID   int64                   `json:"RESPONSIBLE_USER_ID"`
+	CategoryID          int64                   `json:"CATEGORY_ID"`
+	ImageURL            *string                 `json:"IMAGE_URL"`
+	BidCurrency         string                  `json:"BID_CURRENCY"`
+	BidAmount           float64                 `json:"BID_AMOUNT"`
+	BidType             string                  `json:"BID_TYPE"`
+	BidDuration         *int64                  `json:"BID_DURATION"`
+	ActualCloseDate     *i_types.DateTimeString `json:"ACTUAL_CLOSE_DATE"`
+	DateCreatedUTC      i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC      i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
+	OpportunityValue    float64                 `json:"OPPORTUNITY_VALUE"`
+	Probability         int64                   `json:"PROBABILITY"`
+	ForecastCloseDate   i_types.DateTimeString  `json:"FORECAST_CLOSE_DATE"`
+	OwnerUserID         int64                   `json:"OWNER_USER_ID"`
+	LastActivityDateUTC *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC"`
+	NextActivityDateUTC *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC"`
+	PipelineID          int64                   `json:"PIPELINE_ID"`
+	StageID             int64                   `json:"STAGE_ID"`
+	CreatedUserID       int64                   `json:"CREATED_USER_ID"`
+	OrganisationID      int64                   `json:"ORGANISATION_ID"`
+	CustomFields        *CustomFields           `json:"CUSTOMFIELDS"`
+	Tags                *[]Tag                  `json:"TAGS"`
 }
 
 func (o *Opportunity) prepareMarshal() interface{} {
@@ -47,46 +48,46 @@ func (o *Opportunity) prepareMarshal() interface{} {
 	}
 
 	return &struct {
-		OpportunityID      int           `json:"OPPORTUNITY_ID"`
-		OpportunityName    *string       `json:"OPPORTUNITY_NAME,omitempty"`
-		OpportunityDetails *string       `json:"OPPORTUNITY_DETAILS,omitempty"`
-		OpportunityState   *string       `json:"OPPORTUNITY_STATE,omitempty"`
-		ResponsibleUserID  *int          `json:"RESPONSIBLE_USER_ID,omitempty"`
-		CategoryID         *int          `json:"CATEGORY_ID,omitempty"`
-		ImageURL           *string       `json:"IMAGE_URL,omitempty"`
-		BidCurrency        *string       `json:"BID_CURRENCY,omitempty"`
-		BidAmount          *float32      `json:"BID_AMOUNT,omitempty"`
-		BidType            *string       `json:"BID_TYPE,omitempty"`
-		BidDuration        *int          `json:"BID_DURATION,omitempty"`
-		ActualCloseDate    *DateUTC      `json:"ACTUAL_CLOSE_DATE,omitempty"`
-		OpportunityValue   *float32      `json:"OPPORTUNITY_VALUE,omitempty"`
-		Probability        *int          `json:"PROBABILITY,omitempty"`
-		ForecastCloseDate  *DateUTC      `json:"FORECAST_CLOSE_DATE,omitempty"`
-		OwnerUserID        *int          `json:"OWNER_USER_ID,omitempty"`
-		PipelineID         *int          `json:"PIPELINE_ID,omitempty"`
-		StageID            *int          `json:"STAGE_ID,omitempty"`
-		OrganisationID     *int          `json:"ORGANISATION_ID,omitempty"`
-		CustomFields       *CustomFields `json:"CUSTOMFIELDS,omitempty"`
+		OpportunityID      *int64                  `json:"OPPORTUNITY_ID,omitempty"`
+		OpportunityName    *string                 `json:"OPPORTUNITY_NAME,omitempty"`
+		OpportunityDetails *string                 `json:"OPPORTUNITY_DETAILS,omitempty"`
+		OpportunityState   *string                 `json:"OPPORTUNITY_STATE,omitempty"`
+		ResponsibleUserID  *int64                  `json:"RESPONSIBLE_USER_ID,omitempty"`
+		CategoryID         *int64                  `json:"CATEGORY_ID,omitempty"`
+		ImageURL           *string                 `json:"IMAGE_URL,omitempty"`
+		BidCurrency        *string                 `json:"BID_CURRENCY,omitempty"`
+		BidAmount          *float64                `json:"BID_AMOUNT,omitempty"`
+		BidType            *string                 `json:"BID_TYPE,omitempty"`
+		BidDuration        *int64                  `json:"BID_DURATION,omitempty"`
+		ActualCloseDate    *i_types.DateTimeString `json:"ACTUAL_CLOSE_DATE,omitempty"`
+		OpportunityValue   *float64                `json:"OPPORTUNITY_VALUE,omitempty"`
+		Probability        *int64                  `json:"PROBABILITY,omitempty"`
+		ForecastCloseDate  *i_types.DateTimeString `json:"FORECAST_CLOSE_DATE,omitempty"`
+		OwnerUserID        *int64                  `json:"OWNER_USER_ID,omitempty"`
+		PipelineID         *int64                  `json:"PIPELINE_ID,omitempty"`
+		StageID            *int64                  `json:"STAGE_ID,omitempty"`
+		OrganisationID     *int64                  `json:"ORGANISATION_ID,omitempty"`
+		CustomFields       *CustomFields           `json:"CUSTOMFIELDS,omitempty"`
 	}{
-		o.OpportunityID,
-		o.OpportunityName,
+		&o.OpportunityID,
+		&o.OpportunityName,
 		o.OpportunityDetails,
-		o.OpportunityState,
-		o.ResponsibleUserID,
-		o.CategoryID,
+		&o.OpportunityState,
+		&o.ResponsibleUserID,
+		&o.CategoryID,
 		o.ImageURL,
-		o.BidCurrency,
-		o.BidAmount,
-		o.BidType,
+		&o.BidCurrency,
+		&o.BidAmount,
+		&o.BidType,
 		o.BidDuration,
 		o.ActualCloseDate,
-		o.OpportunityValue,
-		o.Probability,
-		o.ForecastCloseDate,
-		o.OwnerUserID,
-		o.PipelineID,
-		o.StageID,
-		o.OrganisationID,
+		&o.OpportunityValue,
+		&o.Probability,
+		&o.ForecastCloseDate,
+		&o.OwnerUserID,
+		&o.PipelineID,
+		&o.StageID,
+		&o.OrganisationID,
 		o.CustomFields,
 	}
 }
@@ -108,28 +109,25 @@ func (service *Service) GetOpportunity(opportunityID int) (*Opportunity, *errort
 	return &opportunity, nil
 }
 
-type GetOpportunitiesFilter struct {
+type GetOpportunitiesConfig struct {
 	UpdatedAfter *time.Time
-	Field        *struct {
-		FieldName  string
-		FieldValue string
-	}
+	FieldFilter  *FieldFilter
 }
 
 // GetOpportunities returns all opportunities
 //
-func (service *Service) GetOpportunities(filter *GetOpportunitiesFilter) (*[]Opportunity, *errortools.Error) {
+func (service *Service) GetOpportunities(config *GetOpportunitiesConfig) (*[]Opportunity, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
-	if filter != nil {
-		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(DateTimeFormat)
+	if config != nil {
+		if config.UpdatedAfter != nil {
+			from := config.UpdatedAfter.Format(DateTimeFormat)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
-		if filter.Field != nil {
-			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", filter.Field.FieldName, filter.Field.FieldValue))
+		if config.FieldFilter != nil {
+			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.FieldFilter.FieldName, config.FieldFilter.FieldValue))
 		}
 	}
 

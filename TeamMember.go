@@ -12,21 +12,21 @@ import (
 // TeamMember stores TeamMember from Service
 //
 type TeamMember struct {
-	PermissionID int `json:"PERMISSION_ID"`
-	TeamID       int `json:"TEAM_ID"`
-	MemberUserID int `json:"MEMBER_USER_ID"`
+	PermissionID int64 `json:"PERMISSION_ID"`
+	TeamID       int64 `json:"TEAM_ID"`
+	MemberUserID int64 `json:"MEMBER_USER_ID"`
 }
 
-type GetTeamMembersFilter struct {
+type GetTeamMembersConfig struct {
 }
 
 // GetTeamMembers returns all teamMembers
 //
-func (service *Service) GetTeamMembers(filter *GetTeamMembersFilter) (*[]TeamMember, *errortools.Error) {
+func (service *Service) GetTeamMembers(config *GetTeamMembersConfig) (*[]TeamMember, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
-	if filter != nil {
+	if config != nil {
 	}
 
 	if len(searchFilter) > 0 {

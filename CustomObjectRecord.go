@@ -3,23 +3,25 @@ package insightly
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
+	i_types "github.com/leapforce-libraries/go_insightly/types"
 )
 
 // CustomObjectRecord stores CustomObjectRecord from Service
 //
 type CustomObjectRecord struct {
-	RecordID       int          `json:"RECORD_ID"`
-	RecordName     string       `json:"RECORD_NAME"`
-	OwnerUserID    *int         `json:"OWNER_USER_ID"`
-	DateCreatedUTC DateUTC      `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC DateUTC      `json:"DATE_UPDATED_UTC"`
-	CreatedUserID  *int         `json:"CREATED_USER_ID"`
-	VisibleTo      string       `json:"VISIBLE_TO"`
-	VisibleTeamID  *int         `json:"VISIBLE_TEAM_ID"`
-	CustomFields   CustomFields `json:"CUSTOMFIELDS"`
+	RecordID       int64                  `json:"RECORD_ID"`
+	RecordName     string                 `json:"RECORD_NAME"`
+	OwnerUserID    int64                  `json:"OWNER_USER_ID"`
+	DateCreatedUTC i_types.DateTimeString `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC i_types.DateTimeString `json:"DATE_UPDATED_UTC"`
+	CreatedUserID  int64                  `json:"CREATED_USER_ID"`
+	VisibleTo      *string                `json:"VISIBLE_TO"`
+	VisibleTeamID  *int64                 `json:"VISIBLE_TEAM_ID"`
+	CustomFields   *CustomFields          `json:"CUSTOMFIELDS"`
 }
 
 func (c *CustomObjectRecord) prepareMarshal() interface{} {
@@ -28,16 +30,16 @@ func (c *CustomObjectRecord) prepareMarshal() interface{} {
 	}
 
 	return &struct {
-		RecordID      int           `json:"RECORD_ID"`
-		RecordName    string        `json:"RECORD_NAME"`
-		OwnerUserID   *int          `json:"OWNER_USER_ID"`
-		VisibleTo     string        `json:"VISIBLE_TO"`
-		VisibleTeamID *int          `json:"VISIBLE_TEAM_ID"`
-		CustomFields  []CustomField `json:"CUSTOMFIELDS"`
+		RecordID      *int64        `json:"RECORD_ID,omitempty"`
+		RecordName    *string       `json:"RECORD_NAME,omitempty"`
+		OwnerUserID   *int64        `json:"OWNER_USER_ID,omitempty"`
+		VisibleTo     *string       `json:"VISIBLE_TO,omitempty"`
+		VisibleTeamID *int64        `json:"VISIBLE_TEAM_ID,omitempty"`
+		CustomFields  *CustomFields `json:"CUSTOMFIELDS,omitempty"`
 	}{
-		c.RecordID,
-		c.RecordName,
-		c.OwnerUserID,
+		&c.RecordID,
+		&c.RecordName,
+		&c.OwnerUserID,
 		c.VisibleTo,
 		c.VisibleTeamID,
 		c.CustomFields,
@@ -61,9 +63,29 @@ func (service *Service) GetCustomObjectRecord(customObjectName string, customObj
 	return &customObjectRecord, nil
 }
 
+type GetCustomObjectRecordsConfig struct {
+	CustomObjectName string
+	FieldFilter      *FieldFilter
+}
+
 // GetCustomObjectRecords returns all customObjectRecords
 //
-func (service *Service) GetCustomObjectRecords(customObjectName string, filter *FieldFilter) (*[]CustomObjectRecord, *errortools.Error) {
+func (service *Service) GetCustomObjectRecords(config *GetCustomObjectRecordsConfig) (*[]CustomObjectRecord, *errortools.Error) {
+	searchString := "?"
+	searchFilter := []string{}
+
+	if config == nil {
+		return nil, errortools.ErrorMessage("GetCustomObjectRecordsConfig must not be nil or a nil pointer")
+	}
+
+	if config.FieldFilter != nil {
+		searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.FieldFilter.FieldName, config.FieldFilter.FieldValue))
+	}
+
+	if len(searchFilter) > 0 {
+		searchString = "/Search?" + strings.Join(searchFilter, "&")
+	}
+
 	endpointStr := "%s%sskip=%s&top=%s"
 	skip := 0
 	top := 100
@@ -75,7 +97,7 @@ func (service *Service) GetCustomObjectRecords(customObjectName string, filter *
 		_customObjectRecords := []CustomObjectRecord{}
 
 		requestConfig := go_http.RequestConfig{
-			URL:           service.url(fmt.Sprintf(endpointStr, customObjectName, filter.Search(), strconv.Itoa(skip), strconv.Itoa(top))),
+			URL:           service.url(fmt.Sprintf(endpointStr, config.CustomObjectName, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
 			ResponseModel: &_customObjectRecords,
 		}
 		_, _, e := service.get(&requestConfig)
@@ -86,7 +108,6 @@ func (service *Service) GetCustomObjectRecords(customObjectName string, filter *
 		customObjectRecords = append(customObjectRecords, _customObjectRecords...)
 
 		rowCount = len(_customObjectRecords)
-		//rowCount = 0
 		skip += top
 	}
 

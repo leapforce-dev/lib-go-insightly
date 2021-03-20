@@ -12,22 +12,22 @@ import (
 // LeadSource stores LeadSource from Service
 //
 type LeadSource struct {
-	LeadSourceID int    `json:"LEAD_SOURCE_ID"`
+	LeadSourceID int64  `json:"LEAD_SOURCE_ID"`
 	LeadSource   string `json:"LEAD_SOURCE"`
 	DefaultValue bool   `json:"DEFAULT_VALUE"`
-	FieldOrder   int    `json:"FIELD_ORDER"`
+	FieldOrder   int64  `json:"FIELD_ORDER"`
 }
 
-type GetLeadSourcesFilter struct {
+type GetLeadSourcesConfig struct {
 }
 
 // GetLeadSources returns all leadSources
 //
-func (service *Service) GetLeadSources(filter *GetLeadSourcesFilter) (*[]LeadSource, *errortools.Error) {
+func (service *Service) GetLeadSources(config *GetLeadSourcesConfig) (*[]LeadSource, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
-	if filter != nil {
+	if config != nil {
 	}
 
 	if len(searchFilter) > 0 {

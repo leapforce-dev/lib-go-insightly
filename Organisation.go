@@ -8,41 +8,42 @@ import (
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
+	i_types "github.com/leapforce-libraries/go_insightly/types"
 )
 
 // Organisation stores Organisation from Service
 //
 type Organisation struct {
-	OrganisationID         int           `json:"ORGANISATION_ID"`
-	OrganisationName       string        `json:"ORGANISATION_NAME"`
-	Background             string        `json:"BACKGROUND"`
-	ImageURL               string        `json:"IMAGE_URL"`
-	OwnerUserID            *int          `json:"OWNER_USER_ID"`
-	DateCreatedUTC         DateUTC       `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC         DateUTC       `json:"DATE_UPDATED_UTC"`
-	LastActivityDateUTC    DateUTC       `json:"LAST_ACTIVITY_DATE_UTC"`
-	NextActivityDateUTC    DateUTC       `json:"NEXT_ACTIVITY_DATE_UTC"`
-	CreatedUserID          *int          `json:"CREATED_USER_ID"`
-	Phone                  string        `json:"PHONE"`
-	PhoneFax               string        `json:"PHONE_FAX"`
-	Website                string        `json:"WEBSITE"`
-	AddressBillingStreet   string        `json:"ADDRESS_BILLING_STREET"`
-	AddressBillingCity     string        `json:"ADDRESS_BILLING_CITY"`
-	AddressBillingState    string        `json:"ADDRESS_BILLING_STATE"`
-	AddressBillingCountry  string        `json:"ADDRESS_BILLING_COUNTRY"`
-	AddressBillingPostcode string        `json:"ADDRESS_BILLING_POSTCODE"`
-	AddressShipStreet      string        `json:"ADDRESS_SHIP_STREET"`
-	AddressShipCity        string        `json:"ADDRESS_SHIP_CITY"`
-	AddressShipState       string        `json:"ADDRESS_SHIP_STATE"`
-	AddressShipCountry     string        `json:"ADDRESS_SHIP_COUNTRY"`
-	AddressShipPostcode    string        `json:"ADDRESS_SHIP_POSTCODE"`
-	SocialLinkedin         string        `json:"SOCIAL_LINKEDIN"`
-	SocialFacebook         string        `json:"SOCIAL_FACEBOOK"`
-	SocialTwitter          string        `json:"SOCIAL_TWITTER"`
-	CustomFields           CustomFields  `json:"CUSTOMFIELDS"`
-	Tags                   []Tag         `json:"TAGS"`
-	Dates                  []Date        `json:"DATES"`
-	EmailDomains           []EmailDomain `json:"EMAILDOMAINS"`
+	OrganisationID         int64                   `json:"ORGANISATION_ID"`
+	OrganisationName       string                  `json:"ORGANISATION_NAME"`
+	Background             *string                 `json:"BACKGROUND"`
+	ImageURL               *string                 `json:"IMAGE_URL"`
+	OwnerUserID            int64                   `json:"OWNER_USER_ID"`
+	DateCreatedUTC         i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC         i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
+	LastActivityDateUTC    *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC"`
+	NextActivityDateUTC    *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC"`
+	CreatedUserID          int64                   `json:"CREATED_USER_ID"`
+	Phone                  *string                 `json:"PHONE"`
+	PhoneFax               *string                 `json:"PHONE_FAX"`
+	Website                *string                 `json:"WEBSITE"`
+	AddressBillingStreet   *string                 `json:"ADDRESS_BILLING_STREET"`
+	AddressBillingCity     *string                 `json:"ADDRESS_BILLING_CITY"`
+	AddressBillingState    *string                 `json:"ADDRESS_BILLING_STATE"`
+	AddressBillingCountry  *string                 `json:"ADDRESS_BILLING_COUNTRY"`
+	AddressBillingPostcode *string                 `json:"ADDRESS_BILLING_POSTCODE"`
+	AddressShipStreet      *string                 `json:"ADDRESS_SHIP_STREET"`
+	AddressShipCity        *string                 `json:"ADDRESS_SHIP_CITY"`
+	AddressShipState       *string                 `json:"ADDRESS_SHIP_STATE"`
+	AddressShipCountry     *string                 `json:"ADDRESS_SHIP_COUNTRY"`
+	AddressShipPostcode    *string                 `json:"ADDRESS_SHIP_POSTCODE"`
+	SocialLinkedin         *string                 `json:"SOCIAL_LINKEDIN"`
+	SocialFacebook         *string                 `json:"SOCIAL_FACEBOOK"`
+	SocialTwitter          *string                 `json:"SOCIAL_TWITTER"`
+	CustomFields           *CustomFields           `json:"CUSTOMFIELDS"`
+	Tags                   *[]Tag                  `json:"TAGS"`
+	Dates                  *[]Date                 `json:"DATES"`
+	EmailDomains           *[]EmailDomain          `json:"EMAILDOMAINS"`
 }
 
 func (o *Organisation) prepareMarshal() interface{} {
@@ -51,34 +52,34 @@ func (o *Organisation) prepareMarshal() interface{} {
 	}
 
 	return &struct {
-		OrganisationID         int          `json:"ORGANISATION_ID"`
-		OrganisationName       string       `json:"ORGANISATION_NAME"`
-		Background             string       `json:"BACKGROUND"`
-		ImageURL               string       `json:"IMAGE_URL"`
-		OwnerUserID            *int         `json:"OWNER_USER_ID"`
-		Phone                  string       `json:"PHONE"`
-		PhoneFax               string       `json:"PHONE_FAX"`
-		Website                string       `json:"WEBSITE"`
-		AddressBillingStreet   string       `json:"ADDRESS_BILLING_STREET"`
-		AddressBillingCity     string       `json:"ADDRESS_BILLING_CITY"`
-		AddressBillingState    string       `json:"ADDRESS_BILLING_STATE"`
-		AddressBillingCountry  string       `json:"ADDRESS_BILLING_COUNTRY"`
-		AddressBillingPostcode string       `json:"ADDRESS_BILLING_POSTCODE"`
-		AddressShipStreet      string       `json:"ADDRESS_SHIP_STREET"`
-		AddressShipCity        string       `json:"ADDRESS_SHIP_CITY"`
-		AddressShipState       string       `json:"ADDRESS_SHIP_STATE"`
-		AddressShipCountry     string       `json:"ADDRESS_SHIP_COUNTRY"`
-		AddressShipPostcode    string       `json:"ADDRESS_SHIP_POSTCODE"`
-		SocialLinkedin         string       `json:"SOCIAL_LINKEDIN"`
-		SocialFacebook         string       `json:"SOCIAL_FACEBOOK"`
-		SocialTwitter          string       `json:"SOCIAL_TWITTER"`
-		CustomFields           CustomFields `json:"CUSTOMFIELDS"`
+		OrganisationID         *int64        `json:"ORGANISATION_ID"`
+		OrganisationName       *string       `json:"ORGANISATION_NAME"`
+		Background             *string       `json:"BACKGROUND"`
+		ImageURL               *string       `json:"IMAGE_URL"`
+		OwnerUserID            *int64        `json:"OWNER_USER_ID"`
+		Phone                  *string       `json:"PHONE"`
+		PhoneFax               *string       `json:"PHONE_FAX"`
+		Website                *string       `json:"WEBSITE"`
+		AddressBillingStreet   *string       `json:"ADDRESS_BILLING_STREET"`
+		AddressBillingCity     *string       `json:"ADDRESS_BILLING_CITY"`
+		AddressBillingState    *string       `json:"ADDRESS_BILLING_STATE"`
+		AddressBillingCountry  *string       `json:"ADDRESS_BILLING_COUNTRY"`
+		AddressBillingPostcode *string       `json:"ADDRESS_BILLING_POSTCODE"`
+		AddressShipStreet      *string       `json:"ADDRESS_SHIP_STREET"`
+		AddressShipCity        *string       `json:"ADDRESS_SHIP_CITY"`
+		AddressShipState       *string       `json:"ADDRESS_SHIP_STATE"`
+		AddressShipCountry     *string       `json:"ADDRESS_SHIP_COUNTRY"`
+		AddressShipPostcode    *string       `json:"ADDRESS_SHIP_POSTCODE"`
+		SocialLinkedin         *string       `json:"SOCIAL_LINKEDIN"`
+		SocialFacebook         *string       `json:"SOCIAL_FACEBOOK"`
+		SocialTwitter          *string       `json:"SOCIAL_TWITTER"`
+		CustomFields           *CustomFields `json:"CUSTOMFIELDS"`
 	}{
-		o.OrganisationID,
-		o.OrganisationName,
+		&o.OrganisationID,
+		&o.OrganisationName,
 		o.Background,
 		o.ImageURL,
-		o.OwnerUserID,
+		&o.OwnerUserID,
 		o.Phone,
 		o.PhoneFax,
 		o.Website,
@@ -116,28 +117,25 @@ func (service *Service) GetOrganisation(organisationID int) (*Organisation, *err
 	return &organisation, nil
 }
 
-type GetOrganisationsFilter struct {
+type GetOrganisationsConfig struct {
 	UpdatedAfter *time.Time
-	Field        *struct {
-		FieldName  string
-		FieldValue string
-	}
+	FieldFilter  *FieldFilter
 }
 
 // GetOrganisations returns all organisations
 //
-func (service *Service) GetOrganisations(filter *GetOrganisationsFilter) (*[]Organisation, *errortools.Error) {
+func (service *Service) GetOrganisations(config *GetOrganisationsConfig) (*[]Organisation, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
-	if filter != nil {
-		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(DateTimeFormat)
+	if config != nil {
+		if config.UpdatedAfter != nil {
+			from := config.UpdatedAfter.Format(DateTimeFormat)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
-		if filter.Field != nil {
-			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", filter.Field.FieldName, filter.Field.FieldValue))
+		if config.FieldFilter != nil {
+			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.FieldFilter.FieldName, config.FieldFilter.FieldValue))
 		}
 	}
 

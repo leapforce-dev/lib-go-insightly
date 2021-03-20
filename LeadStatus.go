@@ -12,23 +12,23 @@ import (
 // LeadStatus stores LeadStatus from Service
 //
 type LeadStatus struct {
-	LeadStatusID  int    `json:"LEAD_STATUS_ID"`
-	LeadSTatus    string `json:"LEAD_STATUS"`
+	LeadStatusID  int64  `json:"LEAD_STATUS_ID"`
+	LeadStatus    string `json:"LEAD_STATUS"`
 	DefaultStatus bool   `json:"DEFAULT_STATUS"`
-	StatusType    int    `json:"STATUS_TYPE"`
-	FieldOrder    int    `json:"FIELD_ORDER"`
+	StatusType    int64  `json:"STATUS_TYPE"`
+	FieldOrder    int64  `json:"FIELD_ORDER"`
 }
 
-type GetLeadStatusesFilter struct {
+type GetLeadStatusesConfig struct {
 }
 
 // GetLeadStatuses returns all leadStatuses
 //
-func (service *Service) GetLeadStatuses(filter *GetLeadStatusesFilter) (*[]LeadStatus, *errortools.Error) {
+func (service *Service) GetLeadStatuses(config *GetLeadStatusesConfig) (*[]LeadStatus, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
-	if filter != nil {
+	if config != nil {
 	}
 
 	if len(searchFilter) > 0 {

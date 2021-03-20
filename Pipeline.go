@@ -12,23 +12,23 @@ import (
 // Pipeline stores Pipeline from Service
 //
 type Pipeline struct {
-	PipelineID       int    `json:"PIPELINE_ID"`
+	PipelineID       int64  `json:"PIPELINE_ID"`
 	PipelineName     string `json:"PIPELINE_NAME"`
 	ForOpportunities bool   `json:"FOR_OPPORTUNITIES"`
 	ForProjects      bool   `json:"FOR_PROJECTS"`
-	OwnerUserID      *int   `json:"OWNER_USER_ID"`
+	OwnerUserID      int64  `json:"OWNER_USER_ID"`
 }
 
-type GetPipelinesFilter struct {
+type GetPipelinesConfig struct {
 }
 
 // GetPipelines returns all pipelines
 //
-func (service *Service) GetPipelines(filter *GetPipelinesFilter) (*[]Pipeline, *errortools.Error) {
+func (service *Service) GetPipelines(config *GetPipelinesConfig) (*[]Pipeline, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
-	if filter != nil {
+	if config != nil {
 	}
 
 	if len(searchFilter) > 0 {

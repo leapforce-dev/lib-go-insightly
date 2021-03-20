@@ -8,122 +8,30 @@ import (
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
+	i_types "github.com/leapforce-libraries/go_insightly/types"
 )
 
 type Project struct {
-	ProjectID            int          `json:"CONTACT_ID"`
-	Salutation           string       `json:"SALUTATION"`
-	FirstName            string       `json:"FIRST_NAME"`
-	LastName             string       `json:"LAST_NAME"`
-	ImageURL             string       `json:"IMAGE_URL"`
-	Background           string       `json:"BACKGROUND"`
-	OwnerUserID          *int         `json:"OWNER_USER_ID"`
-	DateCreatedUTC       DateUTC      `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC       DateUTC      `json:"DATE_UPDATED_UTC"`
-	SocialLinkedin       string       `json:"SOCIAL_LINKEDIN"`
-	SocialFacebook       string       `json:"SOCIAL_FACEBOOK"`
-	SocialTwitter        string       `json:"SOCIAL_TWITTER"`
-	DateOfBirth          DateUTC      `json:"DATE_OF_BIRTH"`
-	Phone                string       `json:"PHONE"`
-	PhoneHome            string       `json:"PHONE_HOME"`
-	PhoneMobile          string       `json:"PHONE_MOBILE"`
-	PhoneOther           string       `json:"PHONE_OTHER"`
-	PhoneAssistant       string       `json:"PHONE_ASSISTANT"`
-	PhoneFax             string       `json:"PHONE_FAX"`
-	EmailAddress         string       `json:"EMAIL_ADDRESS"`
-	AssistantName        string       `json:"ASSISTANT_NAME"`
-	AddressMailStreet    string       `json:"ADDRESS_MAIL_STREET"`
-	AddressMailCity      string       `json:"ADDRESS_MAIL_CITY"`
-	AddressMailState     string       `json:"ADDRESS_MAIL_STATE"`
-	AddressMailPostcode  string       `json:"ADDRESS_MAIL_POSTCODE"`
-	AddressMailCountry   string       `json:"ADDRESS_MAIL_COUNTRY"`
-	AddressOtherStreet   string       `json:"ADDRESS_OTHER_STREET"`
-	AddressOtherCity     string       `json:"ADDRESS_OTHER_CITY"`
-	AddressOtherState    string       `json:"ADDRESS_OTHER_STATE"`
-	AddressOtherPostcode string       `json:"ADDRESS_OTHER_POSTCODE"`
-	LastActivityDateUTC  DateUTC      `json:"LAST_ACTIVITY_DATE_UTC"`
-	NextActivityDateUTC  DateUTC      `json:"NEXT_ACTIVITY_DATE_UTC"`
-	CreatedUserID        *int         `json:"CREATED_USER_ID"`
-	OrganisationID       *int         `json:"ORGANISATION_ID"`
-	Title                string       `json:"TITLE"`
-	EmailOptedOut        bool         `json:"EMAIL_OPTED_OUT"`
-	CustomFields         CustomFields `json:"CUSTOMFIELDS"`
-	Tags                 []Tag        `json:"TAGS"`
-	Dates                []Date       `json:"DATES"`
-}
-
-func (p *Project) prepareMarshal() interface{} {
-	if p == nil {
-		return nil
-	}
-
-	return &struct {
-		ProjectID            int           `json:"CONTACT_ID"`
-		Salutation           string        `json:"SALUTATION"`
-		FirstName            string        `json:"FIRST_NAME"`
-		LastName             string        `json:"LAST_NAME"`
-		ImageURL             string        `json:"IMAGE_URL"`
-		Background           string        `json:"BACKGROUND"`
-		OwnerUserID          *int          `json:"OWNER_USER_ID"`
-		SocialLinkedin       string        `json:"SOCIAL_LINKEDIN"`
-		SocialFacebook       string        `json:"SOCIAL_FACEBOOK"`
-		SocialTwitter        string        `json:"SOCIAL_TWITTER"`
-		DateOfBirth          DateUTC       `json:"DATE_OF_BIRTH"`
-		Phone                string        `json:"PHONE"`
-		PhoneHome            string        `json:"PHONE_HOME"`
-		PhoneMobile          string        `json:"PHONE_MOBILE"`
-		PhoneOther           string        `json:"PHONE_OTHER"`
-		PhoneAssistant       string        `json:"PHONE_ASSISTANT"`
-		PhoneFax             string        `json:"PHONE_FAX"`
-		EmailAddress         string        `json:"EMAIL_ADDRESS"`
-		AssistantName        string        `json:"ASSISTANT_NAME"`
-		AddressMailStreet    string        `json:"ADDRESS_MAIL_STREET"`
-		AddressMailCity      string        `json:"ADDRESS_MAIL_CITY"`
-		AddressMailState     string        `json:"ADDRESS_MAIL_STATE"`
-		AddressMailPostcode  string        `json:"ADDRESS_MAIL_POSTCODE"`
-		AddressMailCountry   string        `json:"ADDRESS_MAIL_COUNTRY"`
-		AddressOtherStreet   string        `json:"ADDRESS_OTHER_STREET"`
-		AddressOtherCity     string        `json:"ADDRESS_OTHER_CITY"`
-		AddressOtherState    string        `json:"ADDRESS_OTHER_STATE"`
-		AddressOtherPostcode string        `json:"ADDRESS_OTHER_POSTCODE"`
-		OrganisationID       *int          `json:"ORGANISATION_ID"`
-		Title                string        `json:"TITLE"`
-		EmailOptedOut        bool          `json:"EMAIL_OPTED_OUT"`
-		CustomFields         []CustomField `json:"CUSTOMFIELDS"`
-	}{
-		p.ProjectID,
-		p.Salutation,
-		p.FirstName,
-		p.LastName,
-		p.ImageURL,
-		p.Background,
-		p.OwnerUserID,
-		p.SocialLinkedin,
-		p.SocialFacebook,
-		p.SocialTwitter,
-		p.DateOfBirth,
-		p.Phone,
-		p.PhoneHome,
-		p.PhoneMobile,
-		p.PhoneOther,
-		p.PhoneAssistant,
-		p.PhoneFax,
-		p.EmailAddress,
-		p.AssistantName,
-		p.AddressMailStreet,
-		p.AddressMailCity,
-		p.AddressMailState,
-		p.AddressMailPostcode,
-		p.AddressMailCountry,
-		p.AddressOtherStreet,
-		p.AddressOtherCity,
-		p.AddressOtherState,
-		p.AddressOtherPostcode,
-		p.OrganisationID,
-		p.Title,
-		p.EmailOptedOut,
-		p.CustomFields,
-	}
+	ProjectID           int64                   `json:"PROJECT_ID"`
+	ProjectName         string                  `json:"PROJECT_NAME"`
+	Status              string                  `json:"STATUS"`
+	ProjectDetails      *string                 `json:"PROJECT_DETAILS"`
+	StartedDate         *i_types.DateTimeString `json:"STARTED_DATE"`
+	CompletedDate       *i_types.DateTimeString `json:"COMPLETED_DATE"`
+	OpportunityID       *int64                  `json:"OPPORTUNITY_ID"`
+	CategoryID          int64                   `json:"CATEGORY_ID"`
+	PipelineID          int64                   `json:"PIPELINE_ID"`
+	StageID             int64                   `json:"STAGE_ID"`
+	ImageURL            *string                 `json:"IMAGE_URL"`
+	OwnerUserID         int64                   `json:"OWNER_USER_ID"`
+	DateCreatedUTC      i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC      i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
+	LastActivityDateUTC *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC"`
+	NextActivityDateUTC *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC"`
+	CreatedUserID       int64                   `json:"CREATED_USER_ID"`
+	ResponsibleUserID   *int64                  `json:"RESPONSIBLE_USER_ID"`
+	CustomFields        *CustomFields           `json:"CUSTOMFIELDS"`
+	Tags                *[]Tag                  `json:"TAGS"`
 }
 
 // GetProject returns a specific project
@@ -132,7 +40,7 @@ func (service *Service) GetProject(projectID int) (*Project, *errortools.Error) 
 	project := Project{}
 
 	requestConfig := go_http.RequestConfig{
-		URL:           service.url(fmt.Sprintf("Projects/%v", projectID)),
+		URL:           service.url(fmt.Sprintf("Project/%v", projectID)),
 		ResponseModel: &project,
 	}
 	_, _, e := service.get(&requestConfig)
@@ -143,28 +51,25 @@ func (service *Service) GetProject(projectID int) (*Project, *errortools.Error) 
 	return &project, nil
 }
 
-type GetProjectsFilter struct {
+type GetProjectsConfig struct {
 	UpdatedAfter *time.Time
-	Field        *struct {
-		FieldName  string
-		FieldValue string
-	}
+	FieldFilter  *FieldFilter
 }
 
 // GetProjects returns all projects
 //
-func (service *Service) GetProjects(filter *GetProjectsFilter) (*[]Project, *errortools.Error) {
+func (service *Service) GetProjects(config *GetProjectsConfig) (*[]Project, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
-	if filter != nil {
-		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(DateTimeFormat)
+	if config != nil {
+		if config.UpdatedAfter != nil {
+			from := config.UpdatedAfter.Format(DateTimeFormat)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
-		if filter.Field != nil {
-			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", filter.Field.FieldName, filter.Field.FieldValue))
+		if config.FieldFilter != nil {
+			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.FieldFilter.FieldName, config.FieldFilter.FieldValue))
 		}
 	}
 
@@ -172,7 +77,7 @@ func (service *Service) GetProjects(filter *GetProjectsFilter) (*[]Project, *err
 		searchString = "/Search?" + strings.Join(searchFilter, "&")
 	}
 
-	endpointStr := "Projects%sskip=%s&top=%s"
+	endpointStr := "Project%sskip=%s&top=%s"
 	skip := 0
 	top := 100
 	rowCount := top
@@ -203,62 +108,4 @@ func (service *Service) GetProjects(filter *GetProjectsFilter) (*[]Project, *err
 	}
 
 	return &projects, nil
-}
-
-// CreateProject creates a new contract
-//
-func (service *Service) CreateProject(project *Project) (*Project, *errortools.Error) {
-	if project == nil {
-		return nil, nil
-	}
-
-	projectNew := Project{}
-
-	requestConfig := go_http.RequestConfig{
-		URL:           service.url("Projects"),
-		BodyModel:     project.prepareMarshal(),
-		ResponseModel: &projectNew,
-	}
-	_, _, e := service.post(&requestConfig)
-	if e != nil {
-		return nil, e
-	}
-
-	return &projectNew, nil
-}
-
-// UpdateProject updates an existing contract
-//
-func (service *Service) UpdateProject(project *Project) (*Project, *errortools.Error) {
-	if project == nil {
-		return nil, nil
-	}
-
-	projectUpdated := Project{}
-
-	requestConfig := go_http.RequestConfig{
-		URL:           service.url("Projects"),
-		BodyModel:     project.prepareMarshal(),
-		ResponseModel: &projectUpdated,
-	}
-	_, _, e := service.put(&requestConfig)
-	if e != nil {
-		return nil, e
-	}
-
-	return &projectUpdated, nil
-}
-
-// DeleteProject deletes a specific project
-//
-func (service *Service) DeleteProject(projectID int) *errortools.Error {
-	requestConfig := go_http.RequestConfig{
-		URL: service.url(fmt.Sprintf("Projects/%v", projectID)),
-	}
-	_, _, e := service.delete(&requestConfig)
-	if e != nil {
-		return e
-	}
-
-	return nil
 }

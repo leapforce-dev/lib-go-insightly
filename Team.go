@@ -8,17 +8,18 @@ import (
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
+	i_types "github.com/leapforce-libraries/go_insightly/types"
 )
 
 // Team stores Team from Service
 //
 type Team struct {
-	TeamID         int          `json:"TEAM_ID"`
-	TeamName       string       `json:"TEAM_NAME"`
-	AnonymousTeam  bool         `json:"ANONYMOUS_TEAM"`
-	DateCreatedUTC DateUTC      `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC DateUTC      `json:"DATE_UPDATED_UTC"`
-	TeamMembers    []TeamMember `json:"TEAMMEMBERS"`
+	TeamID         int64                  `json:"TEAM_ID"`
+	TeamName       string                 `json:"TEAM_NAME"`
+	AnonymousTeam  bool                   `json:"ANONYMOUS_TEAM"`
+	DateCreatedUTC i_types.DateTimeString `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC i_types.DateTimeString `json:"DATE_UPDATED_UTC"`
+	TeamMembers    *[]TeamMember          `json:"TEAMMEMBERS"`
 }
 
 func (t *Team) prepareMarshal() interface{} {
@@ -27,14 +28,14 @@ func (t *Team) prepareMarshal() interface{} {
 	}
 
 	return &struct {
-		TeamID        int          `json:"TEAM_ID"`
-		TeamName      string       `json:"TEAM_NAME"`
-		AnonymousTeam bool         `json:"ANONYMOUS_TEAM"`
-		TeamMembers   []TeamMember `json:"TEAMMEMBERS"`
+		TeamID        *int64        `json:"TEAM_ID"`
+		TeamName      *string       `json:"TEAM_NAME"`
+		AnonymousTeam *bool         `json:"ANONYMOUS_TEAM"`
+		TeamMembers   *[]TeamMember `json:"TEAMMEMBERS"`
 	}{
-		t.TeamID,
-		t.TeamName,
-		t.AnonymousTeam,
+		&t.TeamID,
+		&t.TeamName,
+		&t.AnonymousTeam,
 		t.TeamMembers,
 	}
 }
@@ -56,28 +57,25 @@ func (service *Service) GetTeam(teamID int) (*Team, *errortools.Error) {
 	return &team, nil
 }
 
-type GetTeamsFilter struct {
+type GetTeamsConfig struct {
 	UpdatedAfter *time.Time
-	Field        *struct {
-		FieldName  string
-		FieldValue string
-	}
+	FieldFilter  *FieldFilter
 }
 
 // GetTeams returns all teams
 //
-func (service *Service) GetTeams(filter *GetTeamsFilter) (*[]Team, *errortools.Error) {
+func (service *Service) GetTeams(config *GetTeamsConfig) (*[]Team, *errortools.Error) {
 	searchString := "?"
 	searchFilter := []string{}
 
-	if filter != nil {
-		if filter.UpdatedAfter != nil {
-			from := filter.UpdatedAfter.Format(DateTimeFormat)
+	if config != nil {
+		if config.UpdatedAfter != nil {
+			from := config.UpdatedAfter.Format(DateTimeFormat)
 			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
 		}
 
-		if filter.Field != nil {
-			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", filter.Field.FieldName, filter.Field.FieldValue))
+		if config.FieldFilter != nil {
+			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.FieldFilter.FieldName, config.FieldFilter.FieldValue))
 		}
 	}
 

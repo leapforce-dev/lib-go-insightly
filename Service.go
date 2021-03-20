@@ -86,6 +86,11 @@ func (service *Service) httpRequest(httpMethod string, requestConfig *go_http.Re
 	}
 
 	if response != nil {
+		if response.StatusCode >= 200 && response.StatusCode <= 299 {
+			// insightly sometimes returns error while call succeeded
+			e = nil
+		}
+
 		// Read RateLimit headers
 		rateLimitRemaining, err := strconv.ParseInt(response.Header.Get("X-RateLimit-Remaining"), 10, 64)
 		if err == nil {

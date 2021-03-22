@@ -102,7 +102,7 @@ func (o *Organisation) prepareMarshal() interface{} {
 
 // GetOrganisation returns a specific organisation
 //
-func (service *Service) GetOrganisation(organisationID int) (*Organisation, *errortools.Error) {
+func (service *Service) GetOrganisation(organisationID int64) (*Organisation, *errortools.Error) {
 	organisation := Organisation{}
 
 	requestConfig := go_http.RequestConfig{

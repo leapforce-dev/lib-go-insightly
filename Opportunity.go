@@ -94,7 +94,7 @@ func (o *Opportunity) prepareMarshal() interface{} {
 
 // GetOpportunity returns a specific opportunity
 //
-func (service *Service) GetOpportunity(opportunityID int) (*Opportunity, *errortools.Error) {
+func (service *Service) GetOpportunity(opportunityID int64) (*Opportunity, *errortools.Error) {
 	opportunity := Opportunity{}
 
 	requestConfig := go_http.RequestConfig{

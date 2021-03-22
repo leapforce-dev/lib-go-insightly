@@ -33,7 +33,7 @@ type Event struct {
 
 // GetEvent returns a specific event
 //
-func (service *Service) GetEvent(eventID int) (*Event, *errortools.Error) {
+func (service *Service) GetEvent(eventID int64) (*Event, *errortools.Error) {
 	event := Event{}
 
 	requestConfig := go_http.RequestConfig{

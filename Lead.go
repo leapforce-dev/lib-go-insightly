@@ -128,7 +128,7 @@ func (l *Lead) prepareMarshal() interface{} {
 
 // GetLead returns a specific lead
 //
-func (service *Service) GetLead(leadID int) (*Lead, *errortools.Error) {
+func (service *Service) GetLead(leadID int64) (*Lead, *errortools.Error) {
 	lead := Lead{}
 
 	requestConfig := go_http.RequestConfig{

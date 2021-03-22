@@ -82,7 +82,7 @@ func (u *User) prepareMarshal() interface{} {
 
 // GetUser returns a specific user
 //
-func (service *Service) GetUser(userID int) (*User, *errortools.Error) {
+func (service *Service) GetUser(userID int64) (*User, *errortools.Error) {
 	user := User{}
 
 	requestConfig := go_http.RequestConfig{

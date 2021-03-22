@@ -36,7 +36,7 @@ type Project struct {
 
 // GetProject returns a specific project
 //
-func (service *Service) GetProject(projectID int) (*Project, *errortools.Error) {
+func (service *Service) GetProject(projectID int64) (*Project, *errortools.Error) {
 	project := Project{}
 
 	requestConfig := go_http.RequestConfig{

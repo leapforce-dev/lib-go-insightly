@@ -67,7 +67,7 @@ func (p *Product) prepareMarshal() interface{} {
 
 // GetProduct returns a specific product
 //
-func (service *Service) GetProduct(productID int) (*Product, *errortools.Error) {
+func (service *Service) GetProduct(productID int64) (*Product, *errortools.Error) {
 	product := Product{}
 
 	requestConfig := go_http.RequestConfig{

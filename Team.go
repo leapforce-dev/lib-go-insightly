@@ -42,7 +42,7 @@ func (t *Team) prepareMarshal() interface{} {
 
 // GetTeam returns a specific team
 //
-func (service *Service) GetTeam(teamID int) (*Team, *errortools.Error) {
+func (service *Service) GetTeam(teamID int64) (*Team, *errortools.Error) {
 	team := Team{}
 
 	requestConfig := go_http.RequestConfig{

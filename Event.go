@@ -28,7 +28,7 @@ type Event struct {
 	ReminderSent    bool                    `json:"REMINDER_SENT"`
 	OwnerUserID     int64                   `json:"OWNER_USER_ID"`
 	CustomFields    *CustomFields           `json:"CUSTOMFIELDS"`
-	Links           *[]Link                 `json:"LINK"`
+	Links           *[]Link                 `json:"LINKS"`
 }
 
 // GetEvent returns a specific event

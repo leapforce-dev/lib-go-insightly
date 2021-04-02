@@ -8,30 +8,28 @@ import (
 	go_http "github.com/leapforce-libraries/go_http"
 )
 
-// PipelineStage stores PipelineStage from Service
+// FileCategory stores FileCategory from Service
 //
-type PipelineStage struct {
-	StageID       int64  `json:"STAGE_ID"`
-	PipelineID    int64  `json:"PIPELINE_ID"`
-	StageName     string `json:"STAGE_NAME"`
-	StageOrder    int64  `json:"STAGE_ORDER"`
-	ActivitySetID *int64 `json:"ACTIVITYSET_ID"`
-	OwnerUserID   int64  `json:"OWNER_USER_ID"`
+type FileCategory struct {
+	CategoryID      int64  `json:"CATEGORY_ID"`
+	CategoryName    string `json:"CATEGORY_NAME"`
+	Active          bool   `json:"ACTIVE"`
+	BackgroundColor string `json:"BACKGROUND_COLOR"`
 }
 
-type GetPipelineStagesConfig struct {
+type GetFileCategoriesConfig struct {
 	Skip       *uint64
 	Top        *uint64
 	CountTotal *bool
 }
 
-// GetPipelineStages returns all pipelineStages
+// GetFileCategories returns all fileCategories
 //
-func (service *Service) GetPipelineStages(config *GetPipelineStagesConfig) (*[]PipelineStage, *errortools.Error) {
+func (service *Service) GetFileCategories(config *GetFileCategoriesConfig) (*[]FileCategory, *errortools.Error) {
 	params := url.Values{}
 
-	endpoint := "PipelineStages"
-	pipelineStages := []PipelineStage{}
+	endpoint := "FileCategories"
+	fileCategories := []FileCategory{}
 	rowCount := uint64(0)
 	top := defaultTop
 
@@ -52,11 +50,11 @@ func (service *Service) GetPipelineStages(config *GetPipelineStagesConfig) (*[]P
 	for true {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
-		pipelineStagesBatch := []PipelineStage{}
+		fileCategoriesBatch := []FileCategory{}
 
 		requestConfig := go_http.RequestConfig{
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
-			ResponseModel: &pipelineStagesBatch,
+			ResponseModel: &fileCategoriesBatch,
 		}
 
 		_, _, e := service.get(&requestConfig)
@@ -64,9 +62,9 @@ func (service *Service) GetPipelineStages(config *GetPipelineStagesConfig) (*[]P
 			return nil, e
 		}
 
-		pipelineStages = append(pipelineStages, pipelineStagesBatch...)
+		fileCategories = append(fileCategories, fileCategoriesBatch...)
 
-		if len(pipelineStagesBatch) < int(top) {
+		if len(fileCategoriesBatch) < int(top) {
 			delete(service.nextSkips, endpoint)
 			break
 		}
@@ -75,9 +73,9 @@ func (service *Service) GetPipelineStages(config *GetPipelineStagesConfig) (*[]P
 		rowCount += top
 
 		if rowCount >= service.maxRowCount {
-			return &pipelineStages, nil
+			return &fileCategories, nil
 		}
 	}
 
-	return &pipelineStages, nil
+	return &fileCategories, nil
 }

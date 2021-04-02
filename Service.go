@@ -16,6 +16,8 @@ const (
 	DateTimeFormat            string = "2006-01-02T15:04:05Z"
 	DateTimeFormatCustomField string = "2006-01-02 15:04:05"
 	DateFormat                string = "2006-01-02"
+	defaultMaxRowCount        uint64 = ^uint64(0)
+	defaultTop                uint64 = 100
 )
 
 // type
@@ -23,22 +25,25 @@ const (
 type Service struct {
 	pod                string
 	token              string
+	maxRowCount        uint64
 	httpService        *go_http.Service
 	rateLimitRemaining *int64
 	retryAt            *time.Time
+	nextSkips          map[string]uint64
 }
 
 type ServiceConfig struct {
-	Pod    string
-	APIKey string
+	Pod         string
+	APIKey      string
+	MaxRowCount *uint64
 }
 
-func NewService(config ServiceConfig) (*Service, *errortools.Error) {
-	if config.Pod == "" {
+func NewService(serviceConfig ServiceConfig) (*Service, *errortools.Error) {
+	if serviceConfig.Pod == "" {
 		return nil, errortools.ErrorMessage("Service Pod not provided")
 	}
 
-	if config.APIKey == "" {
+	if serviceConfig.APIKey == "" {
 		return nil, errortools.ErrorMessage("Service API Key not provided")
 	}
 
@@ -47,10 +52,17 @@ func NewService(config ServiceConfig) (*Service, *errortools.Error) {
 		return nil, e
 	}
 
+	maxRowCount := defaultMaxRowCount
+	if serviceConfig.MaxRowCount != nil {
+		maxRowCount = *serviceConfig.MaxRowCount
+	}
+
 	return &Service{
-		pod:         config.Pod,
-		token:       base64.URLEncoding.EncodeToString([]byte(config.APIKey)),
+		pod:         serviceConfig.Pod,
+		token:       base64.URLEncoding.EncodeToString([]byte(serviceConfig.APIKey)),
+		maxRowCount: maxRowCount,
 		httpService: httpService,
+		nextSkips:   make(map[string]uint64),
 	}, nil
 }
 

@@ -10,44 +10,36 @@ import (
 	i_types "github.com/leapforce-libraries/go_insightly/types"
 )
 
-// Event stores Event from Service
+// Note stores Note from Service
 //
-type Event struct {
-	EventID         int64                   `json:"EVENT_ID"`
-	Title           string                  `json:"TITLE"`
-	Location        string                  `json:"LOCATION"`
-	LastName        string                  `json:"LAST_NAME"`
-	StartDateUTC    i_types.DateTimeString  `json:"START_DATE_UTC"`
-	EndDateUTC      i_types.DateTimeString  `json:"END_DATE_UTC"`
-	AllDay          bool                    `json:"ALL_DAY"`
-	Details         string                  `json:"DETAILS"`
-	DateCreatedUTC  i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC  i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
-	ReminderDateUTC *i_types.DateTimeString `json:"REMINDER_DATE_UTC"`
-	ReminderSent    bool                    `json:"REMINDER_SENT"`
-	OwnerUserID     int64                   `json:"OWNER_USER_ID"`
-	CustomFields    *CustomFields           `json:"CUSTOMFIELDS"`
-	Links           *[]Link                 `json:"LINKS"`
+type Note struct {
+	NoteID         int64                  `json:"NOTE_ID"`
+	Title          string                 `json:"TITLE"`
+	Body           string                 `json:"BODY"`
+	DateCreatedUTC i_types.DateTimeString `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC i_types.DateTimeString `json:"DATE_UPDATED_UTC"`
+	OwnerUserID    int64                  `json:"OWNER_USER_ID"`
+	Links          *[]Link                `json:"LINKS"`
 }
 
-// GetEvent returns a specific event
+// GetNote returns a specific note
 //
-func (service *Service) GetEvent(eventID int64) (*Event, *errortools.Error) {
-	event := Event{}
+func (service *Service) GetNote(noteID int64) (*Note, *errortools.Error) {
+	note := Note{}
 
 	requestConfig := go_http.RequestConfig{
-		URL:           service.url(fmt.Sprintf("Events/%v", eventID)),
-		ResponseModel: &event,
+		URL:           service.url(fmt.Sprintf("Notes/%v", noteID)),
+		ResponseModel: &note,
 	}
 	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
 
-	return &event, nil
+	return &note, nil
 }
 
-type GetEventsConfig struct {
+type GetNotesConfig struct {
 	Skip         *uint64
 	Top          *uint64
 	Brief        *bool
@@ -56,13 +48,13 @@ type GetEventsConfig struct {
 	FieldFilter  *FieldFilter
 }
 
-// GetEvents returns all events
+// GetNotes returns all notes
 //
-func (service *Service) GetEvents(config *GetEventsConfig) (*[]Event, *errortools.Error) {
+func (service *Service) GetNotes(config *GetNotesConfig) (*[]Note, *errortools.Error) {
 	params := url.Values{}
 
-	endpoint := "Events"
-	events := []Event{}
+	endpoint := "Notes"
+	notes := []Note{}
 	rowCount := uint64(0)
 	top := defaultTop
 	isSearch := false
@@ -99,20 +91,20 @@ func (service *Service) GetEvents(config *GetEventsConfig) (*[]Event, *errortool
 
 	for true {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
-		eventsBatch := []Event{}
+		notesBatch := []Note{}
 
 		requestConfig := go_http.RequestConfig{
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
-			ResponseModel: &eventsBatch,
+			ResponseModel: &notesBatch,
 		}
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		events = append(events, eventsBatch...)
+		notes = append(notes, notesBatch...)
 
-		if len(eventsBatch) < int(top) {
+		if len(notesBatch) < int(top) {
 			delete(service.nextSkips, endpoint)
 			break
 		}
@@ -121,9 +113,9 @@ func (service *Service) GetEvents(config *GetEventsConfig) (*[]Event, *errortool
 		rowCount += top
 
 		if rowCount >= service.maxRowCount {
-			return &events, nil
+			return &notes, nil
 		}
 	}
 
-	return &events, nil
+	return &notes, nil
 }

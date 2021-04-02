@@ -2,7 +2,7 @@ package insightly
 
 import (
 	"fmt"
-	"strconv"
+	"net/url"
 	"strings"
 	"time"
 
@@ -145,62 +145,81 @@ func (service *Service) GetContact(contactID int) (*Contact, *errortools.Error) 
 }
 
 type GetContactsConfig struct {
+	Skip         *uint64
+	Top          *uint64
+	Brief        *bool
+	CountTotal   *bool
 	UpdatedAfter *time.Time
-	Field        *struct {
-		FieldName  string
-		FieldValue string
-	}
+	FieldFilter  *FieldFilter
 }
 
 // GetContacts returns all contacts
 //
 func (service *Service) GetContacts(config *GetContactsConfig) (*[]Contact, *errortools.Error) {
-	searchString := "?"
-	searchFilter := []string{}
+	params := url.Values{}
+
+	endpoint := "Contacts"
+	contacts := []Contact{}
+	rowCount := uint64(0)
+	top := defaultTop
+	isSearch := false
 
 	if config != nil {
+		if config.Top != nil {
+			top = *config.Top
+		}
+		if config.Skip != nil {
+			service.nextSkips[endpoint] = *config.Skip
+		}
+		if config.Brief != nil {
+			params.Set("brief", fmt.Sprintf("%v", *config.Brief))
+		}
+		if config.CountTotal != nil {
+			params.Set("count_total", fmt.Sprintf("%v", *config.CountTotal))
+		}
 		if config.UpdatedAfter != nil {
-			from := config.UpdatedAfter.Format(DateTimeFormat)
-			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
+			isSearch = true
+			params.Set("updated_after_utc", fmt.Sprintf("%v", config.UpdatedAfter.Format(DateTimeFormat)))
 		}
-
-		if config.Field != nil {
-			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.Field.FieldName, config.Field.FieldValue))
+		if config.FieldFilter != nil {
+			isSearch = true
+			params.Set("field_name", config.FieldFilter.FieldName)
+			params.Set("field_value", config.FieldFilter.FieldValue)
 		}
 	}
 
-	if len(searchFilter) > 0 {
-		searchString = "/Search?" + strings.Join(searchFilter, "&")
+	if isSearch {
+		endpoint += "/Search"
 	}
 
-	endpointStr := "Contacts%sskip=%s&top=%s"
-	skip := 0
-	top := 100
-	rowCount := top
+	params.Set("top", fmt.Sprintf("%v", top))
 
-	contacts := []Contact{}
-
-	for rowCount >= top {
-		_contacts := []Contact{}
+	for true {
+		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
+		contactsBatch := []Contact{}
 
 		requestConfig := go_http.RequestConfig{
-			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
-			ResponseModel: &_contacts,
+			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			ResponseModel: &contactsBatch,
 		}
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		contacts = append(contacts, _contacts...)
+		contacts = append(contacts, contactsBatch...)
 
-		rowCount = len(_contacts)
-		//rowCount = 0
-		skip += top
-	}
+		if len(contactsBatch) < int(top) {
+			delete(service.nextSkips, endpoint)
+			break
+		}
 
-	if len(contacts) == 0 {
-		contacts = nil
+		service.nextSkips[endpoint] += top
+		rowCount += top
+
+		if rowCount >= service.maxRowCount {
+			return &contacts, nil
+		}
 	}
 
 	return &contacts, nil

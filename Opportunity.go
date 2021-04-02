@@ -2,8 +2,7 @@ package insightly
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
+	"net/url"
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
@@ -110,6 +109,10 @@ func (service *Service) GetOpportunity(opportunityID int64) (*Opportunity, *erro
 }
 
 type GetOpportunitiesConfig struct {
+	Skip         *uint64
+	Top          *uint64
+	Brief        *bool
+	CountTotal   *bool
 	UpdatedAfter *time.Time
 	FieldFilter  *FieldFilter
 }
@@ -117,52 +120,70 @@ type GetOpportunitiesConfig struct {
 // GetOpportunities returns all opportunities
 //
 func (service *Service) GetOpportunities(config *GetOpportunitiesConfig) (*[]Opportunity, *errortools.Error) {
-	searchString := "?"
-	searchFilter := []string{}
+	params := url.Values{}
+
+	endpoint := "Opportunities"
+	opportunities := []Opportunity{}
+	rowCount := uint64(0)
+	top := defaultTop
+	isSearch := false
 
 	if config != nil {
+		if config.Top != nil {
+			top = *config.Top
+		}
+		if config.Skip != nil {
+			service.nextSkips[endpoint] = *config.Skip
+		}
+		if config.Brief != nil {
+			params.Set("brief", fmt.Sprintf("%v", *config.Brief))
+		}
+		if config.CountTotal != nil {
+			params.Set("count_total", fmt.Sprintf("%v", *config.CountTotal))
+		}
 		if config.UpdatedAfter != nil {
-			from := config.UpdatedAfter.Format(DateTimeFormat)
-			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
+			isSearch = true
+			params.Set("updated_after_utc", fmt.Sprintf("%v", config.UpdatedAfter.Format(DateTimeFormat)))
 		}
-
 		if config.FieldFilter != nil {
-			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.FieldFilter.FieldName, config.FieldFilter.FieldValue))
+			isSearch = true
+			params.Set("field_name", config.FieldFilter.FieldName)
+			params.Set("field_value", config.FieldFilter.FieldValue)
 		}
 	}
 
-	if len(searchFilter) > 0 {
-		searchString = "/Search?" + strings.Join(searchFilter, "&")
+	if isSearch {
+		endpoint += "/Search"
 	}
 
-	endpointStr := "Opportunities%sskip=%s&top=%s"
-	skip := 0
-	top := 100
-	rowCount := top
+	params.Set("top", fmt.Sprintf("%v", top))
 
-	opportunities := []Opportunity{}
-
-	for rowCount >= top {
-		_opportunities := []Opportunity{}
+	for true {
+		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
+		opportunitiesBatch := []Opportunity{}
 
 		requestConfig := go_http.RequestConfig{
-			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
-			ResponseModel: &_opportunities,
+			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			ResponseModel: &opportunitiesBatch,
 		}
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		opportunities = append(opportunities, _opportunities...)
+		opportunities = append(opportunities, opportunitiesBatch...)
 
-		rowCount = len(_opportunities)
-		//rowCount = 0
-		skip += top
-	}
+		if len(opportunitiesBatch) < int(top) {
+			delete(service.nextSkips, endpoint)
+			break
+		}
 
-	if len(opportunities) == 0 {
-		opportunities = nil
+		service.nextSkips[endpoint] += top
+		rowCount += top
+
+		if rowCount >= service.maxRowCount {
+			return &opportunities, nil
+		}
 	}
 
 	return &opportunities, nil

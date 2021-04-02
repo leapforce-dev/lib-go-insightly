@@ -2,8 +2,8 @@ package insightly
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
+	"net/url"
+	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
@@ -64,55 +64,87 @@ func (service *Service) GetCustomObjectRecord(customObjectName string, customObj
 }
 
 type GetCustomObjectRecordsConfig struct {
+	Skip             *uint64
+	Top              *uint64
+	Brief            *bool
+	CountTotal       *bool
 	CustomObjectName string
+	UpdatedAfter     *time.Time
 	FieldFilter      *FieldFilter
 }
 
 // GetCustomObjectRecords returns all customObjectRecords
 //
 func (service *Service) GetCustomObjectRecords(config *GetCustomObjectRecordsConfig) (*[]CustomObjectRecord, *errortools.Error) {
-	searchString := "?"
-	searchFilter := []string{}
-
 	if config == nil {
-		return nil, errortools.ErrorMessage("GetCustomObjectRecordsConfig must not be nil or a nil pointer")
+		return nil, nil
 	}
 
-	if config.FieldFilter != nil {
-		searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.FieldFilter.FieldName, config.FieldFilter.FieldValue))
-	}
-
-	if len(searchFilter) > 0 {
-		searchString = "/Search?" + strings.Join(searchFilter, "&")
-	}
-
-	endpointStr := "%s%sskip=%s&top=%s"
-	skip := 0
-	top := 100
-	rowCount := top
+	params := url.Values{}
 
 	customObjectRecords := []CustomObjectRecord{}
 
-	for rowCount >= top {
-		_customObjectRecords := []CustomObjectRecord{}
+	endpoint := config.CustomObjectName
+	rowCount := uint64(0)
+	top := defaultTop
+	isSearch := false
+
+	if config != nil {
+		if config.Top != nil {
+			top = *config.Top
+		}
+		if config.Skip != nil {
+			service.nextSkips[endpoint] = *config.Skip
+		}
+		if config.Brief != nil {
+			params.Set("brief", fmt.Sprintf("%v", *config.Brief))
+		}
+		if config.CountTotal != nil {
+			params.Set("count_total", fmt.Sprintf("%v", *config.CountTotal))
+		}
+		if config.UpdatedAfter != nil {
+			isSearch = true
+			params.Set("updated_after_utc", fmt.Sprintf("%v", config.UpdatedAfter.Format(DateTimeFormat)))
+		}
+		if config.FieldFilter != nil {
+			isSearch = true
+			params.Set("field_name", config.FieldFilter.FieldName)
+			params.Set("field_value", config.FieldFilter.FieldValue)
+		}
+	}
+
+	if isSearch {
+		endpoint += "/Search"
+	}
+
+	params.Set("top", fmt.Sprintf("%v", top))
+
+	for true {
+		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
+		customObjectRecordsBatch := []CustomObjectRecord{}
 
 		requestConfig := go_http.RequestConfig{
-			URL:           service.url(fmt.Sprintf(endpointStr, config.CustomObjectName, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
-			ResponseModel: &_customObjectRecords,
+			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			ResponseModel: &customObjectRecordsBatch,
 		}
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		customObjectRecords = append(customObjectRecords, _customObjectRecords...)
+		customObjectRecords = append(customObjectRecords, customObjectRecordsBatch...)
 
-		rowCount = len(_customObjectRecords)
-		skip += top
-	}
+		if len(customObjectRecordsBatch) < int(top) {
+			service.nextSkips[endpoint] = 0
+			break
+		}
 
-	if len(customObjectRecords) == 0 {
-		customObjectRecords = nil
+		service.nextSkips[endpoint] += top
+		rowCount += top
+
+		if rowCount >= service.maxRowCount {
+			return &customObjectRecords, nil
+		}
 	}
 
 	return &customObjectRecords, nil

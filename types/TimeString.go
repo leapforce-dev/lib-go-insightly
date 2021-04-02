@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	dateTimeFormat string = "2006-01-02 15:04:05"
+	timeFormat string = "3:04PM"
 )
 
-type DateTimeString time.Time
+type TimeString time.Time
 
-func (d *DateTimeString) UnmarshalJSON(b []byte) error {
+func (d *TimeString) UnmarshalJSON(b []byte) error {
 	var returnError = func() error {
-		errortools.CaptureError(fmt.Sprintf("Cannot parse '%s' to DateTimeString", string(b)))
+		errortools.CaptureError(fmt.Sprintf("Cannot parse '%s' to TimeString", string(b)))
 		return nil
 	}
 
@@ -24,7 +24,7 @@ func (d *DateTimeString) UnmarshalJSON(b []byte) error {
 
 	err := json.Unmarshal(b, &s)
 	if err != nil {
-		fmt.Println("DateTimeString", string(b))
+		fmt.Println("TimeString", string(b))
 		return returnError()
 	}
 
@@ -33,16 +33,16 @@ func (d *DateTimeString) UnmarshalJSON(b []byte) error {
 		return nil
 	}
 
-	_t, err := time.Parse(dateTimeFormat, s)
+	_t, err := time.Parse(timeFormat, s)
 	if err != nil {
 		return returnError()
 	}
 
-	*d = DateTimeString(_t)
+	*d = TimeString(_t)
 	return nil
 }
 
-func (d *DateTimeString) ValuePtr() *time.Time {
+func (d *TimeString) ValuePtr() *time.Time {
 	if d == nil {
 		return nil
 	}
@@ -51,6 +51,6 @@ func (d *DateTimeString) ValuePtr() *time.Time {
 	return &_d
 }
 
-func (d DateTimeString) Value() time.Time {
+func (d TimeString) Value() time.Time {
 	return time.Time(d)
 }

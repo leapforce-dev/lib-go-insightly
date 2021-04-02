@@ -2,8 +2,7 @@ package insightly
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
+	"net/url"
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
@@ -52,6 +51,10 @@ func (service *Service) GetProject(projectID int64) (*Project, *errortools.Error
 }
 
 type GetProjectsConfig struct {
+	Skip         *uint64
+	Top          *uint64
+	Brief        *bool
+	CountTotal   *bool
 	UpdatedAfter *time.Time
 	FieldFilter  *FieldFilter
 }
@@ -59,52 +62,70 @@ type GetProjectsConfig struct {
 // GetProjects returns all projects
 //
 func (service *Service) GetProjects(config *GetProjectsConfig) (*[]Project, *errortools.Error) {
-	searchString := "?"
-	searchFilter := []string{}
+	params := url.Values{}
+
+	endpoint := "Project"
+	projects := []Project{}
+	rowCount := uint64(0)
+	top := defaultTop
+	isSearch := false
 
 	if config != nil {
+		if config.Top != nil {
+			top = *config.Top
+		}
+		if config.Skip != nil {
+			service.nextSkips[endpoint] = *config.Skip
+		}
+		if config.Brief != nil {
+			params.Set("brief", fmt.Sprintf("%v", *config.Brief))
+		}
+		if config.CountTotal != nil {
+			params.Set("count_total", fmt.Sprintf("%v", *config.CountTotal))
+		}
 		if config.UpdatedAfter != nil {
-			from := config.UpdatedAfter.Format(DateTimeFormat)
-			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
+			isSearch = true
+			params.Set("updated_after_utc", fmt.Sprintf("%v", config.UpdatedAfter.Format(DateTimeFormat)))
 		}
-
 		if config.FieldFilter != nil {
-			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.FieldFilter.FieldName, config.FieldFilter.FieldValue))
+			isSearch = true
+			params.Set("field_name", config.FieldFilter.FieldName)
+			params.Set("field_value", config.FieldFilter.FieldValue)
 		}
 	}
 
-	if len(searchFilter) > 0 {
-		searchString = "/Search?" + strings.Join(searchFilter, "&")
+	if isSearch {
+		endpoint += "/Search"
 	}
 
-	endpointStr := "Project%sskip=%s&top=%s"
-	skip := 0
-	top := 100
-	rowCount := top
+	params.Set("top", fmt.Sprintf("%v", top))
 
-	projects := []Project{}
-
-	for rowCount >= top {
-		_projects := []Project{}
+	for true {
+		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
+		projectsBatch := []Project{}
 
 		requestConfig := go_http.RequestConfig{
-			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
-			ResponseModel: &_projects,
+			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			ResponseModel: &projectsBatch,
 		}
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		projects = append(projects, _projects...)
+		projects = append(projects, projectsBatch...)
 
-		rowCount = len(_projects)
-		//rowCount = 0
-		skip += top
-	}
+		if len(projectsBatch) < int(top) {
+			delete(service.nextSkips, endpoint)
+			break
+		}
 
-	if len(projects) == 0 {
-		projects = nil
+		service.nextSkips[endpoint] += top
+		rowCount += top
+
+		if rowCount >= service.maxRowCount {
+			return &projects, nil
+		}
 	}
 
 	return &projects, nil

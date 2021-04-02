@@ -2,8 +2,7 @@ package insightly
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
+	"net/url"
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
@@ -26,10 +25,10 @@ type Lead struct {
 	ConvertedDateUTC        *i_types.DateTimeString `json:"CONVERTED_DATE_UTC"`
 	ConvertedOpportunityID  *int64                  `json:"CONVERTED_OPPORTUNITY_ID"`
 	ConvertedOrganisationID *int64                  `json:"CONVERTED_ORGANISATION_ID"`
-	DateCreateUTC           i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
+	DateCreatedUTC          i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
 	DateUpdatedUTC          i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
 	Email                   *string                 `json:"EMAIL"`
-	EmployeeCount           int64                   `json:"EMPLOYEE_COUNT"`
+	EmployeeCount           *int64                  `json:"EMPLOYEE_COUNT"`
 	Fax                     *string                 `json:"FAX"`
 	Industry                *string                 `json:"INDUSTRY"`
 	LeadDescription         *string                 `json:"LEAD_DESCRIPTION"`
@@ -105,7 +104,7 @@ func (l *Lead) prepareMarshal() interface{} {
 		l.ConvertedOpportunityID,
 		l.ConvertedOrganisationID,
 		l.Email,
-		&l.EmployeeCount,
+		l.EmployeeCount,
 		l.Fax,
 		l.Industry,
 		l.LeadDescription,
@@ -144,6 +143,10 @@ func (service *Service) GetLead(leadID int64) (*Lead, *errortools.Error) {
 }
 
 type GetLeadsConfig struct {
+	Skip         *uint64
+	Top          *uint64
+	Brief        *bool
+	CountTotal   *bool
 	UpdatedAfter *time.Time
 	FieldFilter  *FieldFilter
 }
@@ -151,52 +154,70 @@ type GetLeadsConfig struct {
 // GetLeads returns all leads
 //
 func (service *Service) GetLeads(config *GetLeadsConfig) (*[]Lead, *errortools.Error) {
-	searchString := "?"
-	searchFilter := []string{}
+	params := url.Values{}
+
+	endpoint := "Leads"
+	leads := []Lead{}
+	rowCount := uint64(0)
+	top := defaultTop
+	isSearch := false
 
 	if config != nil {
+		if config.Top != nil {
+			top = *config.Top
+		}
+		if config.Skip != nil {
+			service.nextSkips[endpoint] = *config.Skip
+		}
+		if config.Brief != nil {
+			params.Set("brief", fmt.Sprintf("%v", *config.Brief))
+		}
+		if config.CountTotal != nil {
+			params.Set("count_total", fmt.Sprintf("%v", *config.CountTotal))
+		}
 		if config.UpdatedAfter != nil {
-			from := config.UpdatedAfter.Format(DateTimeFormat)
-			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
+			isSearch = true
+			params.Set("updated_after_utc", fmt.Sprintf("%v", config.UpdatedAfter.Format(DateTimeFormat)))
 		}
-
 		if config.FieldFilter != nil {
-			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.FieldFilter.FieldName, config.FieldFilter.FieldValue))
+			isSearch = true
+			params.Set("field_name", config.FieldFilter.FieldName)
+			params.Set("field_value", config.FieldFilter.FieldValue)
 		}
 	}
 
-	if len(searchFilter) > 0 {
-		searchString = "/Search?" + strings.Join(searchFilter, "&")
+	if isSearch {
+		endpoint += "/Search"
 	}
 
-	endpointStr := "Leads%sskip=%s&top=%s"
-	skip := 0
-	top := 100
-	rowCount := top
+	params.Set("top", fmt.Sprintf("%v", top))
 
-	leads := []Lead{}
-
-	for rowCount >= top {
-		_leads := []Lead{}
+	for true {
+		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
+		leadsBatch := []Lead{}
 
 		requestConfig := go_http.RequestConfig{
-			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
-			ResponseModel: &_leads,
+			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			ResponseModel: &leadsBatch,
 		}
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		leads = append(leads, _leads...)
+		leads = append(leads, leadsBatch...)
 
-		rowCount = len(_leads)
-		//rowCount = 0
-		skip += top
-	}
+		if len(leadsBatch) < int(top) {
+			delete(service.nextSkips, endpoint)
+			break
+		}
 
-	if len(leads) == 0 {
-		leads = nil
+		service.nextSkips[endpoint] += top
+		rowCount += top
+
+		if rowCount >= service.maxRowCount {
+			return &leads, nil
+		}
 	}
 
 	return &leads, nil

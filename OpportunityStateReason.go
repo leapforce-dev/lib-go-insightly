@@ -2,8 +2,7 @@ package insightly
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
+	"net/url"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
@@ -18,49 +17,63 @@ type OpportunityStateReason struct {
 }
 
 type GetOpportunityStateReasonsConfig struct {
+	Skip       *uint64
+	Top        *uint64
+	CountTotal *bool
 }
 
 // GetOpportunityStateReasons returns all opportunityStateReasons
 //
 func (service *Service) GetOpportunityStateReasons(config *GetOpportunityStateReasonsConfig) (*[]OpportunityStateReason, *errortools.Error) {
-	searchString := "?"
-	searchFilter := []string{}
+	params := url.Values{}
+
+	endpoint := "OpportunityStateReasons"
+	opportunityStateReasons := []OpportunityStateReason{}
+	rowCount := uint64(0)
+	top := defaultTop
 
 	if config != nil {
+		if config.Top != nil {
+			top = *config.Top
+		}
+		if config.Skip != nil {
+			service.nextSkips[endpoint] = *config.Skip
+		}
+		if config.CountTotal != nil {
+			params.Set("count_total", fmt.Sprintf("%v", *config.CountTotal))
+		}
 	}
 
-	if len(searchFilter) > 0 {
-		searchString = "/Search?" + strings.Join(searchFilter, "&")
-	}
+	params.Set("top", fmt.Sprintf("%v", top))
 
-	endpointStr := "OpportunityStateReasons%sskip=%s&top=%s"
-	skip := 0
-	top := 100
-	rowCount := top
+	for true {
+		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
-	opportunityStateReasons := []OpportunityStateReason{}
-
-	for rowCount >= top {
-		_opportunityStateReasons := []OpportunityStateReason{}
+		opportunityStateReasonsBatch := []OpportunityStateReason{}
 
 		requestConfig := go_http.RequestConfig{
-			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
-			ResponseModel: &_opportunityStateReasons,
+			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			ResponseModel: &opportunityStateReasonsBatch,
 		}
+
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		opportunityStateReasons = append(opportunityStateReasons, _opportunityStateReasons...)
+		opportunityStateReasons = append(opportunityStateReasons, opportunityStateReasonsBatch...)
 
-		rowCount = len(_opportunityStateReasons)
-		//rowCount = 0
-		skip += top
-	}
+		if len(opportunityStateReasonsBatch) < int(top) {
+			delete(service.nextSkips, endpoint)
+			break
+		}
 
-	if len(opportunityStateReasons) == 0 {
-		opportunityStateReasons = nil
+		service.nextSkips[endpoint] += top
+		rowCount += top
+
+		if rowCount >= service.maxRowCount {
+			return &opportunityStateReasons, nil
+		}
 	}
 
 	return &opportunityStateReasons, nil

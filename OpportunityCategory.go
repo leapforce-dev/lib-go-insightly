@@ -2,8 +2,7 @@ package insightly
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
+	"net/url"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
@@ -19,49 +18,63 @@ type OpportunityCategory struct {
 }
 
 type GetOpportunityCategoriesConfig struct {
+	Skip       *uint64
+	Top        *uint64
+	CountTotal *bool
 }
 
 // GetOpportunityCategories returns all opportunityCategories
 //
 func (service *Service) GetOpportunityCategories(config *GetOpportunityCategoriesConfig) (*[]OpportunityCategory, *errortools.Error) {
-	searchString := "?"
-	searchFilter := []string{}
+	params := url.Values{}
+
+	endpoint := "OpportunityCategories"
+	opportunityCategories := []OpportunityCategory{}
+	rowCount := uint64(0)
+	top := defaultTop
 
 	if config != nil {
+		if config.Top != nil {
+			top = *config.Top
+		}
+		if config.Skip != nil {
+			service.nextSkips[endpoint] = *config.Skip
+		}
+		if config.CountTotal != nil {
+			params.Set("count_total", fmt.Sprintf("%v", *config.CountTotal))
+		}
 	}
 
-	if len(searchFilter) > 0 {
-		searchString = "/Search?" + strings.Join(searchFilter, "&")
-	}
+	params.Set("top", fmt.Sprintf("%v", top))
 
-	endpointStr := "OpportunityCategories%sskip=%s&top=%s"
-	skip := 0
-	top := 100
-	rowCount := top
+	for true {
+		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
-	opportunityCategories := []OpportunityCategory{}
-
-	for rowCount >= top {
-		_opportunityCategories := []OpportunityCategory{}
+		opportunityCategoriesBatch := []OpportunityCategory{}
 
 		requestConfig := go_http.RequestConfig{
-			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
-			ResponseModel: &_opportunityCategories,
+			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			ResponseModel: &opportunityCategoriesBatch,
 		}
+
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		opportunityCategories = append(opportunityCategories, _opportunityCategories...)
+		opportunityCategories = append(opportunityCategories, opportunityCategoriesBatch...)
 
-		rowCount = len(_opportunityCategories)
-		//rowCount = 0
-		skip += top
-	}
+		if len(opportunityCategoriesBatch) < int(top) {
+			delete(service.nextSkips, endpoint)
+			break
+		}
 
-	if len(opportunityCategories) == 0 {
-		opportunityCategories = nil
+		service.nextSkips[endpoint] += top
+		rowCount += top
+
+		if rowCount >= service.maxRowCount {
+			return &opportunityCategories, nil
+		}
 	}
 
 	return &opportunityCategories, nil

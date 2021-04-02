@@ -28,23 +28,13 @@ type CustomObject struct {
 func (service *Service) GetCustomObjects() (*[]CustomObject, *errortools.Error) {
 	customObjects := []CustomObject{}
 
-	_customObjects := []CustomObject{}
-
 	requestConfig := go_http.RequestConfig{
 		URL:           service.url("CustomObjects"),
-		ResponseModel: &_customObjects,
+		ResponseModel: &customObjects,
 	}
 	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
-	}
-
-	for _, customObject := range _customObjects {
-		customObjects = append(customObjects, customObject)
-	}
-
-	if len(customObjects) == 0 {
-		customObjects = nil
 	}
 
 	return &customObjects, nil

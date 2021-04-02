@@ -10,44 +10,39 @@ import (
 	i_types "github.com/leapforce-libraries/go_insightly/types"
 )
 
-// Event stores Event from Service
+// Milestone stores Milestone from Service
 //
-type Event struct {
-	EventID         int64                   `json:"EVENT_ID"`
-	Title           string                  `json:"TITLE"`
-	Location        string                  `json:"LOCATION"`
-	LastName        string                  `json:"LAST_NAME"`
-	StartDateUTC    i_types.DateTimeString  `json:"START_DATE_UTC"`
-	EndDateUTC      i_types.DateTimeString  `json:"END_DATE_UTC"`
-	AllDay          bool                    `json:"ALL_DAY"`
-	Details         string                  `json:"DETAILS"`
-	DateCreatedUTC  i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC  i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
-	ReminderDateUTC *i_types.DateTimeString `json:"REMINDER_DATE_UTC"`
-	ReminderSent    bool                    `json:"REMINDER_SENT"`
-	OwnerUserID     int64                   `json:"OWNER_USER_ID"`
-	CustomFields    *CustomFields           `json:"CUSTOMFIELDS"`
-	Links           *[]Link                 `json:"LINKS"`
+type Milestone struct {
+	MilestoneID       int64                   `json:"MILESTONE_ID"`
+	Title             string                  `json:"TITLE"`
+	Completed         bool                    `json:"COMPLETED"`
+	DueDate           i_types.DateTimeString  `json:"DUE_DATE"`
+	OwnerUserID       int64                   `json:"OWNER_USER_ID"`
+	DateCreatedUTC    i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
+	DateUpdatedUTC    i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
+	CompletedDateUTC  *i_types.DateTimeString `json:"COMPLETED_DATE_UTC"`
+	ProjectID         int64                   `json:"PROJECT_ID"`
+	ResponsibleUserID int64                   `json:"RESPONSIBLE_USER"`
 }
 
-// GetEvent returns a specific event
+// GetMilestone returns a specific milestone
 //
-func (service *Service) GetEvent(eventID int64) (*Event, *errortools.Error) {
-	event := Event{}
+func (service *Service) GetMilestone(milestoneID int64) (*Milestone, *errortools.Error) {
+	milestone := Milestone{}
 
 	requestConfig := go_http.RequestConfig{
-		URL:           service.url(fmt.Sprintf("Events/%v", eventID)),
-		ResponseModel: &event,
+		URL:           service.url(fmt.Sprintf("Milestones/%v", milestoneID)),
+		ResponseModel: &milestone,
 	}
 	_, _, e := service.get(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
 
-	return &event, nil
+	return &milestone, nil
 }
 
-type GetEventsConfig struct {
+type GetMilestonesConfig struct {
 	Skip         *uint64
 	Top          *uint64
 	Brief        *bool
@@ -56,13 +51,13 @@ type GetEventsConfig struct {
 	FieldFilter  *FieldFilter
 }
 
-// GetEvents returns all events
+// GetMilestones returns all milestones
 //
-func (service *Service) GetEvents(config *GetEventsConfig) (*[]Event, *errortools.Error) {
+func (service *Service) GetMilestones(config *GetMilestonesConfig) (*[]Milestone, *errortools.Error) {
 	params := url.Values{}
 
-	endpoint := "Events"
-	events := []Event{}
+	endpoint := "Milestones"
+	milestones := []Milestone{}
 	rowCount := uint64(0)
 	top := defaultTop
 	isSearch := false
@@ -99,20 +94,20 @@ func (service *Service) GetEvents(config *GetEventsConfig) (*[]Event, *errortool
 
 	for true {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
-		eventsBatch := []Event{}
+		milestonesBatch := []Milestone{}
 
 		requestConfig := go_http.RequestConfig{
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
-			ResponseModel: &eventsBatch,
+			ResponseModel: &milestonesBatch,
 		}
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		events = append(events, eventsBatch...)
+		milestones = append(milestones, milestonesBatch...)
 
-		if len(eventsBatch) < int(top) {
+		if len(milestonesBatch) < int(top) {
 			delete(service.nextSkips, endpoint)
 			break
 		}
@@ -121,9 +116,9 @@ func (service *Service) GetEvents(config *GetEventsConfig) (*[]Event, *errortool
 		rowCount += top
 
 		if rowCount >= service.maxRowCount {
-			return &events, nil
+			return &milestones, nil
 		}
 	}
 
-	return &events, nil
+	return &milestones, nil
 }

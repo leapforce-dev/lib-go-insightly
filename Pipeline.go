@@ -2,8 +2,7 @@ package insightly
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
+	"net/url"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
@@ -20,49 +19,63 @@ type Pipeline struct {
 }
 
 type GetPipelinesConfig struct {
+	Skip       *uint64
+	Top        *uint64
+	CountTotal *bool
 }
 
 // GetPipelines returns all pipelines
 //
 func (service *Service) GetPipelines(config *GetPipelinesConfig) (*[]Pipeline, *errortools.Error) {
-	searchString := "?"
-	searchFilter := []string{}
+	params := url.Values{}
+
+	endpoint := "Pipelines"
+	pipelines := []Pipeline{}
+	rowCount := uint64(0)
+	top := defaultTop
 
 	if config != nil {
+		if config.Top != nil {
+			top = *config.Top
+		}
+		if config.Skip != nil {
+			service.nextSkips[endpoint] = *config.Skip
+		}
+		if config.CountTotal != nil {
+			params.Set("count_total", fmt.Sprintf("%v", *config.CountTotal))
+		}
 	}
 
-	if len(searchFilter) > 0 {
-		searchString = "/Search?" + strings.Join(searchFilter, "&")
-	}
+	params.Set("top", fmt.Sprintf("%v", top))
 
-	endpointStr := "Pipelines%sskip=%s&top=%s"
-	skip := 0
-	top := 100
-	rowCount := top
+	for true {
+		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
-	pipelines := []Pipeline{}
-
-	for rowCount >= top {
-		_pipelines := []Pipeline{}
+		pipelinesBatch := []Pipeline{}
 
 		requestConfig := go_http.RequestConfig{
-			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
-			ResponseModel: &_pipelines,
+			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			ResponseModel: &pipelinesBatch,
 		}
+
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		pipelines = append(pipelines, _pipelines...)
+		pipelines = append(pipelines, pipelinesBatch...)
 
-		rowCount = len(_pipelines)
-		//rowCount = 0
-		skip += top
-	}
+		if len(pipelinesBatch) < int(top) {
+			delete(service.nextSkips, endpoint)
+			break
+		}
 
-	if len(pipelines) == 0 {
-		pipelines = nil
+		service.nextSkips[endpoint] += top
+		rowCount += top
+
+		if rowCount >= service.maxRowCount {
+			return &pipelines, nil
+		}
 	}
 
 	return &pipelines, nil

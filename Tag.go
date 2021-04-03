@@ -18,7 +18,7 @@ type GetTagsConfig struct {
 	Skip       *uint64
 	Top        *uint64
 	CountTotal *bool
-	RecordType RecordType
+	RecordType string
 }
 
 // GetTags returns all tags
@@ -45,7 +45,7 @@ func (service *Service) GetTags(config *GetTagsConfig) (*[]Tag, *errortools.Erro
 		if config.CountTotal != nil {
 			params.Set("count_total", fmt.Sprintf("%v", *config.CountTotal))
 		}
-		params.Set("record_type", string(config.RecordType))
+		params.Set("record_type", config.RecordType)
 	}
 
 	params.Set("top", fmt.Sprintf("%v", top))

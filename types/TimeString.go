@@ -3,6 +3,7 @@ package insightly
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
@@ -27,6 +28,8 @@ func (d *TimeString) UnmarshalJSON(b []byte) error {
 		fmt.Println("TimeString", string(b))
 		return returnError()
 	}
+
+	s = strings.ReplaceAll(s, " ", "")
 
 	if s == "" || s == "0000-00-00 00:00:00" {
 		d = nil

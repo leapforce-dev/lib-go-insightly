@@ -2,9 +2,7 @@ package insightly
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
-	"time"
+	"net/url"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
@@ -58,59 +56,67 @@ func (service *Service) GetTeam(teamID int64) (*Team, *errortools.Error) {
 }
 
 type GetTeamsConfig struct {
-	UpdatedAfter *time.Time
-	FieldFilter  *FieldFilter
+	Skip       *uint64
+	Top        *uint64
+	Brief      *bool
+	CountTotal *bool
 }
 
 // GetTeams returns all teams
 //
 func (service *Service) GetTeams(config *GetTeamsConfig) (*[]Team, *errortools.Error) {
-	searchString := "?"
-	searchFilter := []string{}
+	params := url.Values{}
+
+	endpoint := "Teams"
+	teams := []Team{}
+	rowCount := uint64(0)
+	top := defaultTop
 
 	if config != nil {
-		if config.UpdatedAfter != nil {
-			from := config.UpdatedAfter.Format(DateTimeFormat)
-			searchFilter = append(searchFilter, fmt.Sprintf("updated_after_utc=%s&", from))
+		if config.Top != nil {
+			top = *config.Top
 		}
-
-		if config.FieldFilter != nil {
-			searchFilter = append(searchFilter, fmt.Sprintf("field_name=%s&field_value=%s&", config.FieldFilter.FieldName, config.FieldFilter.FieldValue))
+		if config.Skip != nil {
+			service.nextSkips[endpoint] = *config.Skip
+		}
+		if config.Brief != nil {
+			params.Set("brief", fmt.Sprintf("%v", *config.Brief))
+		}
+		if config.CountTotal != nil {
+			params.Set("count_total", fmt.Sprintf("%v", *config.CountTotal))
 		}
 	}
 
-	if len(searchFilter) > 0 {
-		searchString = "/Search?" + strings.Join(searchFilter, "&")
-	}
+	params.Set("top", fmt.Sprintf("%v", top))
 
-	endpointStr := "Teams%sskip=%s&top=%s"
-	skip := 0
-	top := 100
-	rowCount := top
+	for true {
+		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
-	teams := []Team{}
-
-	for rowCount >= top {
-		_teams := []Team{}
+		teamsBatch := []Team{}
 
 		requestConfig := go_http.RequestConfig{
-			URL:           service.url(fmt.Sprintf(endpointStr, searchString, strconv.Itoa(skip), strconv.Itoa(top))),
-			ResponseModel: &_teams,
+			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			ResponseModel: &teamsBatch,
 		}
+
 		_, _, e := service.get(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
 
-		teams = append(teams, _teams...)
+		teams = append(teams, teamsBatch...)
 
-		rowCount = len(_teams)
-		//rowCount = 0
-		skip += top
-	}
+		if len(teamsBatch) < int(top) {
+			delete(service.nextSkips, endpoint)
+			break
+		}
 
-	if len(teams) == 0 {
-		teams = nil
+		service.nextSkips[endpoint] += top
+		rowCount += top
+
+		if rowCount >= service.maxRowCount {
+			return &teams, nil
+		}
 	}
 
 	return &teams, nil

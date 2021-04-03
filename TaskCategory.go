@@ -8,27 +8,28 @@ import (
 	go_http "github.com/leapforce-libraries/go_http"
 )
 
-// TeamMember stores TeamMember from Service
+// TaskCategory stores TaskCategory from Service
 //
-type TeamMember struct {
-	PermissionID int64 `json:"PERMISSION_ID"`
-	TeamID       int64 `json:"TEAM_ID"`
-	MemberUserID int64 `json:"MEMBER_USER_ID"`
+type TaskCategory struct {
+	CategoryID      int64  `json:"CATEGORY_ID"`
+	CategoryName    string `json:"CATEGORY_NAME"`
+	Active          bool   `json:"ACTIVE"`
+	BackgroundColor string `json:"BACKGROUND_COLOR"`
 }
 
-type GetTeamMembersConfig struct {
+type GetTaskCategoriesConfig struct {
 	Skip       *uint64
 	Top        *uint64
 	CountTotal *bool
 }
 
-// GetTeamMembers returns all teamMembers
+// GetTaskCategories returns all taskCategories
 //
-func (service *Service) GetTeamMembers(config *GetTeamMembersConfig) (*[]TeamMember, *errortools.Error) {
+func (service *Service) GetTaskCategories(config *GetTaskCategoriesConfig) (*[]TaskCategory, *errortools.Error) {
 	params := url.Values{}
 
-	endpoint := "TeamMembers"
-	teamMembers := []TeamMember{}
+	endpoint := "TaskCategories"
+	taskCategories := []TaskCategory{}
 	rowCount := uint64(0)
 	top := defaultTop
 
@@ -49,11 +50,11 @@ func (service *Service) GetTeamMembers(config *GetTeamMembersConfig) (*[]TeamMem
 	for true {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
-		teamMembersBatch := []TeamMember{}
+		taskCategoriesBatch := []TaskCategory{}
 
 		requestConfig := go_http.RequestConfig{
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
-			ResponseModel: &teamMembersBatch,
+			ResponseModel: &taskCategoriesBatch,
 		}
 
 		_, _, e := service.get(&requestConfig)
@@ -61,9 +62,9 @@ func (service *Service) GetTeamMembers(config *GetTeamMembersConfig) (*[]TeamMem
 			return nil, e
 		}
 
-		teamMembers = append(teamMembers, teamMembersBatch...)
+		taskCategories = append(taskCategories, taskCategoriesBatch...)
 
-		if len(teamMembersBatch) < int(top) {
+		if len(taskCategoriesBatch) < int(top) {
 			delete(service.nextSkips, endpoint)
 			break
 		}
@@ -72,9 +73,9 @@ func (service *Service) GetTeamMembers(config *GetTeamMembersConfig) (*[]TeamMem
 		rowCount += top
 
 		if rowCount >= service.maxRowCount {
-			return &teamMembers, nil
+			return &taskCategories, nil
 		}
 	}
 
-	return &teamMembers, nil
+	return &taskCategories, nil
 }

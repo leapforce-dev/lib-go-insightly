@@ -8,27 +8,31 @@ import (
 	go_http "github.com/leapforce-libraries/go_http"
 )
 
-// TeamMember stores TeamMember from Service
+// Relationship stores Relationship from Service
 //
-type TeamMember struct {
-	PermissionID int64 `json:"PERMISSION_ID"`
-	TeamID       int64 `json:"TEAM_ID"`
-	MemberUserID int64 `json:"MEMBER_USER_ID"`
+type Relationship struct {
+	RelationshipID   int64  `json:"RELATIONSHIP_ID"`
+	ForwardTitle     string `json:"FORWARD_TITLE"`
+	Forward          string `json:"FORWARD"`
+	ReverseTitle     string `json:"REVERSE_TITLE"`
+	Reverse          string `json:"REVERSE"`
+	ForContacts      bool   `json:"FOR_CONTACTS"`
+	ForOrganisations bool   `json:"FOR_ORGANISATIONS"`
 }
 
-type GetTeamMembersConfig struct {
+type GetRelationshipsConfig struct {
 	Skip       *uint64
 	Top        *uint64
 	CountTotal *bool
 }
 
-// GetTeamMembers returns all teamMembers
+// GetRelationships returns all relationships
 //
-func (service *Service) GetTeamMembers(config *GetTeamMembersConfig) (*[]TeamMember, *errortools.Error) {
+func (service *Service) GetRelationships(config *GetRelationshipsConfig) (*[]Relationship, *errortools.Error) {
 	params := url.Values{}
 
-	endpoint := "TeamMembers"
-	teamMembers := []TeamMember{}
+	endpoint := "Relationships"
+	relationships := []Relationship{}
 	rowCount := uint64(0)
 	top := defaultTop
 
@@ -49,11 +53,11 @@ func (service *Service) GetTeamMembers(config *GetTeamMembersConfig) (*[]TeamMem
 	for true {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
-		teamMembersBatch := []TeamMember{}
+		relationshipsBatch := []Relationship{}
 
 		requestConfig := go_http.RequestConfig{
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
-			ResponseModel: &teamMembersBatch,
+			ResponseModel: &relationshipsBatch,
 		}
 
 		_, _, e := service.get(&requestConfig)
@@ -61,9 +65,9 @@ func (service *Service) GetTeamMembers(config *GetTeamMembersConfig) (*[]TeamMem
 			return nil, e
 		}
 
-		teamMembers = append(teamMembers, teamMembersBatch...)
+		relationships = append(relationships, relationshipsBatch...)
 
-		if len(teamMembersBatch) < int(top) {
+		if len(relationshipsBatch) < int(top) {
 			delete(service.nextSkips, endpoint)
 			break
 		}
@@ -72,9 +76,9 @@ func (service *Service) GetTeamMembers(config *GetTeamMembersConfig) (*[]TeamMem
 		rowCount += top
 
 		if rowCount >= service.maxRowCount {
-			return &teamMembers, nil
+			return &relationships, nil
 		}
 	}
 
-	return &teamMembers, nil
+	return &relationships, nil
 }

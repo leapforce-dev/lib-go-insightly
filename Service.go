@@ -38,7 +38,11 @@ type ServiceConfig struct {
 	MaxRowCount *uint64
 }
 
-func NewService(serviceConfig ServiceConfig) (*Service, *errortools.Error) {
+func NewService(serviceConfig *ServiceConfig) (*Service, *errortools.Error) {
+	if serviceConfig == nil {
+		return nil, errortools.ErrorMessage("ServiceConfig must not be a nil pointer")
+	}
+
 	if serviceConfig.Pod == "" {
 		return nil, errortools.ErrorMessage("Service Pod not provided")
 	}

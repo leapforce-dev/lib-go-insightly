@@ -17,7 +17,7 @@ const (
 	DateTimeFormatCustomField string = "2006-01-02 15:04:05"
 	DateFormat                string = "2006-01-02"
 	defaultMaxRowCount        uint64 = ^uint64(0)
-	defaultTop                uint64 = 100
+	defaultTop                uint64 = 500 //max 500, see: https://api.insightly.com/v3.1/Help#!/Overview/Introduction
 )
 
 // type

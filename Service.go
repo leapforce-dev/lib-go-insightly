@@ -12,10 +12,10 @@ import (
 )
 
 const (
-	APIURL                    string = "https://api.%s.insightly.com/v3.1"
-	DateTimeFormat            string = "2006-01-02T15:04:05Z"
-	DateTimeFormatCustomField string = "2006-01-02 15:04:05"
-	DateFormat                string = "2006-01-02"
+	apiURL                    string = "https://api.%s.insightly.com/v3.1"
+	dateTimeFormat            string = "2006-01-02T15:04:05Z"
+	dateTimeFormatCustomField string = "2006-01-02 15:04:05"
+	dateFormat                string = "2006-01-02"
 	defaultMaxRowCount        uint64 = ^uint64(0)
 	defaultTop                uint64 = 500 //max 500, see: https://api.insightly.com/v3.1/Help#!/Overview/Introduction
 )
@@ -122,7 +122,7 @@ func (service *Service) httpRequest(httpMethod string, requestConfig *go_http.Re
 }
 
 func (service *Service) url(path string) string {
-	return fmt.Sprintf("%s/%s", fmt.Sprintf(APIURL, service.pod), path)
+	return fmt.Sprintf("%s/%s", fmt.Sprintf(apiURL, service.pod), path)
 }
 
 func (service *Service) get(requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {

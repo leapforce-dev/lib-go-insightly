@@ -116,7 +116,7 @@ func (service *Service) GetProducts(config *GetProductsConfig) (*[]Product, *err
 		}
 		if config.UpdatedAfter != nil {
 			isSearch = true
-			params.Set("updated_after_utc", fmt.Sprintf("%v", config.UpdatedAfter.Format(DateTimeFormat)))
+			params.Set("updated_after_utc", fmt.Sprintf("%v", config.UpdatedAfter.Format(dateTimeFormat)))
 		}
 		if config.FieldFilter != nil {
 			isSearch = true

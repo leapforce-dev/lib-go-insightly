@@ -48,7 +48,7 @@ func (c *CustomObjectRecord) prepareMarshal() interface{} {
 
 // GetCustomObjectRecord returns a specific customObjectRecord
 //
-func (service *Service) GetCustomObjectRecord(customObjectName string, customObjectRecordID int) (*CustomObjectRecord, *errortools.Error) {
+func (service *Service) GetCustomObjectRecord(customObjectName string, customObjectRecordID int64) (*CustomObjectRecord, *errortools.Error) {
 	customObjectRecord := CustomObjectRecord{}
 
 	requestConfig := go_http.RequestConfig{
@@ -196,7 +196,7 @@ func (service *Service) UpdateCustomObjectRecord(customObjectName string, custom
 
 // DeleteCustomObjectRecord deletes a specific customObjectRecord
 //
-func (service *Service) DeleteCustomObjectRecord(customObjectName string, customObjectRecordID int) *errortools.Error {
+func (service *Service) DeleteCustomObjectRecord(customObjectName string, customObjectRecordID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		URL: service.url(fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)),
 	}

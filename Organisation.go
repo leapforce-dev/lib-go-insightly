@@ -243,7 +243,7 @@ func (service *Service) UpdateOrganisation(organisation *Organisation) (*Organis
 
 // DeleteOrganisation deletes a specific organisation
 //
-func (service *Service) DeleteOrganisation(organisationID int) *errortools.Error {
+func (service *Service) DeleteOrganisation(organisationID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		URL: service.url(fmt.Sprintf("Organisations/%v", organisationID)),
 	}
@@ -257,7 +257,7 @@ func (service *Service) DeleteOrganisation(organisationID int) *errortools.Error
 
 // GetOrganisationLinks returns links for a specific organisation
 //
-func (service *Service) GetOrganisationLinks(organisationID int) (*[]Link, *errortools.Error) {
+func (service *Service) GetOrganisationLinks(organisationID int64) (*[]Link, *errortools.Error) {
 	links := []Link{}
 
 	requestConfig := go_http.RequestConfig{

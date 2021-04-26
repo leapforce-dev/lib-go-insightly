@@ -235,7 +235,7 @@ func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunit
 
 // DeleteOpportunity deletes a specific opportunity
 //
-func (service *Service) DeleteOpportunity(opportunityID int) *errortools.Error {
+func (service *Service) DeleteOpportunity(opportunityID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		URL: service.url(fmt.Sprintf("Opportunities/%v", opportunityID)),
 	}
@@ -249,7 +249,7 @@ func (service *Service) DeleteOpportunity(opportunityID int) *errortools.Error {
 
 // GetOpportunityLinks returns links for a specific opportunity
 //
-func (service *Service) GetOpportunityLinks(opportunityID int) (*[]Link, *errortools.Error) {
+func (service *Service) GetOpportunityLinks(opportunityID int64) (*[]Link, *errortools.Error) {
 	links := []Link{}
 
 	requestConfig := go_http.RequestConfig{

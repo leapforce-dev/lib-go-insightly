@@ -208,7 +208,7 @@ func (service *Service) UpdateProduct(product *Product) (*Product, *errortools.E
 
 // DeleteProduct deletes a specific product
 //
-func (service *Service) DeleteProduct(productID int) *errortools.Error {
+func (service *Service) DeleteProduct(productID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		URL: service.url(fmt.Sprintf("Products/%v", productID)),
 	}

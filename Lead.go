@@ -269,7 +269,7 @@ func (service *Service) UpdateLead(lead *Lead) (*Lead, *errortools.Error) {
 
 // DeleteLead deletes a specific lead
 //
-func (service *Service) DeleteLead(leadID int) *errortools.Error {
+func (service *Service) DeleteLead(leadID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		URL: service.url(fmt.Sprintf("Leads/%v", leadID)),
 	}

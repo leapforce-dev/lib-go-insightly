@@ -129,7 +129,7 @@ func (c *Contact) prepareMarshal() interface{} {
 
 // GetContact returns a specific contact
 //
-func (service *Service) GetContact(contactID int) (*Contact, *errortools.Error) {
+func (service *Service) GetContact(contactID int64) (*Contact, *errortools.Error) {
 	contact := Contact{}
 
 	requestConfig := go_http.RequestConfig{
@@ -271,7 +271,7 @@ func (service *Service) UpdateContact(contact *Contact) (*Contact, *errortools.E
 
 // DeleteContact deletes a specific contact
 //
-func (service *Service) DeleteContact(contactID int) *errortools.Error {
+func (service *Service) DeleteContact(contactID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		URL: service.url(fmt.Sprintf("Contacts/%v", contactID)),
 	}

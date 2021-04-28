@@ -42,6 +42,7 @@ type Contact struct {
 	AddressOtherCity     *string                 `json:"ADDRESS_OTHER_CITY"`
 	AddressOtherState    *string                 `json:"ADDRESS_OTHER_STATE"`
 	AddressOtherPostcode *string                 `json:"ADDRESS_OTHER_POSTCODE"`
+	AddressOtherCountry  *string                 `json:"ADDRESS_OTHER_COUNTRY"`
 	LastActivityDateUTC  *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC"`
 	NextActivityDateUTC  *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC"`
 	CreatedUserID        int64                   `json:"CREATED_USER_ID"`

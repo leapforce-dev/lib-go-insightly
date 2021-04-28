@@ -14,81 +14,31 @@ import (
 //
 type Opportunity struct {
 	OpportunityID       int64                   `json:"OPPORTUNITY_ID"`
-	OpportunityName     string                  `json:"OPPORTUNITY_NAME"`
-	OpportunityDetails  *string                 `json:"OPPORTUNITY_DETAILS"`
-	OpportunityState    string                  `json:"OPPORTUNITY_STATE"`
-	ResponsibleUserID   *int64                  `json:"RESPONSIBLE_USER_ID"`
-	CategoryID          *int64                  `json:"CATEGORY_ID"`
-	ImageURL            *string                 `json:"IMAGE_URL"`
-	BidCurrency         string                  `json:"BID_CURRENCY"`
-	BidAmount           float64                 `json:"BID_AMOUNT"`
-	BidType             string                  `json:"BID_TYPE"`
-	BidDuration         *int64                  `json:"BID_DURATION"`
-	ActualCloseDate     *i_types.DateTimeString `json:"ACTUAL_CLOSE_DATE"`
-	DateCreatedUTC      i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC      i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
-	OpportunityValue    float64                 `json:"OPPORTUNITY_VALUE"`
-	Probability         int64                   `json:"PROBABILITY"`
-	ForecastCloseDate   *i_types.DateTimeString `json:"FORECAST_CLOSE_DATE"`
-	OwnerUserID         int64                   `json:"OWNER_USER_ID"`
-	LastActivityDateUTC *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC"`
-	NextActivityDateUTC *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC"`
-	PipelineID          int64                   `json:"PIPELINE_ID"`
-	StageID             int64                   `json:"STAGE_ID"`
-	CreatedUserID       int64                   `json:"CREATED_USER_ID"`
-	OrganisationID      int64                   `json:"ORGANISATION_ID"`
-	CustomFields        *CustomFields           `json:"CUSTOMFIELDS"`
-	Tags                *[]Tag                  `json:"TAGS"`
-}
-
-func (o *Opportunity) prepareMarshal() interface{} {
-	if o == nil {
-		return nil
-	}
-
-	return &struct {
-		OpportunityID      *int64                  `json:"OPPORTUNITY_ID,omitempty"`
-		OpportunityName    *string                 `json:"OPPORTUNITY_NAME,omitempty"`
-		OpportunityDetails *string                 `json:"OPPORTUNITY_DETAILS,omitempty"`
-		OpportunityState   *string                 `json:"OPPORTUNITY_STATE,omitempty"`
-		ResponsibleUserID  *int64                  `json:"RESPONSIBLE_USER_ID,omitempty"`
-		CategoryID         *int64                  `json:"CATEGORY_ID,omitempty"`
-		ImageURL           *string                 `json:"IMAGE_URL,omitempty"`
-		BidCurrency        *string                 `json:"BID_CURRENCY,omitempty"`
-		BidAmount          *float64                `json:"BID_AMOUNT,omitempty"`
-		BidType            *string                 `json:"BID_TYPE,omitempty"`
-		BidDuration        *int64                  `json:"BID_DURATION,omitempty"`
-		ActualCloseDate    *i_types.DateTimeString `json:"ACTUAL_CLOSE_DATE,omitempty"`
-		OpportunityValue   *float64                `json:"OPPORTUNITY_VALUE,omitempty"`
-		Probability        *int64                  `json:"PROBABILITY,omitempty"`
-		ForecastCloseDate  *i_types.DateTimeString `json:"FORECAST_CLOSE_DATE,omitempty"`
-		OwnerUserID        *int64                  `json:"OWNER_USER_ID,omitempty"`
-		PipelineID         *int64                  `json:"PIPELINE_ID,omitempty"`
-		StageID            *int64                  `json:"STAGE_ID,omitempty"`
-		OrganisationID     *int64                  `json:"ORGANISATION_ID,omitempty"`
-		CustomFields       *CustomFields           `json:"CUSTOMFIELDS,omitempty"`
-	}{
-		&o.OpportunityID,
-		&o.OpportunityName,
-		o.OpportunityDetails,
-		&o.OpportunityState,
-		o.ResponsibleUserID,
-		o.CategoryID,
-		o.ImageURL,
-		&o.BidCurrency,
-		&o.BidAmount,
-		&o.BidType,
-		o.BidDuration,
-		o.ActualCloseDate,
-		&o.OpportunityValue,
-		&o.Probability,
-		o.ForecastCloseDate,
-		&o.OwnerUserID,
-		&o.PipelineID,
-		&o.StageID,
-		&o.OrganisationID,
-		o.CustomFields,
-	}
+	OpportunityName     *string                 `json:"OPPORTUNITY_NAME,omitempty"`
+	OpportunityDetails  *string                 `json:"OPPORTUNITY_DETAILS,omitempty"`
+	OpportunityState    *string                 `json:"OPPORTUNITY_STATE,omitempty"`
+	ResponsibleUserID   *int64                  `json:"RESPONSIBLE_USER_ID,omitempty"`
+	CategoryID          *int64                  `json:"CATEGORY_ID,omitempty"`
+	ImageURL            *string                 `json:"IMAGE_URL,omitempty"`
+	BidCurrency         *string                 `json:"BID_CURRENCY,omitempty"`
+	BidAmount           *float64                `json:"BID_AMOUNT,omitempty"`
+	BidType             *string                 `json:"BID_TYPE,omitempty"`
+	BidDuration         *int64                  `json:"BID_DURATION,omitempty"`
+	ActualCloseDate     *i_types.DateTimeString `json:"ACTUAL_CLOSE_DATE,omitempty"`
+	DateCreatedUTC      *i_types.DateTimeString `json:"DATE_CREATED_UTC,omitempty"`
+	DateUpdatedUTC      *i_types.DateTimeString `json:"DATE_UPDATED_UTC,omitempty"`
+	OpportunityValue    *float64                `json:"OPPORTUNITY_VALUE,omitempty"`
+	Probability         *int64                  `json:"PROBABILITY,omitempty"`
+	ForecastCloseDate   *i_types.DateTimeString `json:"FORECAST_CLOSE_DATE,omitempty"`
+	OwnerUserID         *int64                  `json:"OWNER_USER_ID,omitempty"`
+	LastActivityDateUTC *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC,omitempty"`
+	NextActivityDateUTC *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC,omitempty"`
+	PipelineID          *int64                  `json:"PIPELINE_ID,omitempty"`
+	StageID             *int64                  `json:"STAGE_ID,omitempty"`
+	CreatedUserID       *int64                  `json:"CREATED_USER_ID,omitempty"`
+	OrganisationID      *int64                  `json:"ORGANISATION_ID,omitempty"`
+	CustomFields        *CustomFields           `json:"CUSTOMFIELDS,omitempty"`
+	Tags                *[]Tag                  `json:"TAGS,omitempty"`
 }
 
 // GetOpportunity returns a specific opportunity
@@ -200,7 +150,7 @@ func (service *Service) CreateOpportunity(opportunity *Opportunity) (*Opportunit
 
 	requestConfig := go_http.RequestConfig{
 		URL:           service.url("Opportunities"),
-		BodyModel:     opportunity.prepareMarshal(),
+		BodyModel:     opportunity,
 		ResponseModel: &opportunityNew,
 	}
 	_, _, e := service.post(&requestConfig)
@@ -222,7 +172,7 @@ func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunit
 
 	requestConfig := go_http.RequestConfig{
 		URL:           service.url("Opportunities"),
-		BodyModel:     opportunity.prepareMarshal(),
+		BodyModel:     opportunity,
 		ResponseModel: &opportunityUpdated,
 	}
 	_, _, e := service.put(&requestConfig)

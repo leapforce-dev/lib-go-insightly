@@ -20,16 +20,22 @@ const (
 	defaultTop                uint64 = 500 //max 500, see: https://api.insightly.com/v3.1/Help#!/Overview/Introduction
 )
 
-// type
-//
+type RateLimit struct {
+	Limit     *int64
+	Remaining *int64
+	RetryAt   *time.Time
+}
+
 type Service struct {
-	pod                string
-	token              string
-	maxRowCount        uint64
-	httpService        *go_http.Service
-	rateLimitRemaining *int64
-	retryAt            *time.Time
-	nextSkips          map[string]uint64
+	pod         string
+	token       string
+	maxRowCount uint64
+	httpService *go_http.Service
+	rateLimit   RateLimit
+	//rateLimitLimit     *int64
+	//rateLimitRemaining *int64
+	//retryAt            *time.Time
+	nextSkips map[string]uint64
 }
 
 type ServiceConfig struct {
@@ -72,13 +78,13 @@ func NewService(serviceConfig *ServiceConfig) (*Service, *errortools.Error) {
 
 func (service *Service) httpRequest(httpMethod string, requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {
 	// check rate limit
-	if service.rateLimitRemaining != nil {
-		if *service.rateLimitRemaining == 0 {
-			if service.retryAt == nil {
+	if service.rateLimit.Remaining != nil {
+		if *service.rateLimit.Remaining == 0 {
+			if service.rateLimit.RetryAt == nil {
 				return nil, nil, errortools.ErrorMessage("Rate limit exceeded but RetryAt unknown.")
 			}
 
-			duration := service.retryAt.Sub(time.Now())
+			duration := service.rateLimit.RetryAt.Sub(time.Now())
 
 			if duration > 0 {
 				errortools.CaptureInfo(fmt.Sprintf("Rate limit exceeded, waiting %v ms.", duration.Milliseconds()))
@@ -103,18 +109,24 @@ func (service *Service) httpRequest(httpMethod string, requestConfig *go_http.Re
 
 	if response != nil {
 		// Read RateLimit headers
+		rateLimitLimit, err := strconv.ParseInt(response.Header.Get("X-RateLimit-Limit"), 10, 64)
+		if err == nil {
+			service.rateLimit.Limit = &rateLimitLimit
+		} else {
+			service.rateLimit.Limit = nil
+		}
 		rateLimitRemaining, err := strconv.ParseInt(response.Header.Get("X-RateLimit-Remaining"), 10, 64)
 		if err == nil {
-			service.rateLimitRemaining = &rateLimitRemaining
+			service.rateLimit.Remaining = &rateLimitRemaining
 		} else {
-			service.rateLimitRemaining = nil
+			service.rateLimit.Remaining = nil
 		}
 		retryAfter, err := strconv.ParseInt(response.Header.Get("Retry-After"), 10, 64)
 		if err == nil {
 			retryAt := time.Now().Add(time.Duration(retryAfter) * time.Second)
-			service.retryAt = &retryAt
+			service.rateLimit.RetryAt = &retryAt
 		} else {
-			service.retryAt = nil
+			service.rateLimit.RetryAt = nil
 		}
 	}
 
@@ -139,4 +151,8 @@ func (service *Service) put(requestConfig *go_http.RequestConfig) (*http.Request
 
 func (service *Service) delete(requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {
 	return service.httpRequest(http.MethodDelete, requestConfig)
+}
+
+func (service *Service) RateLimit() RateLimit {
+	return service.rateLimit
 }

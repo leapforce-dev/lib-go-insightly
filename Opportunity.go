@@ -39,6 +39,7 @@ type Opportunity struct {
 	OrganisationID      *int64                  `json:"ORGANISATION_ID,omitempty"`
 	CustomFields        *CustomFields           `json:"CUSTOMFIELDS,omitempty"`
 	Tags                *[]Tag                  `json:"TAGS,omitempty"`
+	Links               *[]Link                 `json:"LINKS,omitempty"`
 }
 
 // GetOpportunity returns a specific opportunity

@@ -52,6 +52,7 @@ type Contact struct {
 	CustomFields         *CustomFields           `json:"CUSTOMFIELDS"`
 	Tags                 *[]Tag                  `json:"TAGS"`
 	Dates                *[]Date                 `json:"DATES"`
+	Links                *[]Link                 `json:"LINKS"`
 }
 
 func (c *Contact) prepareMarshal() interface{} {

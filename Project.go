@@ -31,6 +31,7 @@ type Project struct {
 	ResponsibleUserID   *int64                  `json:"RESPONSIBLE_USER_ID"`
 	CustomFields        *CustomFields           `json:"CUSTOMFIELDS"`
 	Tags                *[]Tag                  `json:"TAGS"`
+	Links               *[]Link                 `json:"LINKS"`
 }
 
 // GetProject returns a specific project

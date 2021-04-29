@@ -43,6 +43,7 @@ type Task struct {
 	AssignedDateUTC   *i_types.DateTimeString `json:"ASSIGNED_DATE_UTC"`
 	CreatedUserID     int64                   `json:"CREATED_USER_ID"`
 	CustomFields      *CustomFields           `json:"CUSTOMFIELDS"`
+	Links             *[]Link                 `json:"LINKS"`
 }
 
 // GetTask returns a specific task

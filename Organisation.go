@@ -43,6 +43,7 @@ type Organisation struct {
 	Tags                   *[]Tag                  `json:"TAGS"`
 	Dates                  *[]Date                 `json:"DATES"`
 	EmailDomains           *[]EmailDomain          `json:"EMAILDOMAINS"`
+	Links                  *[]Link                 `json:"LINKS"`
 }
 
 func (o *Organisation) prepareMarshal() interface{} {

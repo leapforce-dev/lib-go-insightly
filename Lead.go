@@ -51,6 +51,7 @@ type Lead struct {
 	EmailOptedOut           bool                    `json:"EMAIL_OPTED_OUT"`
 	CustomFields            *CustomFields           `json:"CUSTOMFIELDS"`
 	Tags                    *[]Tag                  `json:"TAGS"`
+	Links                   *[]Link                 `json:"LINKS"`
 }
 
 func (l *Lead) prepareMarshal() interface{} {

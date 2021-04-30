@@ -13,120 +13,46 @@ import (
 
 type Contact struct {
 	ContactID            int64                   `json:"CONTACT_ID"`
-	Salutation           *string                 `json:"SALUTATION"`
-	FirstName            *string                 `json:"FIRST_NAME"`
-	LastName             *string                 `json:"LAST_NAME"`
-	ImageURL             *string                 `json:"IMAGE_URL"`
-	Background           *string                 `json:"BACKGROUND"`
-	OwnerUserID          int64                   `json:"OWNER_USER_ID"`
-	DateCreatedUTC       i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC       i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
-	SocialLinkedin       *string                 `json:"SOCIAL_LINKEDIN"`
-	SocialFacebook       *string                 `json:"SOCIAL_FACEBOOK"`
-	SocialTwitter        *string                 `json:"SOCIAL_TWITTER"`
-	DateOfBirth          *i_types.DateTimeString `json:"DATE_OF_BIRTH"`
-	Phone                *string                 `json:"PHONE"`
-	PhoneHome            *string                 `json:"PHONE_HOME"`
-	PhoneMobile          *string                 `json:"PHONE_MOBILE"`
-	PhoneOther           *string                 `json:"PHONE_OTHER"`
-	PhoneAssistant       *string                 `json:"PHONE_ASSISTANT"`
-	PhoneFax             *string                 `json:"PHONE_FAX"`
-	EmailAddress         *string                 `json:"EMAIL_ADDRESS"`
-	AssistantName        *string                 `json:"ASSISTANT_NAME"`
-	AddressMailStreet    *string                 `json:"ADDRESS_MAIL_STREET"`
-	AddressMailCity      *string                 `json:"ADDRESS_MAIL_CITY"`
-	AddressMailState     *string                 `json:"ADDRESS_MAIL_STATE"`
-	AddressMailPostcode  *string                 `json:"ADDRESS_MAIL_POSTCODE"`
-	AddressMailCountry   *string                 `json:"ADDRESS_MAIL_COUNTRY"`
-	AddressOtherStreet   *string                 `json:"ADDRESS_OTHER_STREET"`
-	AddressOtherCity     *string                 `json:"ADDRESS_OTHER_CITY"`
-	AddressOtherState    *string                 `json:"ADDRESS_OTHER_STATE"`
-	AddressOtherPostcode *string                 `json:"ADDRESS_OTHER_POSTCODE"`
-	AddressOtherCountry  *string                 `json:"ADDRESS_OTHER_COUNTRY"`
-	LastActivityDateUTC  *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC"`
-	NextActivityDateUTC  *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC"`
-	CreatedUserID        int64                   `json:"CREATED_USER_ID"`
-	OrganisationID       *int64                  `json:"ORGANISATION_ID"`
-	Title                *string                 `json:"TITLE"`
-	EmailOptedOut        bool                    `json:"EMAIL_OPTED_OUT"`
-	CustomFields         *CustomFields           `json:"CUSTOMFIELDS"`
-	Tags                 *[]Tag                  `json:"TAGS"`
-	Dates                *[]Date                 `json:"DATES"`
-	Links                *[]Link                 `json:"LINKS"`
-}
-
-func (c *Contact) prepareMarshal() interface{} {
-	if c == nil {
-		return nil
-	}
-
-	return &struct {
-		ContactID            *int64                  `json:"CONTACT_ID,omitempty"`
-		Salutation           *string                 `json:"SALUTATION,omitempty"`
-		FirstName            *string                 `json:"FIRST_NAME,omitempty"`
-		LastName             *string                 `json:"LAST_NAME,omitempty"`
-		ImageURL             *string                 `json:"IMAGE_URL,omitempty"`
-		Background           *string                 `json:"BACKGROUND,omitempty"`
-		OwnerUserID          *int64                  `json:"OWNER_USER_ID,omitempty"`
-		SocialLinkedin       *string                 `json:"SOCIAL_LINKEDIN,omitempty"`
-		SocialFacebook       *string                 `json:"SOCIAL_FACEBOOK,omitempty"`
-		SocialTwitter        *string                 `json:"SOCIAL_TWITTER,omitempty"`
-		DateOfBirth          *i_types.DateTimeString `json:"DATE_OF_BIRTH,omitempty"`
-		Phone                *string                 `json:"PHONE,omitempty"`
-		PhoneHome            *string                 `json:"PHONE_HOME,omitempty"`
-		PhoneMobile          *string                 `json:"PHONE_MOBILE,omitempty"`
-		PhoneOther           *string                 `json:"PHONE_OTHER,omitempty"`
-		PhoneAssistant       *string                 `json:"PHONE_ASSISTANT,omitempty"`
-		PhoneFax             *string                 `json:"PHONE_FAX,omitempty"`
-		EmailAddress         *string                 `json:"EMAIL_ADDRESS,omitempty"`
-		AssistantName        *string                 `json:"ASSISTANT_NAME,omitempty"`
-		AddressMailStreet    *string                 `json:"ADDRESS_MAIL_STREET,omitempty"`
-		AddressMailCity      *string                 `json:"ADDRESS_MAIL_CITY,omitempty"`
-		AddressMailState     *string                 `json:"ADDRESS_MAIL_STATE,omitempty"`
-		AddressMailPostcode  *string                 `json:"ADDRESS_MAIL_POSTCODE,omitempty"`
-		AddressMailCountry   *string                 `json:"ADDRESS_MAIL_COUNTRY,omitempty"`
-		AddressOtherStreet   *string                 `json:"ADDRESS_OTHER_STREET,omitempty"`
-		AddressOtherCity     *string                 `json:"ADDRESS_OTHER_CITY,omitempty"`
-		AddressOtherState    *string                 `json:"ADDRESS_OTHER_STATE,omitempty"`
-		AddressOtherPostcode *string                 `json:"ADDRESS_OTHER_POSTCODE,omitempty"`
-		OrganisationID       *int64                  `json:"ORGANISATION_ID,omitempty"`
-		Title                *string                 `json:"TITLE,omitempty"`
-		EmailOptedOut        *bool                   `json:"EMAIL_OPTED_OUT,omitempty"`
-		CustomFields         *CustomFields           `json:"CUSTOMFIELDS,omitempty"`
-	}{
-		&c.ContactID,
-		c.Salutation,
-		c.FirstName,
-		c.LastName,
-		c.ImageURL,
-		c.Background,
-		&c.OwnerUserID,
-		c.SocialLinkedin,
-		c.SocialFacebook,
-		c.SocialTwitter,
-		c.DateOfBirth,
-		c.Phone,
-		c.PhoneHome,
-		c.PhoneMobile,
-		c.PhoneOther,
-		c.PhoneAssistant,
-		c.PhoneFax,
-		c.EmailAddress,
-		c.AssistantName,
-		c.AddressMailStreet,
-		c.AddressMailCity,
-		c.AddressMailState,
-		c.AddressMailPostcode,
-		c.AddressMailCountry,
-		c.AddressOtherStreet,
-		c.AddressOtherCity,
-		c.AddressOtherState,
-		c.AddressOtherPostcode,
-		c.OrganisationID,
-		c.Title,
-		&c.EmailOptedOut,
-		c.CustomFields,
-	}
+	Salutation           *string                 `json:"SALUTATION,omitempty"`
+	FirstName            *string                 `json:"FIRST_NAME,omitempty"`
+	LastName             *string                 `json:"LAST_NAME,omitempty"`
+	ImageURL             *string                 `json:"IMAGE_URL,omitempty"`
+	Background           *string                 `json:"BACKGROUND,omitempty"`
+	OwnerUserID          *int64                  `json:"OWNER_USER_ID,omitempty"`
+	DateCreatedUTC       *i_types.DateTimeString `json:"DATE_CREATED_UTC,omitempty"`
+	DateUpdatedUTC       *i_types.DateTimeString `json:"DATE_UPDATED_UTC,omitempty"`
+	SocialLinkedin       *string                 `json:"SOCIAL_LINKEDIN,omitempty"`
+	SocialFacebook       *string                 `json:"SOCIAL_FACEBOOK,omitempty"`
+	SocialTwitter        *string                 `json:"SOCIAL_TWITTER,omitempty"`
+	DateOfBirth          *i_types.DateTimeString `json:"DATE_OF_BIRTH,omitempty"`
+	Phone                *string                 `json:"PHONE,omitempty"`
+	PhoneHome            *string                 `json:"PHONE_HOME,omitempty"`
+	PhoneMobile          *string                 `json:"PHONE_MOBILE,omitempty"`
+	PhoneOther           *string                 `json:"PHONE_OTHER,omitempty"`
+	PhoneAssistant       *string                 `json:"PHONE_ASSISTANT,omitempty"`
+	PhoneFax             *string                 `json:"PHONE_FAX,omitempty"`
+	EmailAddress         *string                 `json:"EMAIL_ADDRESS,omitempty"`
+	AssistantName        *string                 `json:"ASSISTANT_NAME,omitempty"`
+	AddressMailStreet    *string                 `json:"ADDRESS_MAIL_STREET,omitempty"`
+	AddressMailCity      *string                 `json:"ADDRESS_MAIL_CITY,omitempty"`
+	AddressMailState     *string                 `json:"ADDRESS_MAIL_STATE,omitempty"`
+	AddressMailPostcode  *string                 `json:"ADDRESS_MAIL_POSTCODE,omitempty"`
+	AddressMailCountry   *string                 `json:"ADDRESS_MAIL_COUNTRY,omitempty"`
+	AddressOtherStreet   *string                 `json:"ADDRESS_OTHER_STREET,omitempty"`
+	AddressOtherCity     *string                 `json:"ADDRESS_OTHER_CITY,omitempty"`
+	AddressOtherState    *string                 `json:"ADDRESS_OTHER_STATE,omitempty"`
+	AddressOtherPostcode *string                 `json:"ADDRESS_OTHER_POSTCODE,omitempty"`
+	AddressOtherCountry  *string                 `json:"ADDRESS_OTHER_COUNTRY,omitempty"`
+	LastActivityDateUTC  *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC,omitempty"`
+	NextActivityDateUTC  *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC,omitempty"`
+	CreatedUserID        *int64                  `json:"CREATED_USER_ID,omitempty"`
+	OrganisationID       *int64                  `json:"ORGANISATION_ID,omitempty"`
+	Title                *string                 `json:"TITLE,omitempty"`
+	EmailOptedOut        *bool                   `json:"EMAIL_OPTED_OUT,omitempty"`
+	CustomFields         *CustomFields           `json:"CUSTOMFIELDS,omitempty"`
+	Tags                 *[]Tag                  `json:"TAGS,omitempty"`
+	Dates                *[]Date                 `json:"DATES,omitempty"`
+	Links                *[]Link                 `json:"LINKS,omitempty"`
 }
 
 // GetContact returns a specific contact
@@ -238,7 +164,7 @@ func (service *Service) CreateContact(contact *Contact) (*Contact, *errortools.E
 
 	requestConfig := go_http.RequestConfig{
 		URL:           service.url("Contacts"),
-		BodyModel:     contact.prepareMarshal(),
+		BodyModel:     contact,
 		ResponseModel: &contactNew,
 	}
 	_, _, e := service.post(&requestConfig)
@@ -260,7 +186,7 @@ func (service *Service) UpdateContact(contact *Contact) (*Contact, *errortools.E
 
 	requestConfig := go_http.RequestConfig{
 		URL:           service.url("Contacts"),
-		BodyModel:     contact.prepareMarshal(),
+		BodyModel:     contact,
 		ResponseModel: &contactUpdated,
 	}
 	_, _, e := service.put(&requestConfig)

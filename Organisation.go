@@ -14,90 +14,36 @@ import (
 //
 type Organisation struct {
 	OrganisationID         int64                   `json:"ORGANISATION_ID"`
-	OrganisationName       string                  `json:"ORGANISATION_NAME"`
-	Background             *string                 `json:"BACKGROUND"`
-	ImageURL               *string                 `json:"IMAGE_URL"`
-	OwnerUserID            int64                   `json:"OWNER_USER_ID"`
-	DateCreatedUTC         i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
-	DateUpdatedUTC         i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
-	LastActivityDateUTC    *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC"`
-	NextActivityDateUTC    *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC"`
-	CreatedUserID          int64                   `json:"CREATED_USER_ID"`
-	Phone                  *string                 `json:"PHONE"`
-	PhoneFax               *string                 `json:"PHONE_FAX"`
-	Website                *string                 `json:"WEBSITE"`
-	AddressBillingStreet   *string                 `json:"ADDRESS_BILLING_STREET"`
-	AddressBillingCity     *string                 `json:"ADDRESS_BILLING_CITY"`
-	AddressBillingState    *string                 `json:"ADDRESS_BILLING_STATE"`
-	AddressBillingCountry  *string                 `json:"ADDRESS_BILLING_COUNTRY"`
-	AddressBillingPostcode *string                 `json:"ADDRESS_BILLING_POSTCODE"`
-	AddressShipStreet      *string                 `json:"ADDRESS_SHIP_STREET"`
-	AddressShipCity        *string                 `json:"ADDRESS_SHIP_CITY"`
-	AddressShipState       *string                 `json:"ADDRESS_SHIP_STATE"`
-	AddressShipCountry     *string                 `json:"ADDRESS_SHIP_COUNTRY"`
-	AddressShipPostcode    *string                 `json:"ADDRESS_SHIP_POSTCODE"`
-	SocialLinkedin         *string                 `json:"SOCIAL_LINKEDIN"`
-	SocialFacebook         *string                 `json:"SOCIAL_FACEBOOK"`
-	SocialTwitter          *string                 `json:"SOCIAL_TWITTER"`
-	CustomFields           *CustomFields           `json:"CUSTOMFIELDS"`
-	Tags                   *[]Tag                  `json:"TAGS"`
-	Dates                  *[]Date                 `json:"DATES"`
-	EmailDomains           *[]EmailDomain          `json:"EMAILDOMAINS"`
-	Links                  *[]Link                 `json:"LINKS"`
-}
-
-func (o *Organisation) prepareMarshal() interface{} {
-	if o == nil {
-		return nil
-	}
-
-	return &struct {
-		OrganisationID         *int64        `json:"ORGANISATION_ID"`
-		OrganisationName       *string       `json:"ORGANISATION_NAME"`
-		Background             *string       `json:"BACKGROUND"`
-		ImageURL               *string       `json:"IMAGE_URL"`
-		OwnerUserID            *int64        `json:"OWNER_USER_ID"`
-		Phone                  *string       `json:"PHONE"`
-		PhoneFax               *string       `json:"PHONE_FAX"`
-		Website                *string       `json:"WEBSITE"`
-		AddressBillingStreet   *string       `json:"ADDRESS_BILLING_STREET"`
-		AddressBillingCity     *string       `json:"ADDRESS_BILLING_CITY"`
-		AddressBillingState    *string       `json:"ADDRESS_BILLING_STATE"`
-		AddressBillingCountry  *string       `json:"ADDRESS_BILLING_COUNTRY"`
-		AddressBillingPostcode *string       `json:"ADDRESS_BILLING_POSTCODE"`
-		AddressShipStreet      *string       `json:"ADDRESS_SHIP_STREET"`
-		AddressShipCity        *string       `json:"ADDRESS_SHIP_CITY"`
-		AddressShipState       *string       `json:"ADDRESS_SHIP_STATE"`
-		AddressShipCountry     *string       `json:"ADDRESS_SHIP_COUNTRY"`
-		AddressShipPostcode    *string       `json:"ADDRESS_SHIP_POSTCODE"`
-		SocialLinkedin         *string       `json:"SOCIAL_LINKEDIN"`
-		SocialFacebook         *string       `json:"SOCIAL_FACEBOOK"`
-		SocialTwitter          *string       `json:"SOCIAL_TWITTER"`
-		CustomFields           *CustomFields `json:"CUSTOMFIELDS"`
-	}{
-		&o.OrganisationID,
-		&o.OrganisationName,
-		o.Background,
-		o.ImageURL,
-		&o.OwnerUserID,
-		o.Phone,
-		o.PhoneFax,
-		o.Website,
-		o.AddressBillingStreet,
-		o.AddressBillingCity,
-		o.AddressBillingState,
-		o.AddressBillingCountry,
-		o.AddressBillingPostcode,
-		o.AddressShipStreet,
-		o.AddressShipCity,
-		o.AddressShipState,
-		o.AddressShipCountry,
-		o.AddressShipPostcode,
-		o.SocialLinkedin,
-		o.SocialFacebook,
-		o.SocialTwitter,
-		o.CustomFields,
-	}
+	OrganisationName       *string                 `json:"ORGANISATION_NAME,omitempty"`
+	Background             *string                 `json:"BACKGROUND,omitempty"`
+	ImageURL               *string                 `json:"IMAGE_URL,omitempty"`
+	OwnerUserID            *int64                  `json:"OWNER_USER_ID,omitempty"`
+	DateCreatedUTC         *i_types.DateTimeString `json:"DATE_CREATED_UTC,omitempty"`
+	DateUpdatedUTC         *i_types.DateTimeString `json:"DATE_UPDATED_UTC,omitempty"`
+	LastActivityDateUTC    *i_types.DateTimeString `json:"LAST_ACTIVITY_DATE_UTC,omitempty"`
+	NextActivityDateUTC    *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC,omitempty"`
+	CreatedUserID          *int64                  `json:"CREATED_USER_ID,omitempty"`
+	Phone                  *string                 `json:"PHONE,omitempty"`
+	PhoneFax               *string                 `json:"PHONE_FAX,omitempty"`
+	Website                *string                 `json:"WEBSITE,omitempty"`
+	AddressBillingStreet   *string                 `json:"ADDRESS_BILLING_STREET,omitempty"`
+	AddressBillingCity     *string                 `json:"ADDRESS_BILLING_CITY,omitempty"`
+	AddressBillingState    *string                 `json:"ADDRESS_BILLING_STATE,omitempty"`
+	AddressBillingCountry  *string                 `json:"ADDRESS_BILLING_COUNTRY,omitempty"`
+	AddressBillingPostcode *string                 `json:"ADDRESS_BILLING_POSTCODE,omitempty"`
+	AddressShipStreet      *string                 `json:"ADDRESS_SHIP_STREET,omitempty"`
+	AddressShipCity        *string                 `json:"ADDRESS_SHIP_CITY,omitempty"`
+	AddressShipState       *string                 `json:"ADDRESS_SHIP_STATE,omitempty"`
+	AddressShipCountry     *string                 `json:"ADDRESS_SHIP_COUNTRY,omitempty"`
+	AddressShipPostcode    *string                 `json:"ADDRESS_SHIP_POSTCODE,omitempty"`
+	SocialLinkedin         *string                 `json:"SOCIAL_LINKEDIN,omitempty"`
+	SocialFacebook         *string                 `json:"SOCIAL_FACEBOOK,omitempty"`
+	SocialTwitter          *string                 `json:"SOCIAL_TWITTER,omitempty"`
+	CustomFields           *CustomFields           `json:"CUSTOMFIELDS,omitempty"`
+	Tags                   *[]Tag                  `json:"TAGS,omitempty"`
+	Dates                  *[]Date                 `json:"DATES,omitempty"`
+	EmailDomains           *[]EmailDomain          `json:"EMAILDOMAINS,omitempty"`
+	Links                  *[]Link                 `json:"LINKS,omitempty"`
 }
 
 // GetOrganisation returns a specific organisation
@@ -209,7 +155,7 @@ func (service *Service) CreateOrganisation(organisation *Organisation) (*Organis
 
 	requestConfig := go_http.RequestConfig{
 		URL:           service.url("Organisations"),
-		BodyModel:     organisation.prepareMarshal(),
+		BodyModel:     organisation,
 		ResponseModel: &organisationNew,
 	}
 	_, _, e := service.post(&requestConfig)
@@ -231,7 +177,7 @@ func (service *Service) UpdateOrganisation(organisation *Organisation) (*Organis
 
 	requestConfig := go_http.RequestConfig{
 		URL:           service.url("Organisations"),
-		BodyModel:     organisation.prepareMarshal(),
+		BodyModel:     organisation,
 		ResponseModel: &organisationUpdated,
 	}
 	_, _, e := service.put(&requestConfig)

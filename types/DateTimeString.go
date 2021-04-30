@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"time"
 
@@ -9,7 +10,7 @@ import (
 )
 
 const (
-	dateTimeFormat string = "2006-01-02 15:04:05"
+	layout string = "2006-01-02 15:04:05"
 )
 
 type DateTimeString time.Time
@@ -24,7 +25,6 @@ func (d *DateTimeString) UnmarshalJSON(b []byte) error {
 
 	err := json.Unmarshal(b, &s)
 	if err != nil {
-		fmt.Println("DateTimeString", string(b))
 		return returnError()
 	}
 
@@ -33,13 +33,25 @@ func (d *DateTimeString) UnmarshalJSON(b []byte) error {
 		return nil
 	}
 
-	_t, err := time.Parse(dateTimeFormat, s)
+	_t, err := time.Parse(layout, s)
 	if err != nil {
 		return returnError()
 	}
 
 	*d = DateTimeString(_t)
 	return nil
+}
+
+func (d *DateTimeString) MarshalJSON() ([]byte, error) {
+	if d == nil {
+		return json.Marshal(nil)
+	}
+
+	return json.Marshal(time.Time(*d).Format(layout))
+}
+
+func (d *DateTimeString) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	return e.EncodeElement(time.Time(*d).Format(layout), start)
 }
 
 func (d *DateTimeString) ValuePtr() *time.Time {

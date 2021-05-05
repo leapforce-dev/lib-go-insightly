@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	layout string = "2006-01-02 15:04:05"
+	layout    string = "2006-01-02 15:04:05"
+	layoutXML string = "2006-01-02T15:04:05"
 )
 
 type DateTimeString time.Time
@@ -50,8 +51,10 @@ func (d *DateTimeString) MarshalJSON() ([]byte, error) {
 	return json.Marshal(time.Time(*d).Format(layout))
 }
 
-func (d *DateTimeString) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	return e.EncodeElement(time.Time(*d).Format(layout), start)
+func (d DateTimeString) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	e.EncodeElement(time.Time(d).Format(layoutXML), start)
+
+	return nil
 }
 
 func (d *DateTimeString) ValuePtr() *time.Time {

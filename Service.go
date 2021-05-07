@@ -29,6 +29,7 @@ type RateLimit struct {
 
 type Service struct {
 	pod          string
+	apiKey       string
 	token        string
 	maxRowCount  uint64
 	httpService  *go_http.Service
@@ -68,6 +69,7 @@ func NewService(serviceConfig *ServiceConfig) (*Service, *errortools.Error) {
 
 	return &Service{
 		pod:         serviceConfig.Pod,
+		apiKey:      serviceConfig.APIKey,
 		token:       base64.URLEncoding.EncodeToString([]byte(serviceConfig.APIKey)),
 		maxRowCount: maxRowCount,
 		httpService: httpService,
@@ -158,6 +160,10 @@ func (service *Service) RateLimit() RateLimit {
 
 func (service *Service) APIName() string {
 	return apiName
+}
+
+func (service *Service) APIKey() string {
+	return service.apiKey
 }
 
 func (service *Service) APICallCount() int64 {

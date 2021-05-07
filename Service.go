@@ -12,6 +12,7 @@ import (
 )
 
 const (
+	apiName                   string = "Insightly"
 	apiURL                    string = "https://api.%s.insightly.com/v3.1"
 	dateTimeFormat            string = "2006-01-02T15:04:05Z"
 	dateTimeFormatCustomField string = "2006-01-02 15:04:05"
@@ -27,15 +28,13 @@ type RateLimit struct {
 }
 
 type Service struct {
-	pod         string
-	token       string
-	maxRowCount uint64
-	httpService *go_http.Service
-	rateLimit   RateLimit
-	//rateLimitLimit     *int64
-	//rateLimitRemaining *int64
-	//retryAt            *time.Time
-	nextSkips map[string]uint64
+	pod          string
+	token        string
+	maxRowCount  uint64
+	httpService  *go_http.Service
+	rateLimit    RateLimit
+	apiCallCount int64
+	nextSkips    map[string]uint64
 }
 
 type ServiceConfig struct {
@@ -155,4 +154,12 @@ func (service *Service) delete(requestConfig *go_http.RequestConfig) (*http.Requ
 
 func (service *Service) RateLimit() RateLimit {
 	return service.rateLimit
+}
+
+func (service *Service) APIName() string {
+	return apiName
+}
+
+func (service *Service) APICallCount() int64 {
+	return service.httpService.RequestCount()
 }

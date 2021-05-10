@@ -169,3 +169,7 @@ func (service *Service) APIKey() string {
 func (service *Service) APICallCount() int64 {
 	return service.httpService.RequestCount()
 }
+
+func (service *Service) APIReset() {
+	service.httpService.ResetRequestCount()
+}

@@ -80,7 +80,7 @@ func NewService(serviceConfig *ServiceConfig) (*Service, *errortools.Error) {
 func (service *Service) httpRequest(httpMethod string, requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {
 	// check rate limit
 	if service.rateLimit.Remaining != nil {
-		if *service.rateLimit.Remaining == 0 {
+		if *service.rateLimit.Remaining <= 0 {
 			if service.rateLimit.RetryAt == nil {
 				return nil, nil, errortools.ErrorMessage("Rate limit exceeded but RetryAt unknown.")
 			}

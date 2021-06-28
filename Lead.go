@@ -193,7 +193,7 @@ func (service *Service) GetLeads(config *GetLeadsConfig) (*[]Lead, *errortools.E
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 		leadsBatch := []Lead{}
 

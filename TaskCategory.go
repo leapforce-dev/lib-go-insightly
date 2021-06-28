@@ -47,7 +47,7 @@ func (service *Service) GetTaskCategories(config *GetTaskCategoriesConfig) (*[]T
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
 		taskCategoriesBatch := []TaskCategory{}

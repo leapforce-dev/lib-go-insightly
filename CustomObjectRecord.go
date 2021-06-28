@@ -119,7 +119,7 @@ func (service *Service) GetCustomObjectRecords(config *GetCustomObjectRecordsCon
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 		customObjectRecordsBatch := []CustomObjectRecord{}
 

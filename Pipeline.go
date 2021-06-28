@@ -48,7 +48,7 @@ func (service *Service) GetPipelines(config *GetPipelinesConfig) (*[]Pipeline, *
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
 		pipelinesBatch := []Pipeline{}

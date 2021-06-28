@@ -174,11 +174,7 @@ func (customFields *CustomFields) Contains(fieldName string, fieldValue interfac
 	b := []byte{}
 	b, _ = json.Marshal(fieldValue)
 
-	if string(customFieldRecord.FieldValue) == string(b) {
-		return true
-	}
-
-	return false
+	return string(customFieldRecord.FieldValue) == string(b)
 }
 
 // get

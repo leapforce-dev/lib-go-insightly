@@ -131,7 +131,7 @@ func (service *Service) GetProducts(config *GetProductsConfig) (*[]Product, *err
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 		productsBatch := []Product{}
 

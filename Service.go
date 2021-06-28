@@ -28,14 +28,13 @@ type RateLimit struct {
 }
 
 type Service struct {
-	pod          string
-	apiKey       string
-	token        string
-	maxRowCount  uint64
-	httpService  *go_http.Service
-	rateLimit    RateLimit
-	apiCallCount int64
-	nextSkips    map[string]uint64
+	pod         string
+	apiKey      string
+	token       string
+	maxRowCount uint64
+	httpService *go_http.Service
+	rateLimit   RateLimit
+	nextSkips   map[string]uint64
 }
 
 type ServiceConfig struct {

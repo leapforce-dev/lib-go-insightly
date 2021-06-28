@@ -93,7 +93,7 @@ func (service *Service) GetPricebookEntries(config *GetPricebookEntriesConfig) (
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 		pricebookEntriesBatch := []PricebookEntry{}
 

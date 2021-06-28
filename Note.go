@@ -89,7 +89,7 @@ func (service *Service) GetNotes(config *GetNotesConfig) (*[]Note, *errortools.E
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 		notesBatch := []Note{}
 

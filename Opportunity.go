@@ -109,7 +109,7 @@ func (service *Service) GetOpportunities(config *GetOpportunitiesConfig) (*[]Opp
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 		opportunitiesBatch := []Opportunity{}
 

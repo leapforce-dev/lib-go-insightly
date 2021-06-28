@@ -47,7 +47,7 @@ func (service *Service) GetFileCategories(config *GetFileCategoriesConfig) (*[]F
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
 		fileCategoriesBatch := []FileCategory{}

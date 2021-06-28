@@ -100,7 +100,7 @@ func (service *Service) GetUsers(config *GetUsersConfig) (*[]User, *errortools.E
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 		usersBatch := []User{}
 

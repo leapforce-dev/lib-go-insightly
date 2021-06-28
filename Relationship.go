@@ -50,7 +50,7 @@ func (service *Service) GetRelationships(config *GetRelationshipsConfig) (*[]Rel
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
 		relationshipsBatch := []Relationship{}

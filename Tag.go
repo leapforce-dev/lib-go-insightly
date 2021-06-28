@@ -50,7 +50,7 @@ func (service *Service) GetTags(config *GetTagsConfig) (*[]Tag, *errortools.Erro
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
 		tagsBatch := []Tag{}

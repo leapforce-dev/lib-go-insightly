@@ -88,7 +88,7 @@ func (service *Service) GetActivitySets(config *GetActivitySetsConfig) (*[]Activ
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
 		activitySetsBatch := []ActivitySet{}

@@ -81,7 +81,7 @@ func (service *Service) GetEmails(config *GetEmailsConfig) (*[]Email, *errortool
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 
 		emailsBatch := []Email{}

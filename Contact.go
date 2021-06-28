@@ -122,7 +122,7 @@ func (service *Service) GetContacts(config *GetContactsConfig) (*[]Contact, *err
 
 	params.Set("top", fmt.Sprintf("%v", top))
 
-	for true {
+	for {
 		params.Set("skip", fmt.Sprintf("%v", service.nextSkips[endpoint]))
 		contactsBatch := []Contact{}
 

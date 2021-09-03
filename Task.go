@@ -25,6 +25,7 @@ type Task struct {
 	PercentComplete   int64                   `json:"PERCENT_COMPLETE"`
 	StartDate         i_types.DateTimeString  `json:"START_DATE"`
 	MilestoneID       *int64                  `json:"MILESTONE_ID"`
+	PubliclyVisible   *bool                   `json:"PUBLICLY_VISIBLE"`
 	ResponsibleUserID int64                   `json:"RESPONSIBLE_USER_ID"`
 	OwnerUserID       int64                   `json:"OWNER_USER_ID"`
 	DateCreatedUTC    i_types.DateTimeString  `json:"DATE_CREATED_UTC"`

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
@@ -77,6 +78,9 @@ func NewService(serviceConfig *ServiceConfig) (*Service, *errortools.Error) {
 }
 
 func (service *Service) httpRequest(httpMethod string, requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {
+	retried := false
+
+retry:
 	// check rate limit
 	if service.rateLimit.Remaining != nil {
 		if *service.rateLimit.Remaining <= 0 {
@@ -127,6 +131,18 @@ func (service *Service) httpRequest(httpMethod string, requestConfig *go_http.Re
 			service.rateLimit.RetryAt = &retryAt
 		} else {
 			service.rateLimit.RetryAt = nil
+		}
+
+		if response.StatusCode == http.StatusTooManyRequests {
+			if strings.Contains(strings.ToLower(errorResponse.Message), "maximum admitted 10 per second") {
+				if !retried {
+					fmt.Println("waiting 2 seconds...")
+					// wait 2 seconds
+					time.Sleep(2 * time.Second)
+					retried = true
+					goto retry
+				}
+			}
 		}
 	}
 

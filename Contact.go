@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -61,10 +62,11 @@ func (service *Service) GetContact(contactID int64) (*Contact, *errortools.Error
 	contact := Contact{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("Contacts/%v", contactID)),
 		ResponseModel: &contact,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -127,10 +129,11 @@ func (service *Service) GetContacts(config *GetContactsConfig) (*[]Contact, *err
 		contactsBatch := []Contact{}
 
 		requestConfig := go_http.RequestConfig{
+			Method:        http.MethodGet,
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &contactsBatch,
 		}
-		_, _, e := service.get(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
@@ -163,11 +166,12 @@ func (service *Service) CreateContact(contact *Contact) (*Contact, *errortools.E
 	contactNew := Contact{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPatch,
 		URL:           service.url("Contacts"),
 		BodyModel:     contact,
 		ResponseModel: &contactNew,
 	}
-	_, _, e := service.post(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -185,11 +189,12 @@ func (service *Service) UpdateContact(contact *Contact) (*Contact, *errortools.E
 	contactUpdated := Contact{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPut,
 		URL:           service.url("Contacts"),
 		BodyModel:     contact,
 		ResponseModel: &contactUpdated,
 	}
-	_, _, e := service.put(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -201,9 +206,10 @@ func (service *Service) UpdateContact(contact *Contact) (*Contact, *errortools.E
 //
 func (service *Service) DeleteContact(contactID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
-		URL: service.url(fmt.Sprintf("Contacts/%v", contactID)),
+		Method: http.MethodDelete,
+		URL:    service.url(fmt.Sprintf("Contacts/%v", contactID)),
 	}
-	_, _, e := service.delete(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return e
 	}

@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -32,10 +33,11 @@ func (service *Service) GetPricebookEntry(pricebookEntryID int64) (*PricebookEnt
 	pricebookEntry := PricebookEntry{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("PricebookEntry/%v", pricebookEntryID)),
 		ResponseModel: &pricebookEntry,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -98,10 +100,11 @@ func (service *Service) GetPricebookEntries(config *GetPricebookEntriesConfig) (
 		pricebookEntriesBatch := []PricebookEntry{}
 
 		requestConfig := go_http.RequestConfig{
+			Method:        http.MethodGet,
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &pricebookEntriesBatch,
 		}
-		_, _, e := service.get(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}

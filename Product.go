@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -70,10 +71,11 @@ func (service *Service) GetProduct(productID int64) (*Product, *errortools.Error
 	product := Product{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("Product/%v", productID)),
 		ResponseModel: &product,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -136,10 +138,11 @@ func (service *Service) GetProducts(config *GetProductsConfig) (*[]Product, *err
 		productsBatch := []Product{}
 
 		requestConfig := go_http.RequestConfig{
+			Method:        http.MethodGet,
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &productsBatch,
 		}
-		_, _, e := service.get(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
@@ -172,11 +175,12 @@ func (service *Service) CreateProduct(product *Product) (*Product, *errortools.E
 	productNew := Product{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPost,
 		URL:           service.url("Products"),
 		BodyModel:     product.prepareMarshal(),
 		ResponseModel: &productNew,
 	}
-	_, _, e := service.post(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -194,11 +198,12 @@ func (service *Service) UpdateProduct(product *Product) (*Product, *errortools.E
 	productUpdated := Product{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPut,
 		URL:           service.url("Products"),
 		BodyModel:     product.prepareMarshal(),
 		ResponseModel: &productUpdated,
 	}
-	_, _, e := service.put(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -210,9 +215,10 @@ func (service *Service) UpdateProduct(product *Product) (*Product, *errortools.E
 //
 func (service *Service) DeleteProduct(productID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
-		URL: service.url(fmt.Sprintf("Products/%v", productID)),
+		Method: http.MethodDelete,
+		URL:    service.url(fmt.Sprintf("Products/%v", productID)),
 	}
-	_, _, e := service.delete(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return e
 	}

@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
@@ -44,10 +45,11 @@ func (service *Service) GetTeam(teamID int64) (*Team, *errortools.Error) {
 	team := Team{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("Teams/%v", teamID)),
 		ResponseModel: &team,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -95,11 +97,12 @@ func (service *Service) GetTeams(config *GetTeamsConfig) (*[]Team, *errortools.E
 		teamsBatch := []Team{}
 
 		requestConfig := go_http.RequestConfig{
+			Method:        http.MethodGet,
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &teamsBatch,
 		}
 
-		_, _, e := service.get(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
@@ -132,11 +135,12 @@ func (service *Service) CreateTeam(team *Team) (*Team, *errortools.Error) {
 	teamNew := Team{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPost,
 		URL:           service.url("Teams"),
 		BodyModel:     team.prepareMarshal(),
 		ResponseModel: &teamNew,
 	}
-	_, _, e := service.post(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -154,11 +158,12 @@ func (service *Service) UpdateTeam(team *Team) (*Team, *errortools.Error) {
 	teamUpdated := Team{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPut,
 		URL:           service.url("Teams"),
 		BodyModel:     team.prepareMarshal(),
 		ResponseModel: &teamUpdated,
 	}
-	_, _, e := service.put(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -170,9 +175,10 @@ func (service *Service) UpdateTeam(team *Team) (*Team, *errortools.Error) {
 //
 func (service *Service) DeleteTeam(teamID int) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
-		URL: service.url(fmt.Sprintf("Teams/%v", teamID)),
+		Method: http.MethodDelete,
+		URL:    service.url(fmt.Sprintf("Teams/%v", teamID)),
 	}
-	_, _, e := service.delete(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return e
 	}

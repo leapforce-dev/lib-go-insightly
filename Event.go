@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -36,10 +37,11 @@ func (service *Service) GetEvent(eventID int64) (*Event, *errortools.Error) {
 	event := Event{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("Events/%v", eventID)),
 		ResponseModel: &event,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -102,10 +104,11 @@ func (service *Service) GetEvents(config *GetEventsConfig) (*[]Event, *errortool
 		eventsBatch := []Event{}
 
 		requestConfig := go_http.RequestConfig{
+			Method:        http.MethodGet,
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &eventsBatch,
 		}
-		_, _, e := service.get(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}

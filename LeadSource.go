@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
@@ -53,11 +54,12 @@ func (service *Service) GetLeadSources(config *GetLeadSourcesConfig) (*[]LeadSou
 		leadSourcesBatch := []LeadSource{}
 
 		requestConfig := go_http.RequestConfig{
+			Method:        http.MethodGet,
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &leadSourcesBatch,
 		}
 
-		_, _, e := service.get(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}

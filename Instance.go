@@ -22,11 +22,12 @@ type Instance struct {
 func (service *Service) GetInstance() (*Instance, *http.Response, *errortools.Error) {
 	instance := Instance{}
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url("Instance"),
 		ResponseModel: &instance,
 	}
 
-	_, response, e := service.get(&requestConfig)
+	_, response, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, response, e
 	}

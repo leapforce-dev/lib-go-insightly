@@ -1,6 +1,8 @@
 package insightly
 
 import (
+	"net/http"
+
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
 )
@@ -18,11 +20,12 @@ type Currency struct {
 func (service *Service) GetCurrencies() (*[]Currency, *errortools.Error) {
 	currencies := []Currency{}
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url("Currencies"),
 		ResponseModel: &currencies,
 	}
 
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}

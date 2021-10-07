@@ -77,7 +77,7 @@ func NewService(serviceConfig *ServiceConfig) (*Service, *errortools.Error) {
 	}, nil
 }
 
-func (service *Service) httpRequest(httpMethod string, requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {
+func (service *Service) httpRequest(requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {
 	retried := false
 
 retry:
@@ -88,7 +88,7 @@ retry:
 				return nil, nil, errortools.ErrorMessage("Rate limit exceeded but RetryAt unknown.")
 			}
 
-			duration := service.rateLimit.RetryAt.Sub(time.Now())
+			duration := time.Until(*service.rateLimit.RetryAt)
 
 			if duration > 0 {
 				errortools.CaptureInfo(fmt.Sprintf("Rate limit exceeded, waiting %v ms.", duration.Milliseconds()))
@@ -106,7 +106,7 @@ retry:
 	errorResponse := ErrorResponse{}
 	(*requestConfig).ErrorModel = &errorResponse
 
-	request, response, e := service.httpService.HTTPRequest(httpMethod, requestConfig)
+	request, response, e := service.httpService.HTTPRequest(requestConfig)
 	if errorResponse.Message != "" {
 		e.SetMessage(errorResponse.Message)
 	}
@@ -151,22 +151,6 @@ retry:
 
 func (service *Service) url(path string) string {
 	return fmt.Sprintf("%s/%s", fmt.Sprintf(apiURL, service.pod), path)
-}
-
-func (service *Service) get(requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {
-	return service.httpRequest(http.MethodGet, requestConfig)
-}
-
-func (service *Service) post(requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {
-	return service.httpRequest(http.MethodPost, requestConfig)
-}
-
-func (service *Service) put(requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {
-	return service.httpRequest(http.MethodPut, requestConfig)
-}
-
-func (service *Service) delete(requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {
-	return service.httpRequest(http.MethodDelete, requestConfig)
 }
 
 func (service *Service) RateLimit() RateLimit {

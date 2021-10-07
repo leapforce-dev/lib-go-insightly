@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -132,10 +133,11 @@ func (service *Service) GetLead(leadID int64) (*Lead, *errortools.Error) {
 	lead := Lead{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("Leads/%v", leadID)),
 		ResponseModel: &lead,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -198,10 +200,11 @@ func (service *Service) GetLeads(config *GetLeadsConfig) (*[]Lead, *errortools.E
 		leadsBatch := []Lead{}
 
 		requestConfig := go_http.RequestConfig{
+			Method:        http.MethodGet,
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &leadsBatch,
 		}
-		_, _, e := service.get(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
@@ -234,11 +237,12 @@ func (service *Service) CreateLead(lead *Lead) (*Lead, *errortools.Error) {
 	leadNew := Lead{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPost,
 		URL:           service.url("Leads"),
 		BodyModel:     lead.prepareMarshal(),
 		ResponseModel: &leadNew,
 	}
-	_, _, e := service.post(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -256,11 +260,12 @@ func (service *Service) UpdateLead(lead *Lead) (*Lead, *errortools.Error) {
 	leadUpdated := Lead{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPut,
 		URL:           service.url("Leads"),
 		BodyModel:     lead.prepareMarshal(),
 		ResponseModel: &leadUpdated,
 	}
-	_, _, e := service.put(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -272,9 +277,10 @@ func (service *Service) UpdateLead(lead *Lead) (*Lead, *errortools.Error) {
 //
 func (service *Service) DeleteLead(leadID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
-		URL: service.url(fmt.Sprintf("Leads/%v", leadID)),
+		Method: http.MethodDelete,
+		URL:    service.url(fmt.Sprintf("Leads/%v", leadID)),
 	}
-	_, _, e := service.delete(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return e
 	}

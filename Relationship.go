@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
@@ -56,11 +57,12 @@ func (service *Service) GetRelationships(config *GetRelationshipsConfig) (*[]Rel
 		relationshipsBatch := []Relationship{}
 
 		requestConfig := go_http.RequestConfig{
+			Method:        http.MethodGet,
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &relationshipsBatch,
 		}
 
-		_, _, e := service.get(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}

@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -52,10 +53,11 @@ func (service *Service) GetOrganisation(organisationID int64) (*Organisation, *e
 	organisation := Organisation{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("Organisations/%v", organisationID)),
 		ResponseModel: &organisation,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -118,10 +120,11 @@ func (service *Service) GetOrganisations(config *GetOrganisationsConfig) (*[]Org
 		organisationsBatch := []Organisation{}
 
 		requestConfig := go_http.RequestConfig{
+			Method:        http.MethodGet,
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &organisationsBatch,
 		}
-		_, _, e := service.get(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
@@ -154,11 +157,12 @@ func (service *Service) CreateOrganisation(organisation *Organisation) (*Organis
 	organisationNew := Organisation{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPost,
 		URL:           service.url("Organisations"),
 		BodyModel:     organisation,
 		ResponseModel: &organisationNew,
 	}
-	_, _, e := service.post(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -176,11 +180,12 @@ func (service *Service) UpdateOrganisation(organisation *Organisation) (*Organis
 	organisationUpdated := Organisation{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPut,
 		URL:           service.url("Organisations"),
 		BodyModel:     organisation,
 		ResponseModel: &organisationUpdated,
 	}
-	_, _, e := service.put(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -192,9 +197,10 @@ func (service *Service) UpdateOrganisation(organisation *Organisation) (*Organis
 //
 func (service *Service) DeleteOrganisation(organisationID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
-		URL: service.url(fmt.Sprintf("Organisations/%v", organisationID)),
+		Method: http.MethodDelete,
+		URL:    service.url(fmt.Sprintf("Organisations/%v", organisationID)),
 	}
-	_, _, e := service.delete(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return e
 	}
@@ -208,10 +214,11 @@ func (service *Service) GetOrganisationLinks(organisationID int64) (*[]Link, *er
 	links := []Link{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("Organisations/%v/Links", organisationID)),
 		ResponseModel: &links,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}

@@ -140,7 +140,7 @@ func (customFieldRecord *CustomFieldRecord) set(valueText *string, valueNumeric 
 		return nil
 	}
 
-	b := []byte{}
+	var b []byte
 	if valueText != nil {
 		b, _ = json.Marshal(*valueText)
 	} else if valueNumeric != nil {
@@ -171,8 +171,7 @@ func (customFields *CustomFields) Contains(fieldName string, fieldValue interfac
 		return false
 	}
 
-	b := []byte{}
-	b, _ = json.Marshal(fieldValue)
+	b, _ := json.Marshal(fieldValue)
 
 	return string(customFieldRecord.FieldValue) == string(b)
 }
@@ -185,7 +184,7 @@ func (customFields *CustomFields) get(fieldName string) *CustomFieldRecord {
 	}
 
 	for _, customFieldRecord := range *customFields {
-		if strings.ToLower(customFieldRecord.FieldName) == strings.ToLower(fieldName) {
+		if strings.EqualFold(customFieldRecord.FieldName, fieldName) {
 			//customFieldRecord.unmarshalValue()
 			return &customFieldRecord
 		}
@@ -289,7 +288,7 @@ func (customFields *CustomFields) set(fieldName string, valueText *string, value
 	}
 
 	for i, customFieldRecord := range *customFields {
-		if strings.ToLower(customFieldRecord.FieldName) == strings.ToLower(fieldName) {
+		if strings.EqualFold(customFieldRecord.FieldName, fieldName) {
 			customFieldRecord.set(valueText, valueNumeric, valueBit)
 			(*customFields)[i] = customFieldRecord
 			return nil

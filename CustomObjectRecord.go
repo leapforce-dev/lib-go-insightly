@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -52,10 +53,11 @@ func (service *Service) GetCustomObjectRecord(customObjectName string, customObj
 	customObjectRecord := CustomObjectRecord{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)),
 		ResponseModel: &customObjectRecord,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -124,10 +126,11 @@ func (service *Service) GetCustomObjectRecords(config *GetCustomObjectRecordsCon
 		customObjectRecordsBatch := []CustomObjectRecord{}
 
 		requestConfig := go_http.RequestConfig{
+			Method:        http.MethodGet,
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &customObjectRecordsBatch,
 		}
-		_, _, e := service.get(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
@@ -160,11 +163,12 @@ func (service *Service) CreateCustomObjectRecord(customObjectName string, custom
 	customObjectRecordNew := CustomObjectRecord{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPost,
 		URL:           service.url(customObjectName),
 		BodyModel:     customObjectRecord.prepareMarshal(),
 		ResponseModel: &customObjectRecordNew,
 	}
-	_, _, e := service.post(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -182,11 +186,12 @@ func (service *Service) UpdateCustomObjectRecord(customObjectName string, custom
 	customObjectRecordUpdated := CustomObjectRecord{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPut,
 		URL:           service.url(customObjectName),
 		BodyModel:     customObjectRecord.prepareMarshal(),
 		ResponseModel: &customObjectRecordUpdated,
 	}
-	_, _, e := service.put(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -198,9 +203,10 @@ func (service *Service) UpdateCustomObjectRecord(customObjectName string, custom
 //
 func (service *Service) DeleteCustomObjectRecord(customObjectName string, customObjectRecordID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
-		URL: service.url(fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)),
+		Method: http.MethodDelete,
+		URL:    service.url(fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)),
 	}
-	_, _, e := service.delete(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return e
 	}

@@ -2,6 +2,7 @@ package insightly
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -48,10 +49,11 @@ func (service *Service) GetOpportunity(opportunityID int64) (*Opportunity, *erro
 	opportunity := Opportunity{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("Opportunities/%v", opportunityID)),
 		ResponseModel: &opportunity,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -114,10 +116,11 @@ func (service *Service) GetOpportunities(config *GetOpportunitiesConfig) (*[]Opp
 		opportunitiesBatch := []Opportunity{}
 
 		requestConfig := go_http.RequestConfig{
+			Method:        http.MethodGet,
 			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &opportunitiesBatch,
 		}
-		_, _, e := service.get(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}
@@ -150,11 +153,12 @@ func (service *Service) CreateOpportunity(opportunity *Opportunity) (*Opportunit
 	opportunityNew := Opportunity{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPost,
 		URL:           service.url("Opportunities"),
 		BodyModel:     opportunity,
 		ResponseModel: &opportunityNew,
 	}
-	_, _, e := service.post(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -172,11 +176,12 @@ func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunit
 	opportunityUpdated := Opportunity{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPut,
 		URL:           service.url("Opportunities"),
 		BodyModel:     opportunity,
 		ResponseModel: &opportunityUpdated,
 	}
-	_, _, e := service.put(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}
@@ -188,9 +193,10 @@ func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunit
 //
 func (service *Service) DeleteOpportunity(opportunityID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
-		URL: service.url(fmt.Sprintf("Opportunities/%v", opportunityID)),
+		Method: http.MethodDelete,
+		URL:    service.url(fmt.Sprintf("Opportunities/%v", opportunityID)),
 	}
-	_, _, e := service.delete(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return e
 	}
@@ -204,10 +210,11 @@ func (service *Service) GetOpportunityLinks(opportunityID int64) (*[]Link, *erro
 	links := []Link{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url(fmt.Sprintf("Opportunity/%v/Links", opportunityID)),
 		ResponseModel: &links,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}

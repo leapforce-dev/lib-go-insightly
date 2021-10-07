@@ -1,6 +1,8 @@
 package insightly
 
 import (
+	"net/http"
+
 	errortools "github.com/leapforce-libraries/go_errortools"
 	go_http "github.com/leapforce-libraries/go_http"
 	i_types "github.com/leapforce-libraries/go_insightly/types"
@@ -29,10 +31,11 @@ func (service *Service) GetCustomObjects() (*[]CustomObject, *errortools.Error) 
 	customObjects := []CustomObject{}
 
 	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
 		URL:           service.url("CustomObjects"),
 		ResponseModel: &customObjects,
 	}
-	_, _, e := service.get(&requestConfig)
+	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
 		return nil, e
 	}

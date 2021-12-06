@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	errortools "github.com/leapforce-libraries/go_errortools"
@@ -134,11 +133,12 @@ retry:
 		}
 
 		if response.StatusCode == http.StatusTooManyRequests {
-			if strings.Contains(strings.ToLower(errorResponse.Message), "maximum admitted 10 per second") {
+			if retryAfter > 0 {
 				if !retried {
-					fmt.Println("waiting 2 seconds...")
+					retryAfter++
+					fmt.Printf("waiting %v seconds...\n", retryAfter)
 					// wait 2 seconds
-					time.Sleep(2 * time.Second)
+					time.Sleep(time.Duration(retryAfter) * time.Second)
 					retried = true
 					goto retry
 				}

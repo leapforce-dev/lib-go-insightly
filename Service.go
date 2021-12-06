@@ -19,6 +19,7 @@ const (
 	dateFormat                string = "2006-01-02"
 	defaultMaxRowCount        uint64 = ^uint64(0)
 	defaultTop                uint64 = 500 //max 500, see: https://api.insightly.com/v3.1/Help#!/Overview/Introduction
+	maxRetries                int    = 10
 )
 
 type RateLimit struct {
@@ -77,7 +78,7 @@ func NewService(serviceConfig *ServiceConfig) (*Service, *errortools.Error) {
 }
 
 func (service *Service) httpRequest(requestConfig *go_http.RequestConfig) (*http.Request, *http.Response, *errortools.Error) {
-	retried := false
+	retries := 0
 
 retry:
 	// check rate limit
@@ -134,12 +135,12 @@ retry:
 
 		if response.StatusCode == http.StatusTooManyRequests {
 			if retryAfter > 0 {
-				if !retried {
+				if retries < maxRetries {
 					retryAfter++
 					fmt.Printf("waiting %v seconds...\n", retryAfter)
 					// wait 2 seconds
 					time.Sleep(time.Duration(retryAfter) * time.Second)
-					retried = true
+					retries++
 					goto retry
 				}
 			}

@@ -64,7 +64,7 @@ func (service *Service) GetLeadStatuses(config *GetLeadStatusesConfig) (*[]LeadS
 			ResponseModel: &leadStatusesBatch,
 		}
 
-		_, _, e := service.httpService.HTTPRequest(&requestConfig)
+		_, _, e := service.httpRequest(&requestConfig)
 		if e != nil {
 			return nil, e
 		}

@@ -40,7 +40,7 @@ type Service struct {
 
 type ServiceConfig struct {
 	Pod         string
-	APIKey      string
+	ApiKey      string
 	MaxRowCount *uint64
 }
 
@@ -53,8 +53,8 @@ func NewService(serviceConfig *ServiceConfig) (*Service, *errortools.Error) {
 		return nil, errortools.ErrorMessage("Service Pod not provided")
 	}
 
-	if serviceConfig.APIKey == "" {
-		return nil, errortools.ErrorMessage("Service API Key not provided")
+	if serviceConfig.ApiKey == "" {
+		return nil, errortools.ErrorMessage("Service Api Key not provided")
 	}
 
 	httpService, e := go_http.NewService(&go_http.ServiceConfig{})
@@ -69,8 +69,8 @@ func NewService(serviceConfig *ServiceConfig) (*Service, *errortools.Error) {
 
 	return &Service{
 		pod:         serviceConfig.Pod,
-		apiKey:      serviceConfig.APIKey,
-		token:       base64.URLEncoding.EncodeToString([]byte(serviceConfig.APIKey)),
+		apiKey:      serviceConfig.ApiKey,
+		token:       base64.URLEncoding.EncodeToString([]byte(serviceConfig.ApiKey)),
 		maxRowCount: maxRowCount,
 		httpService: httpService,
 		nextSkips:   make(map[string]uint64),
@@ -158,18 +158,18 @@ func (service *Service) RateLimit() RateLimit {
 	return service.rateLimit
 }
 
-func (service *Service) APIName() string {
+func (service *Service) ApiName() string {
 	return apiName
 }
 
-func (service *Service) APIKey() string {
+func (service *Service) ApiKey() string {
 	return service.apiKey
 }
 
-func (service *Service) APICallCount() int64 {
+func (service *Service) ApiCallCount() int64 {
 	return service.httpService.RequestCount()
 }
 
-func (service *Service) APIReset() {
+func (service *Service) ApiReset() {
 	service.httpService.ResetRequestCount()
 }

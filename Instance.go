@@ -23,7 +23,7 @@ func (service *Service) GetInstance() (*Instance, *http.Response, *errortools.Er
 	instance := Instance{}
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url("Instance"),
+		Url:           service.url("Instance"),
 		ResponseModel: &instance,
 	}
 

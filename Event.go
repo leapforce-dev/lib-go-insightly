@@ -38,7 +38,7 @@ func (service *Service) GetEvent(eventID int64) (*Event, *errortools.Error) {
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Events/%v", eventID)),
+		Url:           service.url(fmt.Sprintf("Events/%v", eventID)),
 		ResponseModel: &event,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -105,7 +105,7 @@ func (service *Service) GetEvents(config *GetEventsConfig) (*[]Event, *errortool
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &eventsBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)

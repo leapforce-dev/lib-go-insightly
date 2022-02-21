@@ -17,7 +17,7 @@ type Organisation struct {
 	OrganisationID         int64                   `json:"ORGANISATION_ID"`
 	OrganisationName       *string                 `json:"ORGANISATION_NAME,omitempty"`
 	Background             *string                 `json:"BACKGROUND,omitempty"`
-	ImageURL               *string                 `json:"IMAGE_URL,omitempty"`
+	ImageUrl               *string                 `json:"IMAGE_Url,omitempty"`
 	OwnerUserID            *int64                  `json:"OWNER_USER_ID,omitempty"`
 	DateCreatedUTC         *i_types.DateTimeString `json:"DATE_CREATED_UTC,omitempty"`
 	DateUpdatedUTC         *i_types.DateTimeString `json:"DATE_UPDATED_UTC,omitempty"`
@@ -54,7 +54,7 @@ func (service *Service) GetOrganisation(organisationID int64) (*Organisation, *e
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Organisations/%v", organisationID)),
+		Url:           service.url(fmt.Sprintf("Organisations/%v", organisationID)),
 		ResponseModel: &organisation,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -121,7 +121,7 @@ func (service *Service) GetOrganisations(config *GetOrganisationsConfig) (*[]Org
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &organisationsBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)
@@ -158,7 +158,7 @@ func (service *Service) CreateOrganisation(organisation *Organisation) (*Organis
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPost,
-		URL:           service.url("Organisations"),
+		Url:           service.url("Organisations"),
 		BodyModel:     organisation,
 		ResponseModel: &organisationNew,
 	}
@@ -181,7 +181,7 @@ func (service *Service) UpdateOrganisation(organisation *Organisation) (*Organis
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPut,
-		URL:           service.url("Organisations"),
+		Url:           service.url("Organisations"),
 		BodyModel:     organisation,
 		ResponseModel: &organisationUpdated,
 	}
@@ -198,7 +198,7 @@ func (service *Service) UpdateOrganisation(organisation *Organisation) (*Organis
 func (service *Service) DeleteOrganisation(organisationID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		Method: http.MethodDelete,
-		URL:    service.url(fmt.Sprintf("Organisations/%v", organisationID)),
+		Url:    service.url(fmt.Sprintf("Organisations/%v", organisationID)),
 	}
 	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
@@ -215,7 +215,7 @@ func (service *Service) GetOrganisationLinks(organisationID int64) (*[]Link, *er
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Organisations/%v/Links", organisationID)),
+		Url:           service.url(fmt.Sprintf("Organisations/%v/Links", organisationID)),
 		ResponseModel: &links,
 	}
 	_, _, e := service.httpRequest(&requestConfig)

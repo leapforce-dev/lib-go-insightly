@@ -21,7 +21,7 @@ func (service *Service) GetCurrencies() (*[]Currency, *errortools.Error) {
 	currencies := []Currency{}
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url("Currencies"),
+		Url:           service.url("Currencies"),
 		ResponseModel: &currencies,
 	}
 

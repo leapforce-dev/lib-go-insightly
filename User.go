@@ -41,7 +41,7 @@ func (service *Service) GetUser(userID int64) (*User, *errortools.Error) {
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Users/%v", userID)),
+		Url:           service.url(fmt.Sprintf("Users/%v", userID)),
 		ResponseModel: &user,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -108,7 +108,7 @@ func (service *Service) GetUsers(config *GetUsersConfig) (*[]User, *errortools.E
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &usersBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)

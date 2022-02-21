@@ -48,7 +48,7 @@ type Lead struct {
 	NextActivityDateUTC     *i_types.DateTimeString `json:"NEXT_ACTIVITY_DATE_UTC"`
 	OrganisationName        *string                 `json:"ORGANISATION_NAME"`
 	CreatedUserID           int64                   `json:"CREATED_USER_ID"`
-	ImageURL                *string                 `json:"IMAGE_URL"`
+	ImageUrl                *string                 `json:"IMAGE_Url"`
 	EmailOptedOut           bool                    `json:"EMAIL_OPTED_OUT"`
 	CustomFields            *CustomFields           `json:"CUSTOMFIELDS"`
 	Tags                    *[]Tag                  `json:"TAGS"`
@@ -89,7 +89,7 @@ func (l *Lead) prepareMarshal() interface{} {
 		AddressState            *string                 `json:"ADDRESS_STATE,omitempty"`
 		AddressPostcode         *string                 `json:"ADDRESS_POSTCODE,omitempty"`
 		AddressCountry          *string                 `json:"ADDRESS_COUNTRY,omitempty"`
-		ImageURL                *string                 `json:"IMAGE_URL,omitempty"`
+		ImageUrl                *string                 `json:"IMAGE_Url,omitempty"`
 		EmailOptedOut           *bool                   `json:"EMAIL_OPTED_OUT,omitempty"`
 		CustomFields            *CustomFields           `json:"CUSTOMFIELDS,omitempty"`
 	}{
@@ -121,7 +121,7 @@ func (l *Lead) prepareMarshal() interface{} {
 		l.AddressState,
 		l.AddressPostcode,
 		l.AddressCountry,
-		l.ImageURL,
+		l.ImageUrl,
 		&l.EmailOptedOut,
 		l.CustomFields,
 	}
@@ -134,7 +134,7 @@ func (service *Service) GetLead(leadID int64) (*Lead, *errortools.Error) {
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Leads/%v", leadID)),
+		Url:           service.url(fmt.Sprintf("Leads/%v", leadID)),
 		ResponseModel: &lead,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -201,7 +201,7 @@ func (service *Service) GetLeads(config *GetLeadsConfig) (*[]Lead, *errortools.E
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &leadsBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)
@@ -238,7 +238,7 @@ func (service *Service) CreateLead(lead *Lead) (*Lead, *errortools.Error) {
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPost,
-		URL:           service.url("Leads"),
+		Url:           service.url("Leads"),
 		BodyModel:     lead.prepareMarshal(),
 		ResponseModel: &leadNew,
 	}
@@ -261,7 +261,7 @@ func (service *Service) UpdateLead(lead *Lead) (*Lead, *errortools.Error) {
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPut,
-		URL:           service.url("Leads"),
+		Url:           service.url("Leads"),
 		BodyModel:     lead.prepareMarshal(),
 		ResponseModel: &leadUpdated,
 	}
@@ -278,7 +278,7 @@ func (service *Service) UpdateLead(lead *Lead) (*Lead, *errortools.Error) {
 func (service *Service) DeleteLead(leadID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		Method: http.MethodDelete,
-		URL:    service.url(fmt.Sprintf("Leads/%v", leadID)),
+		Url:    service.url(fmt.Sprintf("Leads/%v", leadID)),
 	}
 	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {

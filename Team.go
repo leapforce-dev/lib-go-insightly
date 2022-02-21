@@ -46,7 +46,7 @@ func (service *Service) GetTeam(teamID int64) (*Team, *errortools.Error) {
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Teams/%v", teamID)),
+		Url:           service.url(fmt.Sprintf("Teams/%v", teamID)),
 		ResponseModel: &team,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -98,7 +98,7 @@ func (service *Service) GetTeams(config *GetTeamsConfig) (*[]Team, *errortools.E
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &teamsBatch,
 		}
 
@@ -136,7 +136,7 @@ func (service *Service) CreateTeam(team *Team) (*Team, *errortools.Error) {
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPost,
-		URL:           service.url("Teams"),
+		Url:           service.url("Teams"),
 		BodyModel:     team.prepareMarshal(),
 		ResponseModel: &teamNew,
 	}
@@ -159,7 +159,7 @@ func (service *Service) UpdateTeam(team *Team) (*Team, *errortools.Error) {
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPut,
-		URL:           service.url("Teams"),
+		Url:           service.url("Teams"),
 		BodyModel:     team.prepareMarshal(),
 		ResponseModel: &teamUpdated,
 	}
@@ -176,7 +176,7 @@ func (service *Service) UpdateTeam(team *Team) (*Team, *errortools.Error) {
 func (service *Service) DeleteTeam(teamID int) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		Method: http.MethodDelete,
-		URL:    service.url(fmt.Sprintf("Teams/%v", teamID)),
+		Url:    service.url(fmt.Sprintf("Teams/%v", teamID)),
 	}
 	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {

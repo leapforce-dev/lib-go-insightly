@@ -60,7 +60,7 @@ func (service *Service) GetProspect(prospectID int64) (*Prospect, *errortools.Er
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Prospect/%v", prospectID)),
+		Url:           service.url(fmt.Sprintf("Prospect/%v", prospectID)),
 		ResponseModel: &prospect,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -127,7 +127,7 @@ func (service *Service) GetProspects(config *GetProspectsConfig) (*[]Prospect, *
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &prospectsBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)

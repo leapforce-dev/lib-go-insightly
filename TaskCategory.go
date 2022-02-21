@@ -55,7 +55,7 @@ func (service *Service) GetTaskCategories(config *GetTaskCategoriesConfig) (*[]T
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &taskCategoriesBatch,
 		}
 

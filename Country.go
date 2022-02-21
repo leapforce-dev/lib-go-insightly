@@ -20,7 +20,7 @@ func (service *Service) GetCountries() (*[]Country, *errortools.Error) {
 	countries := []Country{}
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url("Countries"),
+		Url:           service.url("Countries"),
 		ResponseModel: &countries,
 	}
 

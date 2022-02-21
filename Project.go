@@ -22,7 +22,7 @@ type Project struct {
 	CategoryID          int64                   `json:"CATEGORY_ID"`
 	PipelineID          int64                   `json:"PIPELINE_ID"`
 	StageID             int64                   `json:"STAGE_ID"`
-	ImageURL            *string                 `json:"IMAGE_URL"`
+	ImageUrl            *string                 `json:"IMAGE_Url"`
 	OwnerUserID         int64                   `json:"OWNER_USER_ID"`
 	DateCreatedUTC      i_types.DateTimeString  `json:"DATE_CREATED_UTC"`
 	DateUpdatedUTC      i_types.DateTimeString  `json:"DATE_UPDATED_UTC"`
@@ -42,7 +42,7 @@ func (service *Service) GetProject(projectID int64) (*Project, *errortools.Error
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Project/%v", projectID)),
+		Url:           service.url(fmt.Sprintf("Project/%v", projectID)),
 		ResponseModel: &project,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -109,7 +109,7 @@ func (service *Service) GetProjects(config *GetProjectsConfig) (*[]Project, *err
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &projectsBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)

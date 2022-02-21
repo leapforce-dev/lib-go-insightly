@@ -20,7 +20,7 @@ type Product struct {
 	ProductSKU      *string                `json:"PRODUCT_SKU"`
 	Description     *string                `json:"DESCRIPTION"`
 	ProductFamily   *string                `json:"PRODUCT_FAMILY"`
-	ProductImageURL *string                `json:"PRODUCT_IMAGE_URL"`
+	ProductImageUrl *string                `json:"PRODUCT_IMAGE_Url"`
 	CurrencyCode    string                 `json:"CURRENCY_CODE"`
 	DefaultPrice    float64                `json:"DEFAULT_PRICE"`
 	DateCreatedUTC  i_types.DateTimeString `json:"DATE_CREATED_UTC"`
@@ -43,7 +43,7 @@ func (p *Product) prepareMarshal() interface{} {
 		ProductSKU      *string       `json:"PRODUCT_SKU"`
 		Description     *string       `json:"DESCRIPTION"`
 		ProductFamily   *string       `json:"PRODUCT_FAMILY"`
-		ProductImageURL *string       `json:"PRODUCT_IMAGE_URL"`
+		ProductImageUrl *string       `json:"PRODUCT_IMAGE_Url"`
 		CurrencyCode    *string       `json:"CURRENCY_CODE"`
 		DefaultPrice    *float64      `json:"DEFAULT_PRICE"`
 		OwnerUserID     *int64        `json:"OWNER_USER_ID"`
@@ -56,7 +56,7 @@ func (p *Product) prepareMarshal() interface{} {
 		p.ProductSKU,
 		p.Description,
 		p.ProductFamily,
-		p.ProductImageURL,
+		p.ProductImageUrl,
 		&p.CurrencyCode,
 		&p.DefaultPrice,
 		&p.OwnerUserID,
@@ -72,7 +72,7 @@ func (service *Service) GetProduct(productID int64) (*Product, *errortools.Error
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Product/%v", productID)),
+		Url:           service.url(fmt.Sprintf("Product/%v", productID)),
 		ResponseModel: &product,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -139,7 +139,7 @@ func (service *Service) GetProducts(config *GetProductsConfig) (*[]Product, *err
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &productsBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)
@@ -176,7 +176,7 @@ func (service *Service) CreateProduct(product *Product) (*Product, *errortools.E
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPost,
-		URL:           service.url("Products"),
+		Url:           service.url("Products"),
 		BodyModel:     product.prepareMarshal(),
 		ResponseModel: &productNew,
 	}
@@ -199,7 +199,7 @@ func (service *Service) UpdateProduct(product *Product) (*Product, *errortools.E
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPut,
-		URL:           service.url("Products"),
+		Url:           service.url("Products"),
 		BodyModel:     product.prepareMarshal(),
 		ResponseModel: &productUpdated,
 	}
@@ -216,7 +216,7 @@ func (service *Service) UpdateProduct(product *Product) (*Product, *errortools.E
 func (service *Service) DeleteProduct(productID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		Method: http.MethodDelete,
-		URL:    service.url(fmt.Sprintf("Products/%v", productID)),
+		Url:    service.url(fmt.Sprintf("Products/%v", productID)),
 	}
 	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {

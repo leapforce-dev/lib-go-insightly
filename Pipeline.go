@@ -56,7 +56,7 @@ func (service *Service) GetPipelines(config *GetPipelinesConfig) (*[]Pipeline, *
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &pipelinesBatch,
 		}
 

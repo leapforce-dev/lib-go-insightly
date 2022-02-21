@@ -55,7 +55,7 @@ func (service *Service) GetTask(taskID int64) (*Task, *errortools.Error) {
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Tasks/%v", taskID)),
+		Url:           service.url(fmt.Sprintf("Tasks/%v", taskID)),
 		ResponseModel: &task,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -122,7 +122,7 @@ func (service *Service) GetTasks(config *GetTasksConfig) (*[]Task, *errortools.E
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &tasksBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)

@@ -30,7 +30,7 @@ func (service *Service) GetPermissions() (*[]Permission, *errortools.Error) {
 	permissions := []Permission{}
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url("Permissions"),
+		Url:           service.url("Permissions"),
 		ResponseModel: &permissions,
 	}
 

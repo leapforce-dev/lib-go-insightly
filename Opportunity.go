@@ -20,7 +20,7 @@ type Opportunity struct {
 	OpportunityState    *string                 `json:"OPPORTUNITY_STATE,omitempty"`
 	ResponsibleUserID   *int64                  `json:"RESPONSIBLE_USER_ID,omitempty"`
 	CategoryID          *int64                  `json:"CATEGORY_ID,omitempty"`
-	ImageURL            *string                 `json:"IMAGE_URL,omitempty"`
+	ImageUrl            *string                 `json:"IMAGE_Url,omitempty"`
 	BidCurrency         *string                 `json:"BID_CURRENCY,omitempty"`
 	BidAmount           *float64                `json:"BID_AMOUNT,omitempty"`
 	BidType             *string                 `json:"BID_TYPE,omitempty"`
@@ -50,7 +50,7 @@ func (service *Service) GetOpportunity(opportunityID int64) (*Opportunity, *erro
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Opportunities/%v", opportunityID)),
+		Url:           service.url(fmt.Sprintf("Opportunities/%v", opportunityID)),
 		ResponseModel: &opportunity,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -117,7 +117,7 @@ func (service *Service) GetOpportunities(config *GetOpportunitiesConfig) (*[]Opp
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &opportunitiesBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)
@@ -154,7 +154,7 @@ func (service *Service) CreateOpportunity(opportunity *Opportunity) (*Opportunit
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPost,
-		URL:           service.url("Opportunities"),
+		Url:           service.url("Opportunities"),
 		BodyModel:     opportunity,
 		ResponseModel: &opportunityNew,
 	}
@@ -177,7 +177,7 @@ func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunit
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPut,
-		URL:           service.url("Opportunities"),
+		Url:           service.url("Opportunities"),
 		BodyModel:     opportunity,
 		ResponseModel: &opportunityUpdated,
 	}
@@ -194,7 +194,7 @@ func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunit
 func (service *Service) DeleteOpportunity(opportunityID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		Method: http.MethodDelete,
-		URL:    service.url(fmt.Sprintf("Opportunities/%v", opportunityID)),
+		Url:    service.url(fmt.Sprintf("Opportunities/%v", opportunityID)),
 	}
 	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {
@@ -211,7 +211,7 @@ func (service *Service) GetOpportunityLinks(opportunityID int64) (*[]Link, *erro
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Opportunity/%v/Links", opportunityID)),
+		Url:           service.url(fmt.Sprintf("Opportunity/%v/Links", opportunityID)),
 		ResponseModel: &links,
 	}
 	_, _, e := service.httpRequest(&requestConfig)

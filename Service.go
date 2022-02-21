@@ -106,7 +106,7 @@ retry:
 	errorResponse := ErrorResponse{}
 	(*requestConfig).ErrorModel = &errorResponse
 
-	request, response, e := service.httpService.HTTPRequest(requestConfig)
+	request, response, e := service.httpService.HttpRequest(requestConfig)
 	if errorResponse.Message != "" {
 		e.SetMessage(errorResponse.Message)
 	}

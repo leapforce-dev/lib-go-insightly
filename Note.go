@@ -30,7 +30,7 @@ func (service *Service) GetNote(noteID int64) (*Note, *errortools.Error) {
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Notes/%v", noteID)),
+		Url:           service.url(fmt.Sprintf("Notes/%v", noteID)),
 		ResponseModel: &note,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -97,7 +97,7 @@ func (service *Service) GetNotes(config *GetNotesConfig) (*[]Note, *errortools.E
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &notesBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)

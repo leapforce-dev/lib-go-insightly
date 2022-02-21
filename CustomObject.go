@@ -32,7 +32,7 @@ func (service *Service) GetCustomObjects() (*[]CustomObject, *errortools.Error) 
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url("CustomObjects"),
+		Url:           service.url("CustomObjects"),
 		ResponseModel: &customObjects,
 	}
 	_, _, e := service.httpRequest(&requestConfig)

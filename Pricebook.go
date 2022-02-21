@@ -33,7 +33,7 @@ func (service *Service) GetPricebook(pricebookID int64) (*Pricebook, *errortools
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Pricebook/%v", pricebookID)),
+		Url:           service.url(fmt.Sprintf("Pricebook/%v", pricebookID)),
 		ResponseModel: &pricebook,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -100,7 +100,7 @@ func (service *Service) GetPricebooks(config *GetPricebooksConfig) (*[]Pricebook
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &pricebooksBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)

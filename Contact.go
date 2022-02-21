@@ -17,7 +17,7 @@ type Contact struct {
 	Salutation           *string                 `json:"SALUTATION,omitempty"`
 	FirstName            *string                 `json:"FIRST_NAME,omitempty"`
 	LastName             *string                 `json:"LAST_NAME,omitempty"`
-	ImageURL             *string                 `json:"IMAGE_URL,omitempty"`
+	ImageUrl             *string                 `json:"IMAGE_Url,omitempty"`
 	Background           *string                 `json:"BACKGROUND,omitempty"`
 	OwnerUserID          *int64                  `json:"OWNER_USER_ID,omitempty"`
 	DateCreatedUTC       *i_types.DateTimeString `json:"DATE_CREATED_UTC,omitempty"`
@@ -63,7 +63,7 @@ func (service *Service) GetContact(contactID int64) (*Contact, *errortools.Error
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Contacts/%v", contactID)),
+		Url:           service.url(fmt.Sprintf("Contacts/%v", contactID)),
 		ResponseModel: &contact,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -130,7 +130,7 @@ func (service *Service) GetContacts(config *GetContactsConfig) (*[]Contact, *err
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &contactsBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)
@@ -167,7 +167,7 @@ func (service *Service) CreateContact(contact *Contact) (*Contact, *errortools.E
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPatch,
-		URL:           service.url("Contacts"),
+		Url:           service.url("Contacts"),
 		BodyModel:     contact,
 		ResponseModel: &contactNew,
 	}
@@ -190,7 +190,7 @@ func (service *Service) UpdateContact(contact *Contact) (*Contact, *errortools.E
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPut,
-		URL:           service.url("Contacts"),
+		Url:           service.url("Contacts"),
 		BodyModel:     contact,
 		ResponseModel: &contactUpdated,
 	}
@@ -207,7 +207,7 @@ func (service *Service) UpdateContact(contact *Contact) (*Contact, *errortools.E
 func (service *Service) DeleteContact(contactID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		Method: http.MethodDelete,
-		URL:    service.url(fmt.Sprintf("Contacts/%v", contactID)),
+		Url:    service.url(fmt.Sprintf("Contacts/%v", contactID)),
 	}
 	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {

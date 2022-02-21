@@ -59,7 +59,7 @@ func (service *Service) GetQuote(quoteID int64) (*Quote, *errortools.Error) {
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("Quotation/%v", quoteID)),
+		Url:           service.url(fmt.Sprintf("Quotation/%v", quoteID)),
 		ResponseModel: &quote,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -126,7 +126,7 @@ func (service *Service) GetQuotes(config *GetQuotesConfig) (*[]Quote, *errortool
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &quotesBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)

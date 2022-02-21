@@ -54,7 +54,7 @@ func (service *Service) GetCustomObjectRecord(customObjectName string, customObj
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodGet,
-		URL:           service.url(fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)),
+		Url:           service.url(fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)),
 		ResponseModel: &customObjectRecord,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -127,7 +127,7 @@ func (service *Service) GetCustomObjectRecords(config *GetCustomObjectRecordsCon
 
 		requestConfig := go_http.RequestConfig{
 			Method:        http.MethodGet,
-			URL:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
+			Url:           service.url(fmt.Sprintf("%s?%s", endpoint, params.Encode())),
 			ResponseModel: &customObjectRecordsBatch,
 		}
 		_, _, e := service.httpRequest(&requestConfig)
@@ -164,7 +164,7 @@ func (service *Service) CreateCustomObjectRecord(customObjectName string, custom
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPost,
-		URL:           service.url(customObjectName),
+		Url:           service.url(customObjectName),
 		BodyModel:     customObjectRecord.prepareMarshal(),
 		ResponseModel: &customObjectRecordNew,
 	}
@@ -187,7 +187,7 @@ func (service *Service) UpdateCustomObjectRecord(customObjectName string, custom
 
 	requestConfig := go_http.RequestConfig{
 		Method:        http.MethodPut,
-		URL:           service.url(customObjectName),
+		Url:           service.url(customObjectName),
 		BodyModel:     customObjectRecord.prepareMarshal(),
 		ResponseModel: &customObjectRecordUpdated,
 	}
@@ -204,7 +204,7 @@ func (service *Service) UpdateCustomObjectRecord(customObjectName string, custom
 func (service *Service) DeleteCustomObjectRecord(customObjectName string, customObjectRecordID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		Method: http.MethodDelete,
-		URL:    service.url(fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)),
+		Url:    service.url(fmt.Sprintf("%s/%v", customObjectName, customObjectRecordID)),
 	}
 	_, _, e := service.httpRequest(&requestConfig)
 	if e != nil {

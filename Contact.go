@@ -17,7 +17,7 @@ type Contact struct {
 	Salutation           *string                 `json:"SALUTATION,omitempty"`
 	FirstName            *string                 `json:"FIRST_NAME,omitempty"`
 	LastName             *string                 `json:"LAST_NAME,omitempty"`
-	ImageUrl             *string                 `json:"IMAGE_Url,omitempty"`
+	ImageUrl             *string                 `json:"IMAGE_URL,omitempty"`
 	Background           *string                 `json:"BACKGROUND,omitempty"`
 	OwnerUserID          *int64                  `json:"OWNER_USER_ID,omitempty"`
 	DateCreatedUTC       *i_types.DateTimeString `json:"DATE_CREATED_UTC,omitempty"`

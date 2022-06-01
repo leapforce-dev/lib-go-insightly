@@ -20,7 +20,7 @@ type Opportunity struct {
 	OpportunityState    *string                 `json:"OPPORTUNITY_STATE,omitempty"`
 	ResponsibleUserID   *int64                  `json:"RESPONSIBLE_USER_ID,omitempty"`
 	CategoryID          *int64                  `json:"CATEGORY_ID,omitempty"`
-	ImageUrl            *string                 `json:"IMAGE_Url,omitempty"`
+	ImageUrl            *string                 `json:"IMAGE_URL,omitempty"`
 	BidCurrency         *string                 `json:"BID_CURRENCY,omitempty"`
 	BidAmount           *float64                `json:"BID_AMOUNT,omitempty"`
 	BidType             *string                 `json:"BID_TYPE,omitempty"`

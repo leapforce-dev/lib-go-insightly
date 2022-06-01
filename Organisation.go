@@ -17,7 +17,7 @@ type Organisation struct {
 	OrganisationID         int64                   `json:"ORGANISATION_ID"`
 	OrganisationName       *string                 `json:"ORGANISATION_NAME,omitempty"`
 	Background             *string                 `json:"BACKGROUND,omitempty"`
-	ImageUrl               *string                 `json:"IMAGE_Url,omitempty"`
+	ImageUrl               *string                 `json:"IMAGE_URL,omitempty"`
 	OwnerUserID            *int64                  `json:"OWNER_USER_ID,omitempty"`
 	DateCreatedUTC         *i_types.DateTimeString `json:"DATE_CREATED_UTC,omitempty"`
 	DateUpdatedUTC         *i_types.DateTimeString `json:"DATE_UPDATED_UTC,omitempty"`

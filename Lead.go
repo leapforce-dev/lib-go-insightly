@@ -89,7 +89,7 @@ func (l *Lead) prepareMarshal() interface{} {
 		AddressState            *string                 `json:"ADDRESS_STATE,omitempty"`
 		AddressPostcode         *string                 `json:"ADDRESS_POSTCODE,omitempty"`
 		AddressCountry          *string                 `json:"ADDRESS_COUNTRY,omitempty"`
-		ImageUrl                *string                 `json:"IMAGE_Url,omitempty"`
+		ImageUrl                *string                 `json:"IMAGE_URL,omitempty"`
 		EmailOptedOut           *bool                   `json:"EMAIL_OPTED_OUT,omitempty"`
 		CustomFields            *CustomFields           `json:"CUSTOMFIELDS,omitempty"`
 	}{

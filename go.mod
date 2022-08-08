@@ -3,8 +3,8 @@ module github.com/leapforce-libraries/go_insightly
 go 1.18
 
 require (
-	github.com/leapforce-libraries/go_errortools v0.0.0-20220801162601-6224cce8469e
-	github.com/leapforce-libraries/go_http v0.0.0-20220801163658-e55bd9a56f12
+	github.com/leapforce-libraries/go_errortools v0.0.0-20220808170134-6bf8d8106f1b
+	github.com/leapforce-libraries/go_http v0.0.0-20220808170400-1885307bff1c
 	github.com/leapforce-libraries/go_types v0.0.0-20220220161618-e9b1045c3ef2
 )
 

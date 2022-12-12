@@ -166,7 +166,7 @@ func (service *Service) CreateOpportunity(opportunity *Opportunity) (*Opportunit
 	return &opportunityNew, nil
 }
 
-// UpdateOpportunity updates an existing contract
+// UpdateOpportunity updates an existing opportunity
 //
 func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunity, *errortools.Error) {
 	if opportunity == nil {
@@ -179,6 +179,52 @@ func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunit
 		Method:        http.MethodPut,
 		Url:           service.url("Opportunities"),
 		BodyModel:     opportunity,
+		ResponseModel: &opportunityUpdated,
+	}
+	_, _, e := service.httpRequest(&requestConfig)
+	if e != nil {
+		return nil, e
+	}
+
+	return &opportunityUpdated, nil
+}
+
+type OpportunityPipeline struct {
+	PipelineID          int64                          `json:"PIPELINE_ID"`
+	PipelineStateChange OpportunityPipelineStageChange `json:"PIPELINE_STAGE_CHANGE"`
+}
+
+type OpportunityPipelineStageChange struct {
+	StageID               int64                                     `json:"STAGE_ID"`
+	ActivitysetAssignment *OpportunityPipelineActivitysetAssignment `json:"ACTIVITYSET_ASSIGNMENT,omitempty"`
+}
+
+type OpportunityPipelineActivitysetAssignment struct {
+	ActivitysetID       int64                                   `json:"ACTIVITYSET_ID"`
+	StartDate           string                                  `json:"START_DATE"`
+	EndDate             string                                  `json:"END_DATE"`
+	ActivityAssignments []OpportunityPipelineActivityAssignment `json:"ACTIVITY_ASSIGNMENTS,omitempty"`
+}
+
+type OpportunityPipelineActivityAssignment struct {
+	ActivityID        int64 `json:"ACTIVITY_ID"`
+	ResponsibleUserID int64 `json:"RESPONSIBLE_USER_ID"`
+	AssignedTeamID    int64 `json:"ASSIGNED_TEAM_ID"`
+}
+
+// UpdateOpportunityPipeline updates pipeline of an existing opportunity
+//
+func (service *Service) UpdateOpportunityPipeline(opportunityId int64, opportunityPipeline *OpportunityPipeline) (*Opportunity, *errortools.Error) {
+	if opportunityPipeline == nil {
+		return nil, nil
+	}
+
+	opportunityUpdated := Opportunity{}
+
+	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPut,
+		Url:           service.url(fmt.Sprintf("Opportunities/%v/Pipeline", opportunityId)),
+		BodyModel:     opportunityPipeline,
 		ResponseModel: &opportunityUpdated,
 	}
 	_, _, e := service.httpRequest(&requestConfig)
@@ -220,4 +266,27 @@ func (service *Service) GetOpportunityLinks(opportunityID int64) (*[]Link, *erro
 	}
 
 	return &links, nil
+}
+
+// CreateOpportunityLink creates a new link for an opportunity
+//
+func (service *Service) CreateOpportunityLink(opportunityId int64, link *Link) (*Opportunity, *errortools.Error) {
+	if link == nil {
+		return nil, nil
+	}
+
+	opportunityNew := Opportunity{}
+
+	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodPost,
+		Url:           service.url(fmt.Sprintf("Opportunities/%v/Links", opportunityId)),
+		BodyModel:     link,
+		ResponseModel: &opportunityNew,
+	}
+	_, _, e := service.httpRequest(&requestConfig)
+	if e != nil {
+		return nil, e
+	}
+
+	return &opportunityNew, nil
 }

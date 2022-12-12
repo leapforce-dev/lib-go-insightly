@@ -166,7 +166,7 @@ func (service *Service) CreateContact(contact *Contact) (*Contact, *errortools.E
 	contactNew := Contact{}
 
 	requestConfig := go_http.RequestConfig{
-		Method:        http.MethodPatch,
+		Method:        http.MethodPost,
 		Url:           service.url("Contacts"),
 		BodyModel:     contact,
 		ResponseModel: &contactNew,

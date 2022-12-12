@@ -20,6 +20,7 @@ type Email struct {
 	EmailTo           string                  `json:"EMAIL_TO"`
 	EmailCC           *go_types.String        `json:"EMAIL_CC"`
 	Subject           string                  `json:"SUBJECT"`
+	Body              string                  `json:"BODY"`
 	EmailDateUTC      i_types.DateTimeString  `json:"EMAIL_DATE_UTC"`
 	Format            string                  `json:"FORMAT"`
 	Size              int64                   `json:"SIZE"`

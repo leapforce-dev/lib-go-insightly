@@ -13,7 +13,6 @@ import (
 )
 
 // Email stores Email from Service
-//
 type Email struct {
 	EmailID           int64                   `json:"EMAIL_ID"`
 	EmailFrom         string                  `json:"EMAIL_FROM"`
@@ -42,8 +41,6 @@ type GetEmailsConfig struct {
 }
 
 // GetEmails returns all emails
-//
-
 func (service *Service) GetEmails(config *GetEmailsConfig) (*[]Email, *errortools.Error) {
 	params := url.Values{}
 
@@ -115,4 +112,22 @@ func (service *Service) GetEmails(config *GetEmailsConfig) (*[]Email, *errortool
 	}
 
 	return &emails, nil
+}
+
+// GetEmail returns a specific email
+func (service *Service) GetEmail(id int64) (*Email, *errortools.Error) {
+	var email Email
+
+	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
+		Url:           service.url(fmt.Sprintf("emails/%v", id)),
+		ResponseModel: &email,
+	}
+
+	_, _, e := service.httpRequest(&requestConfig)
+	if e != nil {
+		return nil, e
+	}
+
+	return &email, nil
 }

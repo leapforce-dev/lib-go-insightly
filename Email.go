@@ -131,3 +131,21 @@ func (service *Service) GetEmail(id int64) (*Email, *errortools.Error) {
 
 	return &email, nil
 }
+
+// GetEmailFileAttachments returns the file attachments of a specific email
+func (service *Service) GetEmailFileAttachments(id int64) (*[]FileAttachment, *errortools.Error) {
+	var fileAttachments []FileAttachment
+
+	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
+		Url:           service.url(fmt.Sprintf("emails/%v/fileattachments", id)),
+		ResponseModel: &fileAttachments,
+	}
+
+	_, _, e := service.httpRequest(&requestConfig)
+	if e != nil {
+		return nil, e
+	}
+
+	return &fileAttachments, nil
+}

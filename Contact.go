@@ -57,7 +57,6 @@ type Contact struct {
 }
 
 // GetContact returns a specific contact
-//
 func (service *Service) GetContact(contactID int64) (*Contact, *errortools.Error) {
 	contact := Contact{}
 
@@ -84,7 +83,6 @@ type GetContactsConfig struct {
 }
 
 // GetContacts returns all contacts
-//
 func (service *Service) GetContacts(config *GetContactsConfig) (*[]Contact, *errortools.Error) {
 	params := url.Values{}
 
@@ -157,7 +155,6 @@ func (service *Service) GetContacts(config *GetContactsConfig) (*[]Contact, *err
 }
 
 // CreateContact creates a new contract
-//
 func (service *Service) CreateContact(contact *Contact) (*Contact, *errortools.Error) {
 	if contact == nil {
 		return nil, nil
@@ -180,7 +177,6 @@ func (service *Service) CreateContact(contact *Contact) (*Contact, *errortools.E
 }
 
 // UpdateContact updates an existing contract
-//
 func (service *Service) UpdateContact(contact *Contact) (*Contact, *errortools.Error) {
 	if contact == nil {
 		return nil, nil
@@ -203,7 +199,6 @@ func (service *Service) UpdateContact(contact *Contact) (*Contact, *errortools.E
 }
 
 // DeleteContact deletes a specific contact
-//
 func (service *Service) DeleteContact(contactID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		Method: http.MethodDelete,
@@ -231,4 +226,22 @@ func (c *Contact) FullName() string {
 	}
 
 	return strings.Trim(name, " ")
+}
+
+// GetContactFileAttachments returns the file attachments of a specific email
+func (service *Service) GetContactFileAttachments(id int64) (*[]FileAttachment, *errortools.Error) {
+	var fileAttachments []FileAttachment
+
+	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
+		Url:           service.url(fmt.Sprintf("contacts/%v/fileattachments", id)),
+		ResponseModel: &fileAttachments,
+	}
+
+	_, _, e := service.httpRequest(&requestConfig)
+	if e != nil {
+		return nil, e
+	}
+
+	return &fileAttachments, nil
 }

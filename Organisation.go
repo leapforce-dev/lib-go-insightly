@@ -12,7 +12,6 @@ import (
 )
 
 // Organisation stores Organisation from Service
-//
 type Organisation struct {
 	OrganisationID         int64                   `json:"ORGANISATION_ID"`
 	OrganisationName       *string                 `json:"ORGANISATION_NAME,omitempty"`
@@ -48,7 +47,6 @@ type Organisation struct {
 }
 
 // GetOrganisation returns a specific organisation
-//
 func (service *Service) GetOrganisation(organisationID int64) (*Organisation, *errortools.Error) {
 	organisation := Organisation{}
 
@@ -75,7 +73,6 @@ type GetOrganisationsConfig struct {
 }
 
 // GetOrganisations returns all organisations
-//
 func (service *Service) GetOrganisations(config *GetOrganisationsConfig) (*[]Organisation, *errortools.Error) {
 	params := url.Values{}
 
@@ -148,7 +145,6 @@ func (service *Service) GetOrganisations(config *GetOrganisationsConfig) (*[]Org
 }
 
 // CreateOrganisation creates a new contract
-//
 func (service *Service) CreateOrganisation(organisation *Organisation) (*Organisation, *errortools.Error) {
 	if organisation == nil {
 		return nil, nil
@@ -171,7 +167,6 @@ func (service *Service) CreateOrganisation(organisation *Organisation) (*Organis
 }
 
 // UpdateOrganisation updates an existing contract
-//
 func (service *Service) UpdateOrganisation(organisation *Organisation) (*Organisation, *errortools.Error) {
 	if organisation == nil {
 		return nil, nil
@@ -194,7 +189,6 @@ func (service *Service) UpdateOrganisation(organisation *Organisation) (*Organis
 }
 
 // DeleteOrganisation deletes a specific organisation
-//
 func (service *Service) DeleteOrganisation(organisationID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		Method: http.MethodDelete,
@@ -209,7 +203,6 @@ func (service *Service) DeleteOrganisation(organisationID int64) *errortools.Err
 }
 
 // GetOrganisationLinks returns links for a specific organisation
-//
 func (service *Service) GetOrganisationLinks(organisationID int64) (*[]Link, *errortools.Error) {
 	links := []Link{}
 
@@ -224,4 +217,22 @@ func (service *Service) GetOrganisationLinks(organisationID int64) (*[]Link, *er
 	}
 
 	return &links, nil
+}
+
+// GetOrganisationFileAttachments returns the file attachments of a specific email
+func (service *Service) GetOrganisationFileAttachments(id int64) (*[]FileAttachment, *errortools.Error) {
+	var fileAttachments []FileAttachment
+
+	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
+		Url:           service.url(fmt.Sprintf("organisations/%v/fileattachments", id)),
+		ResponseModel: &fileAttachments,
+	}
+
+	_, _, e := service.httpRequest(&requestConfig)
+	if e != nil {
+		return nil, e
+	}
+
+	return &fileAttachments, nil
 }

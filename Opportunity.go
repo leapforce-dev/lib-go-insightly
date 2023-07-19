@@ -12,7 +12,6 @@ import (
 )
 
 // Opportunity stores Opportunity from Service
-//
 type Opportunity struct {
 	OpportunityID       int64                   `json:"OPPORTUNITY_ID"`
 	OpportunityName     *string                 `json:"OPPORTUNITY_NAME,omitempty"`
@@ -44,7 +43,6 @@ type Opportunity struct {
 }
 
 // GetOpportunity returns a specific opportunity
-//
 func (service *Service) GetOpportunity(opportunityID int64) (*Opportunity, *errortools.Error) {
 	opportunity := Opportunity{}
 
@@ -71,7 +69,6 @@ type GetOpportunitiesConfig struct {
 }
 
 // GetOpportunities returns all opportunities
-//
 func (service *Service) GetOpportunities(config *GetOpportunitiesConfig) (*[]Opportunity, *errortools.Error) {
 	params := url.Values{}
 
@@ -144,7 +141,6 @@ func (service *Service) GetOpportunities(config *GetOpportunitiesConfig) (*[]Opp
 }
 
 // CreateOpportunity creates a new contract
-//
 func (service *Service) CreateOpportunity(opportunity *Opportunity) (*Opportunity, *errortools.Error) {
 	if opportunity == nil {
 		return nil, nil
@@ -167,7 +163,6 @@ func (service *Service) CreateOpportunity(opportunity *Opportunity) (*Opportunit
 }
 
 // UpdateOpportunity updates an existing opportunity
-//
 func (service *Service) UpdateOpportunity(opportunity *Opportunity) (*Opportunity, *errortools.Error) {
 	if opportunity == nil {
 		return nil, nil
@@ -213,7 +208,6 @@ type OpportunityPipelineActivityAssignment struct {
 }
 
 // UpdateOpportunityPipeline updates pipeline of an existing opportunity
-//
 func (service *Service) UpdateOpportunityPipeline(opportunityId int64, opportunityPipeline *OpportunityPipeline) (*Opportunity, *errortools.Error) {
 	if opportunityPipeline == nil {
 		return nil, nil
@@ -236,7 +230,6 @@ func (service *Service) UpdateOpportunityPipeline(opportunityId int64, opportuni
 }
 
 // DeleteOpportunity deletes a specific opportunity
-//
 func (service *Service) DeleteOpportunity(opportunityID int64) *errortools.Error {
 	requestConfig := go_http.RequestConfig{
 		Method: http.MethodDelete,
@@ -251,7 +244,6 @@ func (service *Service) DeleteOpportunity(opportunityID int64) *errortools.Error
 }
 
 // GetOpportunityLinks returns links for a specific opportunity
-//
 func (service *Service) GetOpportunityLinks(opportunityID int64) (*[]Link, *errortools.Error) {
 	links := []Link{}
 
@@ -269,7 +261,6 @@ func (service *Service) GetOpportunityLinks(opportunityID int64) (*[]Link, *erro
 }
 
 // CreateOpportunityLink creates a new link for an opportunity
-//
 func (service *Service) CreateOpportunityLink(opportunityId int64, link *Link) (*Opportunity, *errortools.Error) {
 	if link == nil {
 		return nil, nil
@@ -289,4 +280,22 @@ func (service *Service) CreateOpportunityLink(opportunityId int64, link *Link) (
 	}
 
 	return &opportunityNew, nil
+}
+
+// GetOpportunityFileAttachments returns the file attachments of a specific email
+func (service *Service) GetOpportunityFileAttachments(id int64) (*[]FileAttachment, *errortools.Error) {
+	var fileAttachments []FileAttachment
+
+	requestConfig := go_http.RequestConfig{
+		Method:        http.MethodGet,
+		Url:           service.url(fmt.Sprintf("opportunities/%v/fileattachments", id)),
+		ResponseModel: &fileAttachments,
+	}
+
+	_, _, e := service.httpRequest(&requestConfig)
+	if e != nil {
+		return nil, e
+	}
+
+	return &fileAttachments, nil
 }
